@@ -1,0 +1,175 @@
+= RubyCAS-Client
+
+Author::    Ola Bini <ola.bini AT ki DOT se>, Matt Zukowski <matt AT roughest DOT net>, Matt Walker <mwalker AT tamu DOT edu>
+Copyright:: (c) 2006 Karolinska Institutet, portions (c) 2006 Urbacon Ltd.
+License::   GNU Lesser General Public License v2.1 (LGPL 2.1)
+Website::   http://rubyforge.org/projects/rubycas-client
+
+=== RubyCAS-Client is a Ruby client library for Yale's Central Authentication Service (CAS) protocol.
+
+CAS provides a solid and secure single sign on solution for web-based applications. When a user logs on to your
+CAS-enabled website, the CAS client checks with the CAS server to see if the user has been centrally authenticated.
+If not, the user is redirected to your CAS server's web-based login page where they enter their credentials, and upon
+successful authentication are redirected back to your client web application. If the user has been previously
+authenticated with the CAS server (with their "ticket" being held as a session cookie), they are transparently
+allowed to go about their business.
+
+This client requires a CAS server to talk to. You can obtain a Java implementation of such a server as well as more info
+about the CAS protocol here: http://www.ja-sig.org/products/cas
+
+This CAS client library is designed to work easily with Rails, but can of course be used elsewhere.
+
+== Installing
+
+You can always download the latest version of RubyCAS-Client from the project's rubyforge page at http://rubyforge.org/projects/rubycas-client.
+However probably the easiest way to install CAS support into your Rails app is via the plugins facility:
+
+  ./script/plugin install http://rubycas-client.rubyforge.org/plugin/rubycas-client
+
+Alternatively, the library is also available as a gem, which can be installed by:
+
+  gem install rubycas-client
+  
+The latest development version is availabe via subversion:
+
+  svn checkout svn://rubyforge.org/var/svn/rubycas-client/trunk/rubycas-client
+  
+Or you can install the latest development version into your Rails app as a plugin:
+
+  ./script/plugin install -x svn://rubyforge.org/var/svn/rubycas-client/trunk/rubycas-client
+  
+Please contact the developers via the {rubyforge.org page}[http://rubyforge.org/projects/rubycas-client] if you have bug fixes
+or enhancements you would like to contribute back.
+
+== Examples
+
+==== Here is an example of how to use the library in your Rails application:
+
+Somewhere in your <tt>config/environment.rb</tt> file add this (assuming that you have RubyCAS-Client installed as a plugin, otherwise
+you'll need to <tt>require 'cas_auth'</tt> and <tt>require 'cas_proxy_callback_controller'</tt>):
+
+  CAS::Filter.cas_base_url = "https://login.example.com/cas"
+
+Then, in your <tt>app/controllers/application.rb</tt> (or in whatever controller you want to add the CAS filter for):
+
+  before_filter CAS::Filter
+  
+That's it. You should now find that you are redirected to your CAS login page whenever you try to access any action
+in your protected controller. You can of course qualify the <tt>before_filter</tt> as you would with any other ActionController
+filter. For example: 
+
+  before_filter CAS::Filter, :except => [ :unprotected_action, :another_unprotected_action ]
+
+<b>Once the user has been authenticated, their authenticated username is available under <tt>request.username</tt></b>
+(and also under <tt>session[:casfilteruser]</tt>). If you want to do something with this username (for example load a 
+user record from the database), you can append another filter method that checks for this value and does whatever you need
+it to do.
+
+==== A more complicated example:
+
+Here is a more complicated configuration showing most of the configuration options (this does not show proxy options however,
+which are covered in the next section):
+
+  CAS::Filter.login_url = "https://login.example.com/cas/login"  # the URI of the CAS login page
+  CAS::Filter.validate_url = "https://login.example.com/cas/serviceValidate"  # the URI where CAS ticket validation requests are sent
+  CAS::Filter.server_name = "yourapplication.example.com:3000"  # the server name of your CAS-protected application
+  CAS::Filter.renew = false                      # force re-authentication? see http://www.ja-sig.org/products/cas/overview/protocol
+  CAS::Filter.wrap_request = true                # make the username available under request.username?
+  CAS::Filter.gateway = false                    # act as cas gateway? see http://www.ja-sig.org/products/cas/overview/protocol
+  CAS::Filter.session_username = :casfilteruser  # this is the hash in the session where the authenticated username will be stored
+
+
+==== How to act as a CAS proxy:
+
+CAS 2.0 has a built-in mechanism that allows a CAS-authenticated application to pass on its authentication to other applications.
+An example where this is useful might be a portal site, where the user logs in to a central website and then gets forwarded to
+various other sites that run independently of the portal system (but are always accessed via the portal). The exact mechanism
+behind this is rather complicated so I won't go over it here. If you wish to learn more about CAS proxying, a great walkthrough
+is available at http://www.ja-sig.org/wiki/display/CAS/Proxy+CAS+Walkthrough.
+
+RubyCAS-Client fully supports proxying, so a CAS-protected Rails application can act as a CAS proxy.
+
+Additionally, RubyCAS-Client comes with a controller that can act as a CAS proxy callback receiver. This is necessary because
+when your application requests to act as a CAS proxy, the CAS server must contact your application to deposit the proxy-granting-ticket
+(PGT). Note that in this case the CAS server CONTACTS YOU, rather than you contacting the CAS server (as in all other CAS operations).
+
+Confused? Don't worry, you don't really have to understand this to use it. To enable your Rails app to act as a CAS proxy, 
+all you need to do is this:
+
+In your <tt>config/environment.rb</tt>:
+
+  CAS::Filter.cas_base_url = "https://login.example.com/cas"
+  CAS::Filter.proxy_callback_url = "https://yourrailsapp.com/cas_proxy_callback/receive_pgt"
+  CAS::Filter.proxy_retrieval_url = "https://yourrailsapp.com/cas_proxy_callback/retrieve_pgt"
+  
+In <tt>config/routes.rb</tt> make sure that you have a route that will allow requests to /cas_proxy_callback/:action to be routed to the
+CasProxyCallbackController. This should work as-is with the standard Rails routes setup, but if you have disabled the default
+route, you should add the following:
+
+  map.cas_proxy_callback 'cas_proxy_callback/:action', :controller => 'cas_proxy_callback'
+
+Once your user logs in to CAS via your application, you can do the following to obtain a service ticket that can then be used
+to authenticate another application:
+
+  service_uri = "http://some.other.application"
+  proxy_granting_ticket = session[:casfilterpgt]
+  ticket = CAS::Filter.request_proxy_ticket(service_uri, proxy_granting_ticket)
+
+<tt>ticket</tt> should now contain a valid service ticket. You can use it to authenticate your other by sending it and the service URI
+as query parameters to your target application:
+
+  http://some.other.application?service=#{ticket.target_service}&ticket=#{ticket.proxy_ticket}
+  
+This is of course assuming that some.other.application is also protected by the CAS filter.
+
+For extra security -- and you will likely want to do this on production machines in the wild -- in the proxied app's configuration
+(some.other.appliction in this example) you can specify the list of authorized proxies. For example, on your proxied app the CAS
+configuration might look something like this:
+
+  CAS::Filter.cas_base_url = "https://login.example.com/cas"
+  CAS::Filter.server_name = "some.other.application"
+  CAS::Filter.authorized_proxies = ["https://yourrailsapp.com/cas/proxy_callback/receive_pgt"]
+  
+If no authorized proxies are given, the filter will accept receipts from any proxy.
+
+===== Additional notes and caveats:
+
+Note that when the CAS filter runs, the PGT is stored in session[:casfilterpgt]. This value must be passed to CAS::Filter#request_proxy_ticket.
+Also, note that CAS::Filter#request_proxy_ticket will URI-encode the service_uri before passing it to the CAS server, and the service
+value must henceforth always be passed as URI-encoded (this can be problematic when your proxied application uses some CAS client other than
+RubyCAS-Client).
+
+<b>The proxy url must be an https address.</b> Otherwise CAS will refuse to communicate with it. This means that if you are using
+the bundled cas_proxy_callback controller, you will have to host your application on an https-enabled server. This can be a bit
+tricky with Rails. WEBrick's SSL support is difficult to configure, and Mongrel doesn't support SSL at all. One workaround is to
+use a reverse proxy like Pound[http://www.apsis.ch/pound/], which will accept https connections and locally re-route them
+to your Rails application. Also, note that <i>self-signed SSL certificates likely won't work</i>. You will probably need to use
+a real certificate purchased from a trusted CA authority (there are ways around this, but good luck :)
+
+
+== SSL Support
+
+If you are getting an error on net/https -- something like this:
+
+no such file to load -- net/https
+
+Then make sure the library for open SSL is installed. For example, on an Debian/Ubuntu system issue the following:
+
+sudo apt-get install libopenssl-ruby
+
+
+== License
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program (see the file called LICENSE); if not, write to the
+Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
