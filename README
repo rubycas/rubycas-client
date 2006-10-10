@@ -32,11 +32,7 @@ Alternatively, the library is also available as a gem, which can be installed by
   
 The latest development version is availabe via subversion:
 
-  svn checkout svn://rubyforge.org/var/svn/rubycas-client/trunk/rubycas-client
-  
-Or you can install the latest development version into your Rails app as a plugin:
-
-  ./script/plugin install -x svn://rubyforge.org/var/svn/rubycas-client/trunk/rubycas-client
+  ./script/plugin install -x http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
   
 Please contact the developers via the {rubyforge.org page}[http://rubyforge.org/projects/rubycas-client] if you have bug fixes
 or enhancements you would like to contribute back.
