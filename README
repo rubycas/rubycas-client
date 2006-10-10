@@ -147,11 +147,11 @@ a real certificate purchased from a trusted CA authority (there are ways around 
 
 If you are getting an error on net/https -- something like this:
 
-no such file to load -- net/https
+  no such file to load -- net/https
 
 Then make sure the library for open SSL is installed. For example, on an Debian/Ubuntu system issue the following:
 
-sudo apt-get install libopenssl-ruby
+  sudo apt-get install libopenssl-ruby
 
 
 == License
