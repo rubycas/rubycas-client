@@ -8,8 +8,10 @@ class CasProxyCallbackController < ActionController::Base
   # Note that this action should ALWAYS be called via https, otherwise you have a gaping security hole.
   # In fact, the JA-SIG implementation of the CAS server will refuse to send PGTs to non-https URLs.
   def receive_pgt
-    render_error "PGTs can be received only via HTTPS or local connections." and return unless
-      request.ssl? or request.env['REMOTE_HOST'] == "127.0.0.1"
+		#FIXME: these checks don't work because REMOTE_HOST doesn't work consistently under all web servers (for example it doesn't work at all under mongrel)
+		#				... need to find a reliable way to check if the request came through from a reverse HTTPS proxy -- until then I'm disabling this check
+    #render_error "PGTs can be received only via HTTPS or local connections." and return unless
+    #  request.ssl? or request.env['REMOTE_HOST'] == "127.0.0.1"
 
     pgtIou = params['pgtIou']
     pgtId = params['pgtId']
