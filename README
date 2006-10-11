@@ -104,6 +104,24 @@ route, you should add the following:
 
   map.cas_proxy_callback 'cas_proxy_callback/:action', :controller => 'cas_proxy_callback'
 
+Now here's a big giant caveat: <b>your CAS callback application and your CAS proxy application must run on separate Rails servers</b>.
+In other words, if you want a Rails app to act as a CAS ticket-granting proxy, the cas_proxy_callback controller
+must run on a different server. This is because Rails does not properly support handling of concurrent requests. The CAS proxy mechanism
+acts in such a way that if your proxy application and your callback controller were on the same server
+you would end up with a deadlock (the CAS server would be waiting for its callback to be accepted by your Rails server,
+but your Rails server wouldn't respond to the CAS server's callback until the CAS server responded back first).
+
+The simplest workaround is this:
+
+1. Create an empty rails app (i.e. something like <tt>rails cas_proxy_callback</tt>)
+2. Make sure that you have the CAS plugin installed. If you installed it as a gem, you don't have to do anything since
+   it is already installed. If you want to install as a plugin, see the instructions in the "Installing" section above.
+3. Make sure that the server is up and running, and configure your proxy_callback_url and proxy_retrieval_url to point
+   to the new server as described above (or rather, make Pound point to the new server, if that's how you're handling https).
+   
+That's it. The proxy_callback_controller doesn't require any additional configuration. It doesn't access the database
+or anything of that sort.
+
 Once your user logs in to CAS via your application, you can do the following to obtain a service ticket that can then be used
 to authenticate another application:
 

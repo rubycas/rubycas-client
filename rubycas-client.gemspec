@@ -3,7 +3,7 @@ require 'rake'
 Gem::Specification.new do |s|
   s.name = %q{rubycas-client}
   s.version = "0.10.1"
-  s.date = %q{2006-10-10}
+  s.date = %q{2006-10-11}
   s.summary = %q{Client library for the CAS single-sign-on protocol.}
   s.email = %q{matt@roughest.net}
   s.homepage = %q{http://rubycas-client.rubyforge.org}
