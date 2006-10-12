@@ -36,8 +36,8 @@ class CasProxyCallbackController < ActionController::Base
   # in fact, the action will not work if the request is not made via SSL or is not local (we allow for local
   # non-SSL requests since this allows for the use of reverse HTTPS proxies like Pound).
   def retrieve_pgt
-    render_error "You can only retrieve PGTs via HTTPS or local connections." and return unless
-      request.ssl? or request.env['REMOTE_HOST'] == "127.0.0.1"
+    #render_error "You can only retrieve PGTs via HTTPS or local connections." and return unless
+    #  request.ssl? or request.env['REMOTE_HOST'] == "127.0.0.1"
     
     pgtIou = params['pgtIou']
     
