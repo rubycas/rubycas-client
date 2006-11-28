@@ -45,6 +45,12 @@ Somewhere in your <tt>config/environment.rb</tt> file add this (assuming that yo
 you'll need to <tt>require 'cas_auth'</tt> and <tt>require 'cas_proxy_callback_controller'</tt>):
 
   CAS::Filter.cas_base_url = "https://login.example.com/cas"
+  
+You will also probably (but not necessarily) specify the server name where your CAS-protected app is running:
+
+  CAS::Filter.server_name = "yourapplication.example.com:3000"
+
+The above setting might not be necessary if your application is running on the standard port 80.
 
 Then, in your <tt>app/controllers/application.rb</tt> (or in whatever controller you want to add the CAS filter for):
 
