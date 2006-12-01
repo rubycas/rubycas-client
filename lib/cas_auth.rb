@@ -275,7 +275,7 @@ module CAS
     end
     
     def self.guess_service(controller)
-      log.debug("guessing service based on params #{params.inspect}")
+      log.debug("guessing service based on params #{controller.params.inspect}")
     
       # we're assuming that controller.params[:service] is url-encoded!
       return controller.params[:service] if controller.params.include? :service
