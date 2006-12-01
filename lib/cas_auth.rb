@@ -149,6 +149,7 @@ module CAS
       end
       
       def filter_r(controller)
+        logger.debug("\n\n==================================================================")
         logger.debug("filter of controller: #{controller}")
         receipt = controller.session[:casfilterreceipt]
         logger.info("receipt: #{receipt}")
@@ -260,17 +261,22 @@ module CAS
       end
       receipt
     end
+    
     def self.service_url(controller)
       before = @@service_url || guess_service(controller)
-      logger.debug("before: #{before}")
-      after = escape_service_uri(before)
-      logger.debug("after: #{after}")
+      logger.debug("service url before escape: #{before}")
+      after = escape_service_uri(remove_ticket_from_service_uri(before))
+      logger.debug("service url after escape: #{after}")
       after
     end
+    
     def self.redirect_url(controller,url=@@login_url)
       "#{url}?service=#{service_url(controller)}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.nil?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
     end
+    
     def self.guess_service(controller)
+      log.debug("guessing service based on params #{params.inspect}")
+    
       # we're assuming that controller.params[:service] is url-encoded!
       return controller.params[:service] if controller.params.include? :service
       
@@ -281,8 +287,16 @@ module CAS
       query = "?" + query unless query.empty?
       "#{req.protocol}#{@@server_name}#{req.request_uri.split(/\?/)[0]}#{query}"
     end
+    
     def self.escape_service_uri(uri)
       URI.encode(uri, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]", false, 'U').freeze)
+    end
+    
+    # The service URI should never have a ticket parameter, but we use this to remove
+    # any parameters named "ticket" just in case, as having a "ticket" parameter in the
+    # service URI will generally cause an infinite redirection loop.
+    def self.remove_ticket_from_service_uri(uri)
+      uri.gsub(/&?ticket=[^&$]*/, '')
     end
   end
 end
