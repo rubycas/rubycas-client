@@ -169,7 +169,7 @@ module CAS
     attr_reader :proxy_ticket
   
     def request
-      url_building = "#{proxy_url}#{(url_building =~ /\?/)?'&':'?'}targetService=#{target_service}&pgt=#{pgt}"
+      url_building = "#{proxy_url}#{(url_building =~ /\?/)?'&':'?'}pgt=#{pgt}&targetService=#{target_service}"
 #      puts "REQUESTING:"+url_building
       @@entire_response = ServiceTicketValidator.retrieve url_building
 #      puts @@entire_response.to_s
