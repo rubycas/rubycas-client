@@ -100,24 +100,26 @@ module CAS
         if !@@logout_url && @@login_url =~ %r{^(.+?)/[^/]*$}
           @@logout_url = "#{$1}/logout"
         end
-        logger.info "Created logout-url: #{@@logout_url}"
+        logger.info "Created logout url: #{@@logout_url}"
       end
       
       def logout_url(controller)
         create_logout_url unless @@logout_url
         url = redirect_url(controller,@@logout_url)
-        logger.info "Using logout-url #{url}"
+        logger.info "Logout url is: #{url}"
         url
       end
       
-      def logout_url=(val)
-        @@logout_url = val
+      def logout_url=(url)
+        @@logout_url = url
+        logger.info "Set logout url to: #{url}"
       end
       
       def cas_base_url=(url)
         CAS::Filter.login_url = "#{url}/login"
         CAS::Filter.validate_url = "#{url}/proxyValidate"
         CAS::Filter.proxy_url = "#{url}/proxy"
+        logger.info "Set CAS base url to: #{url}"
       end
         
       def fake
@@ -127,14 +129,16 @@ module CAS
       def fake=(val)
         if val.nil?
           alias :filter :filter_r
+          logger.info "Will use real filter"
         else
           alias :filter :filter_f
+          logger.warn "Will use fake filter"
         end
         @@fake = val
       end
 
       def filter_f(controller)
-        logger.debug("entering fake cas filter")
+        logger.warn("Using fake CAS filter")
         username = @@fake
         if :failure == @@fake
           return false
@@ -143,72 +147,93 @@ module CAS
         elsif Proc === @@fake
           username = @@fake.call(controller)
         end
-        logger.debug("our username is: #{username}")
+        logger.info("The username set by the fake filter is: #{username}")
         controller.session[@@session_username] = username
         return true
       end
       
       def filter_r(controller)
-        logger.debug("\n==================================================================")
-        logger.debug("filter of controller: #{controller}")
+        logger.info("Using real CAS filter in controller: #{controller}")
         receipt = controller.session[:casfilterreceipt]
-        logger.info("receipt: #{receipt}")
+
         valid = false
         if receipt
+          log.info "Validating receipt from the session"
+          log.debug "The receipt stored in the session under :casfilterreceipt is: #{receipt}"
           valid = validate_receipt(receipt)
-          logger.info("valid receipt?: #{valid}")
+          log.info "The receipt stored in the session is "+(valid ? "" : "NOT ")+"VALID"
         else
+          log.info "There is no receipt stored in the session"
           reqticket = controller.params["ticket"]
-          logger.info("ticket: #{reqticket}")
           if reqticket
+            log.info "We have a ticket: #{reqticket}"
+            
             # We temporarily allow ActionController requests to be handled concurrently.
             # Otherwise proxy granting ticket callbacks from CAS wouldn't work, since
             # the Rails server would be deadlocked while it waits for the CAS server to validate
             # the ticket, and the CAS server waits for the Rails server to receive the PGT callback.
+            # 
             # Note that since the allow_concurrency option is undocumented and considered
-            # experimental, what we're doing here may cause unforseen problems. Beware!
+            # experimental, what we're doing here may cause unforseen problems (or more likely,
+            # it just won't work). Beware!
             ActionController::Base.allow_concurrency = true
             receipt = authenticated_user(reqticket,controller)
             ActionController::Base.allow_concurrency = false
             
-            logger.info("new receipt: #{receipt}")
-            logger.info("validate_receipt: " + validate_receipt(receipt).to_s)
             if receipt && validate_receipt(receipt)
-              logger.info("receipt for ticket request #{reqticket} checks out; it will be stored in the session")
+              logger.info("Receipt for ticket request #{reqticket} is valid and will be stored in the session under :casfilterreceipt.")
               controller.session[:casfilterreceipt] = receipt
               controller.session[@@session_username] = receipt.user_name
               
               if receipt.pgt_iou
-                logger.info("receipt has a pgt iou... attempting to retrieve the proxy granting ticket...")
+                logger.info("Receipt has a proxy-granting ticket IOU. Attempting to retrieve the proxy-granting ticket...")
                 # I've briefly allowed concurrency here in an attempt to alllow the Rails app act as its own proxy
                 # callback. Unfortunately this probably doesn't work, and you will almost certainly have to run
                 # the CAS callback controller on a separate Rails app.
                 ActionController::Base.allow_concurrency = true
                 retrieve_url = "#{@@proxy_retrieval_url}?pgtIou=#{receipt.pgt_iou}"
-                logger.info("retrieving pgt from: #{retrieve_url}")
-                controller.session[:casfilterpgt] = CAS::ServiceTicketValidator.retrieve(retrieve_url)
+                
+                logger.debug("Will attempt to retrieve the PGT from: #{retrieve_url}")
+                
+                pgt = CAS::ServiceTicketValidator.retrieve(retrieve_url)
+                
+                logger.info("Retrieved the PGT: #{pgt}")
+                
+                controller.session[:casfilterpgt] = pgt
+                
                 ActionController::Base.allow_concurrency = false
               end
               
               valid = true
             end
           else
+            log.info "We do not have a ticket."
+            
             did_gateway = controller.session[:casfiltergateway]
             raise CASException, "Can't redirect without login url" if !@@login_url
+            
             if did_gateway
               if controller.session[@@session_username]
+                log.info "We gatewayed and have a username stored in the session. The gateway was therefore successful."
                 valid = true
               else
+                log.debug "We gatewayed but do not have a username stored in the session, so we will keep session[:casfiltergateway] true"
                 controller.session[:casfiltergateway] = true
               end
             else
+              log.info "We did not gateway, so we will notify the filter that the next request is being gatewayed by setting sesson[:casfiltergateway} to true"
               controller.session[:casfiltergateway] = true
             end
           end
         end
-        logger.info("will send redirect #{redirect_url(controller)}") if !valid
-        controller.send :redirect_to,redirect_url(controller) if !valid
-        return valid
+        
+        if valid
+          logger.info "This request is successfully CAS authenticated!"
+          return true
+        else
+          logger.info "This request is not CAS authenticated, so we will redirect to: #{redirect_url(controller)}"
+          controller.send :redirect_to, redirect_url(controller) and return false
+        end
       end
       alias :filter :filter_r
       
@@ -221,13 +246,13 @@ module CAS
 
         raise "Cannot request a proxy ticket for service #{r.target_service} because no proxy granting ticket (PGT) has been set." unless r.pgt
         
-        logger.info("requesting proxy ticket for service #{r.target_service} with pgt #{pgt}")
+        logger.info("Requesting proxy ticket for service: #{r.target_service} with PGT #{pgt}")
         r.request
         
         if r.proxy_ticket
-          logger.info("got proxy ticket #{r.proxy_ticket} for service #{r.target_service}")
+          logger.info("Got proxy ticket #{r.proxy_ticket} for service #{r.target_service}")
         else
-          logger.warn("did not receive a proxy ticket for service #{r.target_service}!")
+          logger.warn("Did not receive a proxy ticket for service #{r.target_service}!")
         end
         
         return r
@@ -235,43 +260,62 @@ module CAS
     end
     
     private
-    def self.validate_receipt(receipt)       
-        if receipt
-          logger.debug "authorized proxies: #{@@authorized_proxies.inspect}"
-          logger.debug "proxying service: #{receipt.proxying_service.inspect}"
-        end
-        
-        valid = receipt && !(@@renew && !receipt.primary_authentication?)
-        
+    def self.validate_receipt(receipt)
+      logger.info "Checking that the  receipt is valid and coherent."
+      
+      if not receipt
+        logger.info "No receipt given, so the receipt is invalid"
+        return false
+      elsif @@renew && !receipt.primary_authentication?
+        logger.info "The filter is configured to force primary authentication (i.e. the renew options is set to true), but the receipt was not generated by primary authentication so we consider it invalid"
+        return false
+      end
+      
+      if receipt.proxied?      
         if @@authorized_proxies and !@@authorized_proxies.empty?
-          valid = valid && !(receipt.proxied? && !@@authorized_proxies.include?(receipt.proxying_service)) 
+          logger.debug "Authorized proxies are: #{@@authorized_proxies.inspect}"
+          
+            logger.info "Receipt is proxied by proxying service: #{receipt.proxying_service}"
+            if !@@authorized_proxies.include? receipt.proxying_service
+              logger.warn "Receipt was proxied by #{receipt_proxying_service} but this proxying service is not in the list of authorized proxies. The receipt is therefore invalid."
+              return false
+            else
+              logger.info "Receipt is proxied by a valid proxying service."
+            end
+        else
+          logger.info "No authorized proxies set, so any proxy will be considered valid"
         end
-        
-        return valid
+      else
+        logger.info "Receipt is not proxied"
+      end
+      
+      return true
     end
 
-    def self.authenticated_user(tick, controller)
+    def self.authenticated_user(ticket, controller)
+      logger.info "Getting receipt for ticket '#{ticket}'"
       pv = ProxyTicketValidator.new
       pv.validate_url = @@validate_url
-      pv.service_ticket = tick
+      pv.service_ticket = ticket
       pv.service = service_url(controller)
       pv.renew = @@renew
       pv.proxy_callback_url = @@proxy_callback_url
       receipt = nil
-      logger.debug("pv: #{pv.inspect}")
+      logger.debug "ProxyTicketValidator is: #{pv.inspect}"
       begin
         receipt = Receipt.new(pv)
-      rescue AuthenticationException=>auth
-        logger.warn("filter: had an authentication-exception #{auth}")
+      rescue AuthenticationException => e
+        logger.warn("Getting a receipt for the ProxyTicketValidator threw an exception: #{e}")
       end
+      logger.debug "Receipt is: #{receipt.inspect}"
       receipt
     end
     
     def self.service_url(controller)
       before = @@service_url || guess_service(controller)
-      logger.debug("service url before escape: #{before}")
+      logger.debug("Service url before URI encoding is: #{before}")
       after = escape_service_uri(remove_ticket_from_service_uri(before))
-      logger.debug("service url after escape: #{after}")
+      logger.debug("Service url after URI encoding is: #{after}")
       after
     end
     
@@ -280,17 +324,26 @@ module CAS
     end
     
     def self.guess_service(controller)
-      log.debug("guessing service based on params #{controller.params.inspect}")
+      logger.info "Guessing service based on params: #{controller.params.inspect}"
     
+      
       # we're assuming that controller.params[:service] is url-encoded!
-      return controller.params[:service] if controller.params.include? :service
+      if controller.params.include? :service
+        logger.info "We have a :service param, so we will use this as the service: #{controller.params[:service]}"
+        return controller.params[:service] 
+      end
       
       req = controller.request
       parms = controller.params.dup
       parms.delete("ticket")
       query = (parms.collect {|key, val| "#{key}=#{val}"}).join("&")
       query = "?" + query unless query.empty?
-      "#{req.protocol}#{@@server_name}#{req.request_uri.split(/\?/)[0]}#{query}"
+      
+      service = "#{req.protocol}#{@@server_name}#{req.request_uri.split(/\?/)[0]}#{query}"
+      
+      logger.info "Guessed service is: #{service}"
+      
+      return service
     end
     
     def self.escape_service_uri(uri)
