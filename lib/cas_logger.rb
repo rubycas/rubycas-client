@@ -1,4 +1,3 @@
-require 'roundhouse'
 require 'logger'
 
 # this overrides clean_logger.rb in Rails that pretty much completely breaks logging #!@%*(#@*$&%!!...
