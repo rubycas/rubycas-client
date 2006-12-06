@@ -149,7 +149,7 @@ module CAS
       end
       
       def filter_r(controller)
-        logger.debug("\n\n==================================================================")
+        logger.debug("\n==================================================================")
         logger.debug("filter of controller: #{controller}")
         receipt = controller.session[:casfilterreceipt]
         logger.info("receipt: #{receipt}")
@@ -174,10 +174,15 @@ module CAS
             logger.info("new receipt: #{receipt}")
             logger.info("validate_receipt: " + validate_receipt(receipt).to_s)
             if receipt && validate_receipt(receipt)
+              logger.info("receipt for ticket request #{reqticket} checks out; it will be stored in the session")
               controller.session[:casfilterreceipt] = receipt
               controller.session[@@session_username] = receipt.user_name
               
               if receipt.pgt_iou
+                logger.info("receipt has a pgt iou... attempting to retrieve the proxy granting ticket...")
+                # I've briefly allowed concurrency here in an attempt to alllow the Rails app act as its own proxy
+                # callback. Unfortunately this probably doesn't work, and you will almost certainly have to run
+                # the CAS callback controller on a separate Rails app.
                 ActionController::Base.allow_concurrency = true
                 retrieve_url = "#{@@proxy_retrieval_url}?pgtIou=#{receipt.pgt_iou}"
                 logger.info("retrieving pgt from: #{retrieve_url}")
