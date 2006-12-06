@@ -47,7 +47,7 @@ you'll need to <tt>require 'cas_auth'</tt> and <tt>require 'cas_proxy_callback_c
 
   CAS::Filter.cas_base_url = "https://login.example.com/cas"
   
-You will also probably (but not necessarily) specify the server name where your CAS-protected app is running:
+You will also probably (but not necessarily) need to specify the server name where your CAS-protected app is running:
 
   CAS::Filter.server_name = "yourapplication.example.com:3000"
 
