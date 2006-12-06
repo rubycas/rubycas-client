@@ -276,10 +276,11 @@ module CAS
       end
       
       if receipt.proxied?    
+        logger.info "The receipt is proxied by proxying service: #{receipt.proxying_service}"
+        
         if @@authorized_proxies and !@@authorized_proxies.empty?
-          logger.debug "The receipt is proxied. Authorized proxies are: #{@@authorized_proxies.inspect}"
+          logger.debug "Authorized proxies are: #{@@authorized_proxies.inspect}"
           
-          logger.info "Receipt is proxied by proxying service: #{receipt.proxying_service}"
           if !@@authorized_proxies.include? receipt.proxying_service
             logger.warn "Receipt was proxied by #{receipt_proxying_service} but this proxying service is not in the list of authorized proxies. The receipt is therefore invalid."
             return false
