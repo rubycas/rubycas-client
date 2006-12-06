@@ -1,0 +1,23 @@
+= RubyCAS-Client Changelog
+
+== Version 0.10.2
+
+* Added this changelog to advise users of major changes to the library.
+* service and targetService parameters in requests are now properly URI-encoded,
+  so the filter should behave properly when your service has query parameters.
+* If your service URI has a 'ticket' parameter, it will now be automatically
+  removed. This is done because at least some CAS servers will happily accept
+  a service URI with a 'ticket' parameter, which will result in a URI with 
+  multiple 'ticket' parameters once you are redirected back to CAS (and that in
+  turn can result in an endless redirection loop).
+* Logging has been greatly improved, which should make debugging your CAS
+  installation much easier. Look for the logs under log/cas_client_RAILS_ENV.log
+* When you install RubyCAS-Client as a Rails plugin, it will now by default
+  use a custom logger. You can change this by explicitly setting your own
+  logger in your environment.rb, or by modifying the plugin's init.rb.
+* CasProxyCallbackController no longer checks to make sure that the incoming
+  request is secure. The check is impossible since the secure header is not 
+  passed on by at least some reverse proxies (like Pound), and if you are using
+  the callback controller then you are almost certainly also using a reverse
+  proxy.
+* Cleaned up and updated documentation, fixed some example code.
