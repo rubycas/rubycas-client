@@ -139,9 +139,10 @@ to authenticate another application:
 <tt>ticket</tt> should now contain a valid service ticket. You can use it to authenticate by sending it and the service URI
 as query parameters to your target application:
 
-  http://some.other.application?service=#{ticket.target_service}&ticket=#{ticket.proxy_ticket}
+  http://some.other.application?service=#{CGI.encode(ticket.target_service)}&ticket=#{ticket.proxy_ticket}
   
-This is of course assuming that some.other.application is also protected by the CAS filter.
+This is of course assuming that some.other.application is also protected by the CAS filter. 
+Note that you should always URI-encode your service parameter inside URIs!
 
 Note that CAS::Filter#request_proxy_ticket actually returns a CAS::ProxyTicketRequest object, which is why we need to call
 #proxy_ticket on it to retrieve the actual service ticket.
