@@ -159,9 +159,13 @@ module CAS
         valid = false
         if receipt
           log.info "Validating receipt from the session"
-          log.debug "The receipt stored in the session under :casfilterreceipt is: #{receipt}"
+          log.debug "The session receipt is: #{receipt}"
           valid = validate_receipt(receipt)
-          log.info "The receipt stored in the session is "+(valid ? "" : "NOT ")+"VALID"
+          if valid
+            log.info "The session receipt is VALID"
+          else 
+            log.warn "The session receipt is NOT VALID!"
+          end
         else
           log.info "There is no receipt stored in the session"
           reqticket = controller.params["ticket"]
@@ -231,7 +235,7 @@ module CAS
           logger.info "This request is successfully CAS authenticated!"
           return true
         else
-          logger.info "This request is not CAS authenticated, so we will redirect to: #{redirect_url(controller)}"
+          logger.info "This request is NOT CAS authenticated, so we will redirect to the login page at: #{redirect_url(controller)}"
           controller.send :redirect_to, redirect_url(controller) and return false
         end
       end
@@ -313,9 +317,9 @@ module CAS
     
     def self.service_url(controller)
       before = @@service_url || guess_service(controller)
-      logger.debug("Service url before URI encoding is: #{before}")
+      logger.debug("Service URI before encoding is: #{before}")
       after = escape_service_uri(remove_ticket_from_service_uri(before))
-      logger.debug("Service url after URI encoding is: #{after}")
+      logger.debug("Service URI after encoding is: #{after}")
       after
     end
     
