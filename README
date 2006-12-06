@@ -22,15 +22,16 @@ This CAS client library is designed to work easily with Rails, but can of course
 == Installing
 
 You can always download the latest version of RubyCAS-Client from the project's rubyforge page at http://rubyforge.org/projects/rubycas-client.
-However probably the easiest way to install CAS support into your Rails app is via the plugins facility:
+However, probably the easiest way to install CAS support into your Rails app is via the plugins facility:
 
-  ./script/plugin install http://rubycas-client.rubyforge.org/plugin/rubycas-client
+  ./script/plugin install http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
 
 Alternatively, the library is also available as a gem, which can be installed by:
 
   gem install rubycas-client
   
-The latest development version is availabe via subversion:
+If your Rails application is under subversion control, you can also install the plugin as an external, which will ensure that
+you are always up to date:
 
   ./script/plugin install -x http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
   
@@ -135,7 +136,7 @@ to authenticate another application:
   proxy_granting_ticket = session[:casfilterpgt]
   ticket = CAS::Filter.request_proxy_ticket(service_uri, proxy_granting_ticket)
 
-<tt>ticket</tt> should now contain a valid service ticket. You can use it to authenticate your other by sending it and the service URI
+<tt>ticket</tt> should now contain a valid service ticket. You can use it to authenticate by sending it and the service URI
 as query parameters to your target application:
 
   http://some.other.application?service=#{ticket.target_service}&ticket=#{ticket.proxy_ticket}
