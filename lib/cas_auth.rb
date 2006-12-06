@@ -1,4 +1,4 @@
-require 'uri'
+require 'cgi'
 require 'logger'
 
 require File.dirname(File.expand_path(__FILE__))+'/cas'
@@ -245,9 +245,6 @@ module CAS
       def request_proxy_ticket(target_service, pgt)
         r = ProxyTicketRequest.new
         r.proxy_url = @@proxy_url
-        # FIXME: target_service is not being URI encoded here, because the JA-SIG CAS server doesn't seem to be URI-decoding it on
-        #         the other end. This means that service URIs with ampersands (&) will probably fail. Need to look into why the JA-SIG
-        #         server might not be URI-decoding this value.
         r.target_service = target_service
         r.pgt = pgt
 
@@ -268,7 +265,7 @@ module CAS
     
     private
     def self.validate_receipt(receipt)
-      logger.info "Checking that the  receipt is valid and coherent."
+      logger.info "Checking that the receipt is valid and coherent..."
       
       if not receipt
         logger.info "No receipt given, so the receipt is invalid"
@@ -278,17 +275,17 @@ module CAS
         return false
       end
       
-      if receipt.proxied?      
+      if receipt.proxied?    
         if @@authorized_proxies and !@@authorized_proxies.empty?
-          logger.debug "Authorized proxies are: #{@@authorized_proxies.inspect}"
+          logger.debug "The receipt is proxied. Authorized proxies are: #{@@authorized_proxies.inspect}"
           
-            logger.info "Receipt is proxied by proxying service: #{receipt.proxying_service}"
-            if !@@authorized_proxies.include? receipt.proxying_service
-              logger.warn "Receipt was proxied by #{receipt_proxying_service} but this proxying service is not in the list of authorized proxies. The receipt is therefore invalid."
-              return false
-            else
-              logger.info "Receipt is proxied by a valid proxying service."
-            end
+          logger.info "Receipt is proxied by proxying service: #{receipt.proxying_service}"
+          if !@@authorized_proxies.include? receipt.proxying_service
+            logger.warn "Receipt was proxied by #{receipt_proxying_service} but this proxying service is not in the list of authorized proxies. The receipt is therefore invalid."
+            return false
+          else
+            logger.info "Receipt is proxied by a valid proxying service."
+          end
         else
           logger.info "No authorized proxies set, so any proxy will be considered valid"
         end
@@ -319,14 +316,14 @@ module CAS
     end
     
     def self.service_url(controller)
-      before = @@service_url || guess_service(controller)
-      service_uri = remove_ticket_from_service_uri(before)
-      logger.debug("Service URI with ticket removed is: #{service_uri}")
-      service_uri
+      unclean = @@service_url || guess_service(controller)
+      clean = remove_ticket_from_service_uri(unclean)
+      logger.debug("Service URI with ticket removed is: #{clean}")
+      clean
     end
     
     def self.redirect_url(controller,url=@@login_url)
-      "#{url}?service=#{service_url(controller)}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.nil?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
+      "#{url}?service=#{CGI.escape(service_url(controller))}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.nil?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
     end
     
     def self.guess_service(controller)
@@ -335,8 +332,9 @@ module CAS
       
       # we're assuming that controller.params[:service] is url-encoded!
       if controller.params.include? :service
-        logger.info "We have a :service param, so we will use this as the service: #{controller.params[:service]}"
-        return controller.params[:service] 
+        service = controller.params[:service]
+        logger.info "We have a :service param, so we will URI-decode it and use this as the service: #{controller.params[:service]}"
+        return service
       end
       
       req = controller.request

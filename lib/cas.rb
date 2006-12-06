@@ -57,6 +57,7 @@ module CAS
   class AbstractCASResponse
   
     def self.retrieve(uri_str)
+#      puts uri_str
       prs = URI.parse(uri_str)
 #      puts prs.inspect
       https = Net::HTTP.new(prs.host,prs.port)
@@ -105,7 +106,7 @@ module CAS
       raise ValidationException, "must set validation URL and ticket" if validate_url.nil? || service_ticket.nil?
       clear!
       @attempted_authentication = true
-      url_building = "#{validate_url}#{(url_building =~ /\?/)?'&':'?'}service=#{service}&ticket=#{service_ticket}"
+      url_building = "#{validate_url}#{(url_building =~ /\?/)?'&':'?'}service=#{CGI.escape(service)}&ticket=#{service_ticket}"
       url_building += "&pgtUrl=#{proxy_callback_url}" if proxy_callback_url
       url_building += "&renew=true" if renew
       @@entire_response = ServiceTicketValidator.retrieve url_building
@@ -169,7 +170,7 @@ module CAS
     attr_reader :proxy_ticket
   
     def request
-      url_building = "#{proxy_url}#{(url_building =~ /\?/)?'&':'?'}pgt=#{pgt}&targetService=#{target_service}"
+      url_building = "#{proxy_url}#{(url_building =~ /\?/)?'&':'?'}pgt=#{pgt}&targetService=#{CGI.escape(target_service)}"
 #      puts "REQUESTING:"+url_building
       @@entire_response = ServiceTicketValidator.retrieve url_building
 #      puts @@entire_response.to_s
