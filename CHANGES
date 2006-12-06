@@ -5,6 +5,7 @@
 * Added this changelog to advise users of major changes to the library.
 * service and targetService parameters in requests are now properly URI-encoded,
   so the filter should behave properly when your service has query parameters.
+  Thanks sakazuki for pointing out the problem.
 * If your service URI has a 'ticket' parameter, it will now be automatically
   removed. This is done because at least some CAS servers will happily accept
   a service URI with a 'ticket' parameter, which will result in a URI with 
