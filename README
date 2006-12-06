@@ -134,7 +134,7 @@ to authenticate another application:
 
   service_uri = "http://some.other.application"
   proxy_granting_ticket = session[:casfilterpgt]
-  ticket = CAS::Filter.request_proxy_ticket(service_uri, proxy_granting_ticket)
+  ticket = CAS::Filter.request_proxy_ticket(service_uri, proxy_granting_ticket).proxy_ticket
 
 <tt>ticket</tt> should now contain a valid service ticket. You can use it to authenticate by sending it and the service URI
 as query parameters to your target application:
@@ -142,6 +142,9 @@ as query parameters to your target application:
   http://some.other.application?service=#{ticket.target_service}&ticket=#{ticket.proxy_ticket}
   
 This is of course assuming that some.other.application is also protected by the CAS filter.
+
+Note that CAS::Filter#request_proxy_ticket actually returns a CAS::ProxyTicketRequest object, which is why we need to call
+#proxy_ticket on it to retrieve the actual service ticket.
 
 For extra security -- and you will likely want to do this on production machines in the wild -- in the proxied app's configuration
 (some.other.appliction in this example) you can specify the list of authorized proxies. For example, on your proxied app the CAS
