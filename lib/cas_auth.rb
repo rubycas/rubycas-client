@@ -245,7 +245,10 @@ module CAS
       def request_proxy_ticket(target_service, pgt)
         r = ProxyTicketRequest.new
         r.proxy_url = @@proxy_url
-        r.target_service = escape_service_uri(target_service)
+        # FIXME: target_service is not being URI encoded here, because the JA-SIG CAS server doesn't seem to be URI-decoding it on
+        #         the other end. This means that service URIs with ampersands (&) will probably fail. Need to look into why the JA-SIG
+        #         server might not be URI-decoding this value.
+        r.target_service = target_service
         r.pgt = pgt
 
         raise "Cannot request a proxy ticket for service #{r.target_service} because no proxy granting ticket (PGT) has been set." unless r.pgt
