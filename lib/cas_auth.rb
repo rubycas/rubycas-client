@@ -320,10 +320,9 @@ module CAS
     
     def self.service_url(controller)
       before = @@service_url || guess_service(controller)
-      logger.debug("Service URI before encoding is: #{before}")
-      after = escape_service_uri(remove_ticket_from_service_uri(before))
-      logger.debug("Service URI after encoding is: #{after}")
-      after
+      service_uri = remove_ticket_from_service_uri(before)
+      logger.debug("Service URI with ticket removed is: #{service_uri}")
+      service_uri
     end
     
     def self.redirect_url(controller,url=@@login_url)
