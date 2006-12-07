@@ -155,9 +155,10 @@ module CAS
       def filter_r(controller)
         logger.info("Using real CAS filter in controller: #{controller}")
         receipt = controller.session[:casfilterreceipt]
+        reqticket = controller.params[:ticket]
 
         valid = false
-        if receipt
+        if receipt and not reqticket
           log.info "Validating receipt from the session"
           log.debug "The session receipt is: #{receipt}"
           valid = validate_receipt(receipt)
@@ -167,8 +168,12 @@ module CAS
             log.warn "The session receipt is NOT VALID!"
           end
         else
-          log.info "There is no receipt stored in the session"
-          reqticket = controller.params["ticket"]
+          if receipt
+            log.info "There is a receipt stored in the session, but there is also a ticket in this request and this overrides the session receipt"
+          else
+            log.info "There is no receipt stored in the session"
+          end
+          
           if reqticket
             log.info "We have a ticket: #{reqticket}"
             
