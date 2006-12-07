@@ -6,11 +6,16 @@
 * service and targetService parameters in requests are now properly URI-encoded,
   so the filter should behave properly when your service has query parameters.
   Thanks sakazuki for pointing out the problem.
+* If your request URI has a 'ticket' parameter, it will now always override the
+  authentication info stored in the session. In other words, if you provide
+  a 'ticket' parameter, the CAS client will contact the CAS server to validate
+  this new ticket and update your CAS session info accordingly.
 * If your service URI has a 'ticket' parameter, it will now be automatically
-  removed. This is done because at least some CAS servers will happily accept
-  a service URI with a 'ticket' parameter, which will result in a URI with 
-  multiple 'ticket' parameters once you are redirected back to CAS (and that in
-  turn can result in an endless redirection loop).
+  removed when passing the service as a parameter in any CAS request. This is
+  done because at least some CAS servers will happily accept a service URI with
+  a 'ticket' parameter, which will result in a URI with  multiple 'ticket' 
+  parameters once you are redirected back to CAS (and that in turn can result 
+  in an endless redirection loop).
 * Logging has been greatly improved, which should make debugging your CAS
   installation much easier. Look for the logs under log/cas_client_RAILS_ENV.log
 * When you install RubyCAS-Client as a Rails plugin, it will now by default
