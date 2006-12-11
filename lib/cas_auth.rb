@@ -1,6 +1,11 @@
 require 'cgi'
 require 'logger'
 
+# these requires are needed when outside of a Rails app context (e.g. in unit tests)
+require 'rubygems'
+require 'active_support'
+require 'action_controller'
+
 require File.dirname(File.expand_path(__FILE__))+'/cas'
 
 module CAS
@@ -253,7 +258,7 @@ module CAS
         r.target_service = target_service
         r.pgt = pgt
 
-        raise "Cannot request a proxy ticket for service #{r.target_service} because no proxy granting ticket (PGT) has been set." unless r.pgt
+        raise CAS::ProxyGrantingNotAvailable, "Cannot request a proxy ticket for service #{r.target_service} because no proxy granting ticket (PGT) has been set." unless r.pgt
         
         logger.info("Requesting proxy ticket for service: #{r.target_service} with PGT #{pgt}")
         r.request
@@ -329,23 +334,29 @@ module CAS
     end
     
     def self.redirect_url(controller,url=@@login_url)
-      "#{url}?service=#{CGI.escape(service_url(controller))}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.nil?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
+      "#{url}?service=#{CGI.escape(service_url(controller))}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.blank?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
     end
     
     def self.guess_service(controller)
       logger.info "Guessing service based on params: #{controller.params.inspect}"
-    
       
       # we're assuming that controller.params[:service] is url-encoded!
-      if controller.params.include? :service
+      if controller.params and controller.params.include? :service
         service = controller.params[:service]
         logger.info "We have a :service param, so we will URI-decode it and use this as the service: #{controller.params[:service]}"
         return service
       end
       
       req = controller.request
-      parms = controller.params.dup
+      
+      if controller.params
+        parms = controller.params.dup
+      else
+        parms = {}
+      end
+      
       parms.delete("ticket")
+      
       query = (parms.collect {|key, val| "#{key}=#{val}"}).join("&")
       query = "?" + query unless query.empty?
       
@@ -364,8 +375,11 @@ module CAS
     # any parameters named "ticket" just in case, as having a "ticket" parameter in the
     # service URI will generally cause an infinite redirection loop.
     def self.remove_ticket_from_service_uri(uri)
-      uri.gsub(/&?ticket=[^&$]*/, '')
+      uri.gsub(/ticket=[^&$]*&?/, '')
     end
+  end
+  
+  class ProxyGrantingNotAvailable < Exception
   end
 end
 
