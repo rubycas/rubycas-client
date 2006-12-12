@@ -6,10 +6,16 @@
 * service and targetService parameters in requests are now properly URI-encoded,
   so the filter should behave properly when your service has query parameters.
   Thanks sakazuki for pointing out the problem.
-* If your request URI has a 'ticket' parameter, it will now always override the
-  authentication info stored in the session. In other words, if you provide
-  a 'ticket' parameter, the CAS client will contact the CAS server to validate
-  this new ticket and update your CAS session info accordingly.
+* You can now force the CAS client to re-authenticate itself with the CAS server
+  (i.e. override the authentication stored in the session) by providing a new
+  service ticket in the URI. In other words, the client will authenticate with
+  CAS if: a) you have a 'ticket' parameter in the URI, and there is currently no
+  authentication info in the session, or b) you have a 'ticket' parameter in the
+  URI and this ticket is different than the ticket that was used to authenticat
+  the existing session. This is especially useful when you are using CAS proxying,
+  since it allows you to force re-authentication in proxied applications (for
+  example, when the user has logged out and a new user has logged in in the parent
+  proxy-granting application).
 * If your service URI has a 'ticket' parameter, it will now be automatically
   removed when passing the service as a parameter in any CAS request. This is
   done because at least some CAS servers will happily accept a service URI with
