@@ -12,6 +12,10 @@ module CAS
       (@formatter || @default_formatter).call(severity, datetime, progname, msg)
     end
     
+    def break
+      self << "\n"
+    end
+    
     class Formatter < ::Logger::Formatter
       Format = "[%s#%d] %5s -- %s: %s\n"
       
