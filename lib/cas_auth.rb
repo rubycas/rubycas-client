@@ -243,9 +243,9 @@ module CAS
         else
           logger.info "This request is NOT CAS authenticated, so we will redirect to the login page at: #{redirect_url(controller)}"
             controller.send :redirect_to, redirect_url(controller) and return false
-          end
         end
-        alias :filter :filter_r
+      end
+      alias :filter :filter_r
         
         
       def request_proxy_ticket(target_service, pgt)
