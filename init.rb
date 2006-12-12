@@ -8,7 +8,11 @@ require 'cas_proxy_callback_controller'
 CAS::Filter.logger = CAS::Logger.new("#{RAILS_ROOT}/log/cas_client_#{RAILS_ENV}.log", 'weekly')
 CAS::Filter.logger.formatter = CAS::Logger::Formatter.new
 
-CAS::Filter.logger.level = Logger::DEBUG
+if RAILS_ENV == "production"
+  CAS::Filter.logger.level = Logger::WARN
+else
+  CAS::Filter.logger.level = Logger::DEBUG
+end
 
 
 #class ActionController::Base
