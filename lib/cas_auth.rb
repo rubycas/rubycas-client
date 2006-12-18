@@ -344,6 +344,7 @@ module CAS
         clean
       end
       
+      # FIXME: this method is really poorly named :(
       def self.redirect_url(controller,url=@@login_url)
         "#{url}?service=#{CGI.escape(service_url(controller))}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.blank?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
       end
