@@ -2,6 +2,7 @@
 
 VERSION=$1
 REPO=https://rubycas-client.googlecode.com/svn
+REPO_SUBDIR=/rubycas-client
 APP=rubycas-client
 
 APPVER=$APP-$VERSION
@@ -20,7 +21,7 @@ echo "Deleting old snapshot tag in SVN (if it already exists)"
 svn delete $REPO/tags/$APPVER -m "deleting previous snapshot -- will be replaced with new snapshot" 2> /dev/null
 
 echo "Creating snapshot tag in SVN"
-svn copy -rHEAD $REPO/trunk $REPO/tags/$APPVER -m "Snapshot of $VERSION release"
+svn copy -rHEAD $REPO/trunk$REPO_SUBDIR $REPO/tags/$APPVER -m "Snapshot of $VERSION release"
 
 cd ..
 
