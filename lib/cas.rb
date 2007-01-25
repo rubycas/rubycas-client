@@ -55,14 +55,12 @@ module CAS
   end
 
   class AbstractCASResponse
+    attr_reader :error_code, :error_message, :successful_authentication
   
     def self.retrieve(uri_str)
-#      puts uri_str
       prs = URI.parse(uri_str)
-#      puts prs.inspect
       https = Net::HTTP.new(prs.host,prs.port)
-#      puts https.inspect
-      https.use_ssl=true
+      https.use_ssl = true
       https.start { |conn|
         # TODO: make sure that HTTP status code in the response is 200... maybe throw exception if is 500?
         conn.get("#{prs.path}?#{prs.query}").body.strip
@@ -71,17 +69,15 @@ module CAS
     
     protected
     def parse_unsuccessful(elm)
-#      puts "unsuccessful"
       @error_message = elm.text.strip
       @error_code = elm.attributes["code"].strip
       @successful_authentication = false
     end
 
     def parse(str)
-#      puts "parsing... #{str}"
       doc = REXML::Document.new str
       resp = doc.elements["cas:serviceResponse"].elements[1]
-#      puts "resp... #{resp.name}"
+
       if successful_response? resp
         parse_successful(resp)
       else
@@ -92,7 +88,7 @@ module CAS
   
   class ServiceTicketValidator < AbstractCASResponse
     attr_accessor :validate_url, :proxy_callback_url, :renew, :service_ticket, :service
-    attr_reader   :pgt_iou, :user, :error_code, :error_message, :entire_response, :successful_authentication
+    attr_reader   :pgt_iou, :user, :entire_response
 
     def renewed?
       renew
@@ -154,7 +150,7 @@ module CAS
     protected
     def parse_successful(elm)
       super(elm)
-#      puts "proxy_successful"
+      
       proxies = elm.elements["cas:proxies"]
       if proxies
         proxies.elements.each("cas:proxy") { |prox|
@@ -171,9 +167,7 @@ module CAS
   
     def request
       url_building = "#{proxy_url}#{(url_building =~ /\?/)?'&':'?'}pgt=#{pgt}&targetService=#{CGI.escape(target_service)}"
-#      puts "REQUESTING:"+url_building
       @@entire_response = ServiceTicketValidator.retrieve url_building
-#      puts @@entire_response.to_s
       parse @@entire_response
     end
     
