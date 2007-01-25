@@ -195,9 +195,9 @@ module CAS
             is_valid = true
           else
             if receipt
-              log.warn "get_receipt_for_ticket() for ticket #{ticket} did not return a receipt!"
-            else
               log.warn "Receipt was invalid for ticket #{ticket}!"
+            else
+              log.warn "get_receipt_for_ticket() for ticket #{ticket} did not return a receipt!"
             end
           end
           
@@ -262,7 +262,7 @@ module CAS
         if r.proxy_ticket
           logger.info("Got proxy ticket #{r.proxy_ticket} for service #{r.target_service}")
         else
-          logger.warn("Did not receive a proxy ticket for service #{r.target_service}!")
+          logger.warn("Did not receive a proxy ticket for service #{r.target_service}! Reason: #{r.error_code}: #{r.error_message}")
         end
         
         return r
