@@ -30,28 +30,29 @@ Alternatively, the library is also available as a gem, which can be installed by
 
   gem install rubycas-client
   
-If your Rails application is under subversion control, you can also install the plugin as an external, which will ensure that
-you are always up to date:
+If your Rails application is under Subversion control, you can also install the plugin as an svn:external, which will ensure that
+you always have the latest version of RubyCAS-Client:
 
   ./script/plugin install -x http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
   
-Please contact the developers via the {rubyforge.org page}[http://rubyforge.org/projects/rubycas-client] if you have bug fixes
+Please contact the developers via the {RubyForge page}[http://rubyforge.org/projects/rubycas-client] if you have bug fixes
 or enhancements you would like to contribute back.
 
 == Examples
 
-==== Here is an example of how to use the library in your Rails application:
+==== Using RubyCAS-Client in Rails controllers
 
-Somewhere in your <tt>config/environment.rb</tt> file add this (assuming that you have RubyCAS-Client installed as a plugin, otherwise
-you'll need to <tt>require 'cas_auth'</tt> and <tt>require 'cas_proxy_callback_controller'</tt>):
+<i>Note that from this point on we are assuming that you have a working CAS server up and running at an https URI.</i>
 
+Somewhere in your <tt>config/environment.rb</tt> file add this:
+
+  require 'cas_auth'
   CAS::Filter.cas_base_url = "https://login.example.com/cas"
   
-You will also probably (but not necessarily) need to specify the server name where your CAS-protected app is running:
+You will also need to specify the server name where your CAS-protected app is running (i.e. the hostname of the app you are
+adding CAS protection to, not the CAS server):
 
   CAS::Filter.server_name = "yourapplication.example.com:3000"
-
-The above setting might not be necessary if your application is running on the standard port 80.
 
 Then, in your <tt>app/controllers/application.rb</tt> (or in whatever controller you want to add the CAS filter for):
 
@@ -68,7 +69,7 @@ filter. For example:
 user record from the database), you can append another filter method that checks for this value and does whatever you need
 it to do.
 
-==== A more complicated example:
+==== A more complicated example
 
 Here is a more complicated configuration showing most of the configuration options (this does not show proxy options however,
 which are covered in the next section):
@@ -81,8 +82,10 @@ which are covered in the next section):
   CAS::Filter.gateway = false                    # act as cas gateway? see http://www.ja-sig.org/products/cas/overview/protocol
   CAS::Filter.session_username = :casfilteruser  # this is the hash in the session where the authenticated username will be stored
 
+Note that in this example we explicitly specified the login and validate URLs instead of letting RubyCAS-Client figure them out
+based on <tt>CAS::Filter.cas_base_url</tt>.
 
-==== How to act as a CAS proxy:
+==== How to act as a CAS proxy
 
 CAS 2.0 has a built-in mechanism that allows a CAS-authenticated application to pass on its authentication to other applications.
 An example where this is useful might be a portal site, where the user logs in to a central website and then gets forwarded to
