@@ -8,6 +8,8 @@ module CAS
   end
   class ValidationException < CASException
   end
+  class MalformedServerResponseException < CASException
+  end
 
   class Receipt
     attr_accessor :validate_url, :pgt_iou, :primary_authentication, :proxy_callback_url, :proxy_list, :user_name
@@ -75,7 +77,12 @@ module CAS
     end
 
     def parse(str)
-      doc = REXML::Document.new str
+      begin
+        doc = REXML::Document.new str
+      rescue REXML::ParseException
+        raise MalformedServerResponseException, str
+      end
+      
       resp = doc.elements["cas:serviceResponse"].elements[1]
 
       if successful_response? resp

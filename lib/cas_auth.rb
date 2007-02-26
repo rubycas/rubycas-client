@@ -332,6 +332,9 @@ module CAS
           receipt = Receipt.new(pv)
         rescue AuthenticationException => e
           logger.warn("Getting a receipt for the ProxyTicketValidator threw an exception: #{e}")
+        rescue  MalformedServerResponseException => e
+          logger.error("CAS Server returned malformed response:\n\n#{e}")
+          raise e
         end
         logger.debug "Receipt is: #{receipt.inspect}"
         receipt
@@ -340,7 +343,7 @@ module CAS
       def self.service_url(controller)
         unclean = @@service_url || guess_service(controller)
         clean = remove_ticket_from_service_uri(unclean)
-        logger.debug("Service URI with ticket removed is: #{clean}")
+        logger.debug("Service URI without ticket is: #{clean}")
         clean
       end
       
