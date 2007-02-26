@@ -122,6 +122,7 @@ module CAS
       end
       
       def cas_base_url=(url)
+        url.gsub!(/\/$/, '')
         CAS::Filter.login_url = "#{url}/login"
         CAS::Filter.validate_url = "#{url}/proxyValidate"
         CAS::Filter.proxy_url = "#{url}/proxy"
