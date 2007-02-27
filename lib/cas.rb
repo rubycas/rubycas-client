@@ -80,11 +80,15 @@ module CAS
       begin
         doc = REXML::Document.new str
       rescue REXML::ParseException
-        raise MalformedServerResponseException, str
+        raise MalformedServerResponseException, "BAD RESPONSE FROM CAS SERVER:\n#{str}"
+      end
+      
+      unless doc.elements && doc.elements["cas:serviceResponse"]
+        raise MalformedServerResponseException, "BAD RESPONSE FROM CAS SERVER:\n#{str}"
       end
       
       resp = doc.elements["cas:serviceResponse"].elements[1]
-
+      
       if successful_response? resp
         parse_successful(resp)
       else
