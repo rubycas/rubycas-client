@@ -84,7 +84,7 @@ module CAS
       end
       
       unless doc.elements && doc.elements["cas:serviceResponse"]
-        raise MalformedServerResponseException, "BAD RESPONSE FROM CAS SERVER:\n#{str}\n\nDOC:#{doc.inspect}"
+        raise MalformedServerResponseException, "BAD RESPONSE FROM CAS SERVER:\n#{str}\n\nXML DOC:\n#{doc.inspect}"
       end
       
       resp = doc.elements["cas:serviceResponse"].elements[1]
