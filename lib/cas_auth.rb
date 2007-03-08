@@ -106,19 +106,19 @@ module CAS
         if !@@logout_url && @@login_url =~ %r{^(.+?)/[^/]*$}
           @@logout_url = "#{$1}/logout"
         end
-        logger.info "Created logout url: #{@@logout_url}"
+        logger.debug "Created logout url: #{@@logout_url}"
       end
       
       def logout_url(controller)
         create_logout_url unless @@logout_url
         url = redirect_url(controller,@@logout_url)
-        logger.info "Logout url is: #{url}"
+        logger.debug "Logout url is: #{url}"
         url
       end
       
       def logout_url=(url)
         @@logout_url = url
-        logger.info "Set logout url to: #{url}"
+        logger.debug "Initialized logout url to: #{url}"
       end
       
       def cas_base_url=(url)
@@ -126,7 +126,7 @@ module CAS
         CAS::Filter.login_url = "#{url}/login"
         CAS::Filter.validate_url = "#{url}/proxyValidate"
         CAS::Filter.proxy_url = "#{url}/proxy"
-        logger.info "Set CAS base url to: #{url}"
+        logger.debug "Initialized CAS base url to: #{url}"
       end
         
       def fake
