@@ -189,7 +189,7 @@ module CAS
                 log.debug("Got PGT #{pgt} for PGT IOU #{receipt.pgt_iou}. This will be stored in the session.")
                 controller.session[:casfilterpgt] = pgt
               else
-                log.warning("Failed to retrieve a PGT for PGT IOU #{receipt.pgt_iou}!")
+                log.error("Failed to retrieve a PGT for PGT IOU #{receipt.pgt_iou}!")
               end
             end
             
