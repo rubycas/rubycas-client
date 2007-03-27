@@ -15,7 +15,7 @@ class CasProxyCallbackController < ActionController::Base
 
     pgtIou = params['pgtIou']
     
-    # CAS Protocol spec says that the argument should be called 'pgt', but the JA-SIG CAS server seems to use pgtIou.
+    # CAS Protocol spec says that the argument should be called 'pgt', but the JA-SIG CAS server seems to use pgtId.
     # To accomodate this, we check for both parameters, although 'pgt' takes precedence over 'pgtId'.
     pgtId = params['pgt'] || params['pgtId']
     
