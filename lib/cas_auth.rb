@@ -163,17 +163,18 @@ module CAS
       def filter_r(controller)
         logger.break
         logger.info("Using real CAS filter in controller: #{controller}")
-          session_receipt = controller.session[:casfilterreceipt]
-          session_ticket = controller.session[:caslastticket]
-          ticket = controller.params[:ticket]
+        
+        session_receipt = controller.session[:casfilterreceipt]
+        session_ticket = controller.session[:caslastticket]
+        ticket = controller.params[:ticket]
   
-          is_valid = false
-          
-          if ticket and (!session_ticket or session_ticket != ticket)
-            log.info "A ticket parameter was given in the URI: #{ticket} and "+
-              (!session_ticket ? "there is no previous ticket for this session" : 
-                  "the ticket is different than the previous ticket, which was #{session_ticket}")
-          
+        is_valid = false
+        
+        if ticket and (!session_ticket or session_ticket != ticket)
+          log.info "A ticket parameter was given in the URI: #{ticket} and "+
+            (!session_ticket ? "there is no previous ticket for this session" : 
+                "the ticket is different than the previous ticket, which was #{session_ticket}")
+        
           receipt = get_receipt_for_ticket(ticket, controller)
           
           if receipt && validate_receipt(receipt)
@@ -242,6 +243,7 @@ module CAS
           logger.info "This request is successfully CAS authenticated for user #{controller.session[@@session_username]}!"
           return true
         else
+          controller.session[:service] = service_url(controller)
           logger.info "This request is NOT CAS authenticated, so we will redirect to the login page at: #{redirect_url(controller)}"
             controller.send :redirect_to, redirect_url(controller) and return false
         end
@@ -324,7 +326,7 @@ module CAS
         pv = ProxyTicketValidator.new
         pv.validate_url = @@validate_url
         pv.service_ticket = ticket
-        pv.service = service_url(controller)
+        pv.service = controller.session[:service] || service_url(controller)
         pv.renew = @@renew
         pv.proxy_callback_url = @@proxy_callback_url
         receipt = nil
@@ -350,7 +352,11 @@ module CAS
       
       # FIXME: this method is really poorly named :(
       def self.redirect_url(controller,url=@@login_url)
-        "#{url}?service=#{CGI.escape(service_url(controller))}" + ((@@renew)? "&renew=true":"") + ((@@gateway)? "&gateway=true":"") + ((@@query_string.blank?)? "" : "&"+(@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
+        "#{url}?service=#{CGI.escape(service_url(controller))}" + 
+          ((@@renew)? "&renew=true":"") + 
+          ((@@gateway)? "&gateway=true":"") + 
+          ((@@query_string.blank?)? "" : "&" +
+          (@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
       end
       
       def self.guess_service(controller)
