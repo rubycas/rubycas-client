@@ -1,5 +1,16 @@
 = RubyCAS-Client Changelog
 
+== Version 0.12.0
+
+* The client now handles malformed CAS server responses more gracefully.
+  This makes debugging a malfunctioning CAS server somewhat easier.
+* When receiving a proxy-granting ticket, the cas_proxy_callback_controller
+  can now take a parameter called 'pgt' (which is what ought to be used
+  according to the published CAS spec) or 'pgtId' (which is what the JA-SIG
+  CAS server uses).
+* Logging has been somewhat quieted down. Many messages that were previously
+  logged as INFO are now logged as DEBUG.
+
 == Version 0.11.0
 
 * Added this changelog to advise users of major changes to the library.
