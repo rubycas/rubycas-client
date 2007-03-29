@@ -2,6 +2,13 @@
 
 == Version 0.12.0
 
+* Before redirecting to the CAS login page, the client now stores the
+  current service URI in a session variable. This value is now used to
+  validate the service ticket after the user comes back from the CAS
+  server's login page. This should address issues where redirection
+  from the CAS server resulted in a slightly different URI from the original
+  one used prior to login redirection (for example due to variations in the
+  way routing rules are applied by the server).
 * The client now handles malformed CAS server responses more gracefully.
   This makes debugging a malfunctioning CAS server somewhat easier.
 * When receiving a proxy-granting ticket, the cas_proxy_callback_controller
