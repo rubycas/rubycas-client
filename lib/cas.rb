@@ -62,7 +62,7 @@ module CAS
     def self.retrieve(uri_str)
       prs = URI.parse(uri_str)
       https = Net::HTTP.new(prs.host,prs.port)
-      https.use_ssl = true
+      https.use_ssl = (prs.scheme == 'https') # patch by rubywmg to allow non-SSL URLs for demo purposes
       https.start { |conn|
         # TODO: make sure that HTTP status code in the response is 200... maybe throw exception if is 500?
         conn.get("#{prs.path}?#{prs.query}").body.strip
