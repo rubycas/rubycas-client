@@ -1,5 +1,13 @@
 = RubyCAS-Client Changelog
 
+== Version 1.0
+
+* RubyCAS-Client has matured to the point where it is probably safe to
+  take it out of beta and release version 1.0.
+* Non-SSL CAS URLs will now work. This may be useful for demo purposes, 
+  but certainly shouldn't be used in production. The client automatically
+  disables SSL if the CAS URL starts with http (rather than https). [rubywmq]
+
 == Version 0.12.0
 
 * Prior to redirecting to the CAS login page, the client now stores the
