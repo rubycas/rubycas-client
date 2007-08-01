@@ -92,10 +92,11 @@ module CAS
 
     class << self
     
-      # Retrieves the current Logger instance
+      # Retrieves the Logger used by the filter
       def logger
         CAS::LOGGER
       end
+      # Sets the Logger used by the filter
       def logger=(val)
         CAS::LOGGER.set_logger(val)
       end
@@ -103,6 +104,9 @@ module CAS
       alias :log :logger
       alias :log= :logger=
   
+      # Builds the internal logout URL. The current @@logout_url value will
+      # be used if it is set. Otherwise we will try to figure it out based
+      # on the @@login_url.
       def create_logout_url
         if !@@logout_url && @@login_url =~ %r{^(.+?)/[^/]*$}
           @@logout_url = "#{$1}/logout"
@@ -110,6 +114,9 @@ module CAS
         logger.debug "Created logout url: #{@@logout_url}"
       end
       
+      # Returns the logout URL for the given controller.
+      # This method calls create_logout_url if no logout url has yet
+      # been created or set.
       def logout_url(controller)
         create_logout_url unless @@logout_url
         url = redirect_url(controller,@@logout_url)
@@ -117,11 +124,14 @@ module CAS
         url
       end
       
+      # Explicitly sets the logout URL.
       def logout_url=(url)
         @@logout_url = url
         logger.debug "Initialized logout url to: #{url}"
       end
       
+      # Sets the base CAS url. The login_url, validate_url, and proxy_url
+      # are automagically built on top of this.
       def cas_base_url=(url)
         url.gsub!(/\/$/, '')
         CAS::Filter.login_url = "#{url}/login"
@@ -129,15 +139,28 @@ module CAS
         CAS::Filter.proxy_url = "#{url}/proxy"
         logger.debug "Initialized CAS base url to: #{url}"
       end
-        
+      
+      # Returns the current @@fake value.
+      # This is used for debugging. See <tt>fake=</tt> and <tt>filter_f</tt>.
       def fake
         @@fake
       end
       
+      # Enables or disables the fake filter.
+      # This is used in debugging.
+      #
+      # The argument can have one of the following values:
+      #
+      # :failure :: The fake filter will always fail.
+      # :param :: The fake filter will use the 'username' request param to set 
+      #           the username.
+      # Proc :: The fake filter will execute the given proc to determine the 
+      #         username. The current controller will be fed to the Proc as an
+      #         argument.
+      # nil :: Disables the fake filter and enables the real filter.
       def fake=(val)
         if val.nil?
           alias :filter :filter_r
-          logger.info "Will use real filter"
         else
           alias :filter :filter_f
           logger.warn "Will use fake filter"
@@ -145,9 +168,11 @@ module CAS
           @@fake = val
         end
   
+      # This is the fake filter method. It is aliased as 'filter'
+      # when the fake filter is enabled. See <tt>fake=</tt>.
       def filter_f(controller)
           logger.break
-          logger.warn("Using fake CAS filter")
+          logger.warn "Using fake CAS filter"
         username = @@fake
         if :failure == @@fake
           return false
@@ -161,6 +186,15 @@ module CAS
         return true
       end
       
+      # This is the real filter method. It is alias as 'filter'
+      # by default (when the fake filter is disabled).
+      #
+      # The filter method behaves like a standard Rails filter, taking
+      # the current controller as an argument (in order to access the current
+      # request params, the session, etc.). The method returns true
+      # when authentication is successful, false otherwise. Generally,
+      # before returning false the filter will send a HTTP redirect back to the 
+      # CAS server.
       def filter_r(controller)
         logger.break
         logger.info("Using real CAS filter in controller: #{controller}")
@@ -170,6 +204,14 @@ module CAS
         ticket = controller.params[:ticket]
   
         is_valid = false
+        
+        if controller.session[:casfiltergateway]
+          log.debug "Coming back from gatewayed request to CAS server..."
+          did_gateway = true
+          controller.session[:casfiltergateway] = false
+        else
+          log.debug "This request is not gatewayed."
+        end
         
         if ticket and (!session_ticket or session_ticket != ticket)
           log.info "A ticket parameter was given in the URI: #{ticket} and "+
@@ -222,19 +264,19 @@ module CAS
           
           log.info "No ticket was given and we do not have a receipt in the session."
         
-          did_gateway = controller.session[:casfiltergateway]
+          
           raise CASException, "Can't redirect without login url" unless @@login_url
           
           if did_gateway
-            if controller.session[@@session_username]
-              log.info "We gatewayed and have a username stored in the session. The gateway was therefore successful."
-              is_valid = true
+            log.info "We gatewayed and came back without authentication."
+            if self.gateway
+              log.info "This filter is configured to allow gatewaying, so we will permit the user to continue without authentication."
+              return true
             else
-              log.debug "We gatewayed but do not have a username stored in the session, so we will keep session[:casfiltergateway] true"
-              controller.session[:casfiltergateway] = true
+              log.warn "This filter is NOT configured to allow gatewaying, yet this request was gatewayed. Something is not right!"
             end
-          else
-            log.info "We did not gateway, so we will notify the filter that the next request is being gatewayed by setting sesson[:casfiltergateway} to true"
+          elsif self.gateway
+            log.debug "We did not gateway, so we will notify the filter that the next request is being gatewayed by setting sesson[:casfiltergateway} to true"
             controller.session[:casfiltergateway] = true
           end
           
@@ -251,13 +293,18 @@ module CAS
       end
       alias :filter :filter_r
         
-        
+      # Requests a proxy ticket from the CAS server and returns it as a ProxyTicketRequest object.
+      #
+      # Note that the ProxyTicketRequest object is returned regardless of whether the request
+      # is successful. You should check the returned object's proxy_ticket field to find out
+      # whether the request resulted in a valid proxy ticket.
       def request_proxy_ticket(target_service, pgt)
         r = ProxyTicketRequest.new
         r.proxy_url = @@proxy_url
         r.target_service = target_service
         r.pgt = pgt
   
+        # FIXME: Why is this here? The only way it would get raised is if the supplied pgt was nil/false? This might be a vestige...
         raise CAS::ProxyGrantingNotAvailable, "Cannot request a proxy ticket for service #{r.target_service} because no proxy granting ticket (PGT) has been set." unless r.pgt
         
         logger.info("Requesting proxy ticket for service: #{r.target_service} with PGT #{pgt}")
@@ -277,6 +324,10 @@ module CAS
     
     private
     
+      # Retrieves a proxy granting ticket corresponding to the given receipt's
+      # proxy granting ticket IOU from the proxy callback server.
+      #
+      # Returns a CAS::ProxyGrantingTicket object.
       def self.retrieve_pgt(receipt)
         retrieve_url = "#{@@proxy_retrieval_url}?pgtIou=#{receipt.pgt_iou}"
                 
@@ -289,6 +340,7 @@ module CAS
         return pgt
       end
     
+      # Returns true if the given CAS::Receipt is valid; false wotherwise.
       def self.validate_receipt(receipt)
         logger.info "Checking that the receipt is valid and coherent..."
         
@@ -322,6 +374,12 @@ module CAS
         return true
       end
   
+      # Fetches a CAS::Receipt for the given service or proxy ticket
+      # and returns it.
+      #
+      # Takes the current controller as the second argument in order to
+      # guess the current service URL when it is not explicitly set for
+      # the filter.
       def self.get_receipt_for_ticket(ticket, controller)
         logger.info "Getting receipt for ticket '#{ticket}'"
         pv = ProxyTicketValidator.new
@@ -344,6 +402,11 @@ module CAS
         receipt
       end
       
+      # Returns the service URL for the current service.
+      #
+      # This will return the @@service_url if it has been explicitly
+      # set; otherwise it will try to guess the service URL based
+      # on the given controller parameters (see <tt>guess_service()</tt>).
       def self.service_url(controller)
         unclean = @@service_url || guess_service(controller)
         clean = remove_ticket_from_service_uri(unclean)
@@ -351,6 +414,11 @@ module CAS
         clean
       end
       
+      # Returns the URL to the login page of the CAS server with
+      # additional parameters like 'renew', and 'gateway' tacked
+      # on as appropriate. The <tt>url</tt> parameter can be used
+      # to use something other than the login url as the base.
+      #
       # FIXME: this method is really poorly named :(
       def self.redirect_url(controller,url=@@login_url)
         "#{url}?service=#{CGI.escape(service_url(controller))}" + 
@@ -360,6 +428,14 @@ module CAS
           (@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
       end
       
+      # Tries to figure out the current service URL. 
+      #
+      # This is used when the @@service_url has not been explicitly set. 
+      # The guessed URL (generally the current URL stripped of some 
+      # CAS-specific parameters) is fed to the CAS server so that the
+      # server knows where to redirect back after authentication.
+      #
+      # Also see <tt>redirect_url</tt>.
       def self.guess_service(controller)
         logger.info "Guessing service based on params: #{controller.params.inspect}"
         
@@ -390,7 +466,9 @@ module CAS
         return service
       end
       
+      # URI-encodes the 
       def self.escape_service_uri(uri)
+        # FIXME: Why aren't we just using  CGi.escape?
         URI.encode(uri, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]", false, 'U').freeze)
       end
       
