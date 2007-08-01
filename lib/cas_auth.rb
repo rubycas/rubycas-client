@@ -52,7 +52,7 @@ module CAS
   # It is of course possible to use different configurations in development, test
   # and production by placing the configuration in the appropriate environments file.
   #
-  # To add CAS protection to a controller:
+  # To add CAS protection to a Rails controller:
   # 
   #   before_filter CAS::Filter
   #   
@@ -83,7 +83,8 @@ module CAS
     @@fake = nil
     @@pgt = nil
     cattr_accessor :query_string
-    cattr_accessor :login_url, :validate_url, :service_url, :server_name, :renew, :wrap_request, :gateway, :session_username
+    cattr_accessor :login_url, :validate_url, :service_url, :server_name, :wrap_request, :session_username
+    class_inheritable_accessor :gateway, :renew
     cattr_accessor :proxy_url, :proxy_callback_url, :proxy_retrieval_url
     @@authorized_proxies = []
     cattr_accessor :authorized_proxies
@@ -354,7 +355,7 @@ module CAS
       def self.redirect_url(controller,url=@@login_url)
         "#{url}?service=#{CGI.escape(service_url(controller))}" + 
           ((@@renew)? "&renew=true":"") + 
-          ((@@gateway)? "&gateway=true":"") + 
+          ((gateway)? "&gateway=true":"") + 
           ((@@query_string.blank?)? "" : "&" +
           (@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
       end
@@ -399,6 +400,30 @@ module CAS
       def self.remove_ticket_from_service_uri(uri)
         uri.gsub(/ticket=[^&$]*&?/, '')
       end
+  end
+  
+  # The GatewayFilter is identical to the normal Filter, but has the gateway 
+  # option set to true by default. This makes it easier to use in cases where 
+  # authentication is optional.
+  #
+  # For example, say your 'index' view is accessible by authenticated and 
+  # unauthenticated users, but you want some additional content shown for 
+  # authenticated users. You can use the GatewayFilter to check if the user is 
+  # already authenticated with CAS and provide them with a service ticket for 
+  # the new service. If they are not already authenticated, then they will be 
+  # allowed to see the 'index' view without being asked for a login.
+  #
+  # To achieve this in a Rails controller, you should set up your filters as follows:
+  #
+  #   before_filter CAS::Filter, :except => [:index]  
+  #   before_filter CAS::GatewayFilter, :only => [:index]
+  #
+  # Note that you cannot use the 'renew' option with the GatewayFilter since the 
+  # 'gateway' and 'renew' options have roughly opposite meanings -- 'renew' forces
+  # re-authentication, while 'gateway' makes authentication optional.
+  class GatewayFilter < Filter
+    self.gateway = true
+    self.renew = false
   end
   
   class ProxyGrantingNotAvailable < Exception
