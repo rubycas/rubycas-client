@@ -85,6 +85,16 @@ which are covered in the next section):
 Note that in this example we explicitly specified the login and validate URLs instead of letting RubyCAS-Client figure them out
 based on <tt>CAS::Filter.cas_base_url</tt>.
 
+==== Gatewayed authentication
+
+RubyCAS-Client supports gatewaying as of version 1.1.0. Gatewaying allows for optional CAS authentication, so that users who
+already have a pre-existing CAS SSO session will be automatically authenticated for the gatewayed service, while those who
+do not, will be allowed to access the service without authentication. This is useful for example when you want to show
+some additional private content on a homepage to authenticated users, but also want unauthenticated users to be able to
+access the page without first logging in.
+
+For more information on using gatewaying, see CAS::GatewayFilter.
+
 ==== How to act as a CAS proxy
 
 CAS 2.0 has a built-in mechanism that allows a CAS-authenticated application to pass on its authentication to other applications.
