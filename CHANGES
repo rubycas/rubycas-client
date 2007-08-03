@@ -5,7 +5,7 @@
 * Added new GatewayFilter. This is identical to the normal Filter but
   has the gateway option set to true by default. This should make
   using the gateway option easier.
-* The Filter class' methods are now properly documented.
+* The CAS::Filter methods are now properly documented.
 
 == Version 1.0.0 :: 2007-07-26
 
