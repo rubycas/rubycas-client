@@ -6,6 +6,9 @@
   has the gateway option set to true by default. This should make
   using the gateway option easier.
 * The CAS::Filter methods are now properly documented.
+* Simplified guess_service produces better URLs when redirecting to the CAS
+  server for authentication and the service URL is not explicitly specified. 
+  [delagoya]
 
 == Version 1.0.0 :: 2007-07-26
 
