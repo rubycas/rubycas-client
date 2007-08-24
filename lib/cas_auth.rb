@@ -89,6 +89,8 @@ module CAS
     @@authorized_proxies = []
     cattr_accessor :authorized_proxies
 
+    # gatewaying is disabled by default -- use GatewayFilter if you want gatewaying
+    self.gateway = false
 
     class << self
     
