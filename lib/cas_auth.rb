@@ -457,11 +457,7 @@ module CAS
         end
         
         parms.delete("ticket")
-        
-        query = (parms.collect {|key, val| "#{key}=#{val}"}).join("&")
-        query = "?" + query unless query.empty?
-        
-        service = "#{req.protocol}#{@@server_name}#{req.request_uri.split(/\?/)[0]}#{query}"
+        service = controller.url_for(parms)
         
         logger.info "Guessed service is: #{service}"
         
