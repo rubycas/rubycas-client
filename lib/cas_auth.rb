@@ -188,7 +188,7 @@ module CAS
         return true
       end
       
-      # This is the real filter method. It is alias as 'filter'
+      # This is the real filter method. It is aliased as 'filter'
       # by default (when the fake filter is disabled).
       #
       # The filter method behaves like a standard Rails filter, taking
@@ -201,6 +201,8 @@ module CAS
         logger.break
         logger.info("Using real CAS filter in controller: #{controller}")
         
+        # FIXME: why are we storing the receipt in the session?? 
+        #   this breaks the logout mechanism -- see http://code.google.com/p/rubycas-server/issues/detail?id=19
         session_receipt = controller.session[:casfilterreceipt]
         session_ticket = controller.session[:caslastticket]
         ticket = controller.params[:ticket]
