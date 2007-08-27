@@ -500,6 +500,15 @@ module CAS
   class GatewayFilter < Filter
     self.gateway = true
     self.renew = false
+    
+    def logout_url
+      uri = URI.parse(super)
+      if uri.query?
+        uri.to_s + "&gateway=1"
+      else
+        uri.to_s + "?gateway=1"
+      end
+    end
   end
   
   class ProxyGrantingNotAvailable < Exception
