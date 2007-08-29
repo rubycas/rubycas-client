@@ -506,9 +506,9 @@ module CAS
     def logout_url
       uri = URI.parse(super)
       if uri.query?
-        uri.to_s + "&gateway=1"
+        uri.to_s + "&gateway=true"
       else
-        uri.to_s + "?gateway=1"
+        uri.to_s + "?gateway=true"
       end
     end
   end
