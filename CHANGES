@@ -2,6 +2,9 @@
 
 == Version 1.1.0 :: In Progress
 
+* Fixed serious bug having to do with logouts. You can now end the
+  CAS session on the client-side (i.e. force the client to re-authenticate)
+  by setting session[:casfilteruser] = nil.
 * Added new GatewayFilter. This is identical to the normal Filter but
   has the gateway option set to true by default. This should make
   using the gateway option easier.

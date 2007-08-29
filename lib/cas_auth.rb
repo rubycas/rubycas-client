@@ -201,8 +201,9 @@ module CAS
         logger.break
         logger.info("Using real CAS filter in controller: #{controller}")
         
-        # FIXME: why are we storing the receipt in the session?? 
-        #   this breaks the logout mechanism -- see http://code.google.com/p/rubycas-server/issues/detail?id=19
+        # We store the receipt in the session so that we do not have to fetch it again
+        # if we're asked to validate a ticket that has already been validated. This
+        # saves us from unnecessarily hitting the CAS server.
         session_receipt = controller.session[:casfilterreceipt]
         session_ticket = controller.session[:caslastticket]
         ticket = controller.params[:ticket]
@@ -250,10 +251,9 @@ module CAS
             end
           end
           
-        elsif session_receipt
+        elsif session_receipt && controller.session[@@session_username] && !@@renew
         
-          log.info "Validating receipt from the session because " + 
-            (ticket ? "the given ticket #{ticket} is the same as the old ticket" : "there was no ticket given in the URI") + "."
+          log.info "Validating receipt from the session (instead of checking with the CAS server) because we have a :casfilteruser and the filter is not configured with @@renew."
           log.debug "The session receipt is: #{session_receipt}"
           
           is_valid = validate_receipt(session_receipt)
@@ -280,7 +280,7 @@ module CAS
               log.warn "This filter is NOT configured to allow gatewaying, yet this request was gatewayed. Something is not right!"
             end
           elsif self.gateway
-            log.debug "We did not gateway, so we will notify the filter that the next request is being gatewayed by setting sesson[:casfiltergateway} to true"
+            log.debug "We did not gateway, so we will notify the filter that the next request is being gatewayed by setting sesson[:casfiltergateway] to true"
             controller.session[:casfiltergateway] = true
           end
           
