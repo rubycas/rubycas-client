@@ -85,6 +85,16 @@ which are covered in the next section):
 Note that in this example we explicitly specified the login and validate URLs instead of letting RubyCAS-Client figure them out
 based on <tt>CAS::Filter.cas_base_url</tt>.
 
+==== Defining a 'logout' action
+
+Your Rails application's controller(s) will probably have some sort of logout function. In it you will likely want reset the 
+user's session for your application, and then redirect to the CAS server's logout URL. Here's an example of how to do this:
+
+  def logout
+  	reset_session
+  	redirect_to CAS::Filter.logout_url(self, request.referer)
+  end
+
 ==== Gatewayed authentication
 
 RubyCAS-Client supports gatewaying as of version 1.1.0. Gatewaying allows for optional CAS authentication, so that users who

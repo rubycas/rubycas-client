@@ -12,6 +12,11 @@
 * Simplified guess_service produces better URLs when redirecting to the CAS
   server for authentication and the service URL is not explicitly specified. 
   [delagoya]
+* The correct method for overriding the service URL for the client is now
+  properly documented. You should use service_url=, as server_name= no longer
+  works and instead generates a warning message.
+* logout_url() now takes an additional 'service' parameter. If specified, this
+  URL will be passed on to the CAS server as part of the logout URL. 
 
 == Version 1.0.0 :: 2007-07-26
 
