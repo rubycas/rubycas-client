@@ -426,9 +426,10 @@ module CAS
       end
       
       def self.server_name=(s)
-        puts "!!!!!!!!!!!!!!!"
-        puts "!!! WARNING !!!"
-        puts "!!!!!!!!!!!!!!!"
+        puts
+        puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        puts "!!! CAS CONFIGURATION WARNING !!!"
+        puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts
         puts "CAS::Filter.server_name= no longer does anything."
         puts 
