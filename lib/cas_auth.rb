@@ -39,15 +39,19 @@ module CAS
   # To use CAS::Filter for authentication, add something like this to
   # your environment:
   # 
-  #   CAS::Filter.server_name = "yourapplication.server.name"
   #   CAS::Filter.cas_base_url = "https://cas.company.com
   #   
   # The filter will try to use the standard CAS page locations based on this URL.
   # Or you can explicitly specify the individual URLs:
   #
-  #   CAS::Filter.server_name = "yourapplication.server.name"
   #   CAS::Filter.login_url = "https://cas.company.com/login"
   #   CAS::Filter.validate_url = "https://cas.company.com/proxyValidate"
+  #
+  # The filter will also try to automatically figure out your CAS-protected application's 
+  # URL (to send the client back after authenticating on the CAS server), but you can 
+  # explicitly override:
+  #
+  #   CAS::Filter.service_url = "http://www.my-cas-protected-app.com/
   #
   # It is of course possible to use different configurations in development, test
   # and production by placing the configuration in the appropriate environments file.
@@ -76,14 +80,13 @@ module CAS
     @@login_url = "https://localhost/login"
     @@logout_url = nil
     @@validate_url = "https://localhost/proxyValidate"
-    @@server_name = "localhost"
     @@renew = false
     @@session_username = :casfilteruser
     @@query_string = {}
     @@fake = nil
     @@pgt = nil
     cattr_accessor :query_string
-    cattr_accessor :login_url, :validate_url, :service_url, :server_name, :wrap_request, :session_username
+    cattr_accessor :login_url, :validate_url, :service_url, :wrap_request, :session_username
     class_inheritable_accessor :gateway, :renew
     cattr_accessor :proxy_url, :proxy_callback_url, :proxy_retrieval_url
     @@authorized_proxies = []
@@ -119,9 +122,13 @@ module CAS
       # Returns the logout URL for the given controller.
       # This method calls create_logout_url if no logout url has yet
       # been created or set.
-      def logout_url(controller)
+      #
+      # Additionally a service URL can be provided and will be attached
+      # to the CAS server logout URL. If not provided, the service URL
+      # will be automatically derived using guess_service().
+      def logout_url(controller, service = nil)
         create_logout_url unless @@logout_url
-        url = redirect_url(controller,@@logout_url)
+        url = redirect_url(controller,@@logout_url,service)
         logger.debug "Logout url is: #{url}"
         url
       end
@@ -424,8 +431,10 @@ module CAS
       # to use something other than the login url as the base.
       #
       # FIXME: this method is really poorly named :(
-      def self.redirect_url(controller,url=@@login_url)
-        "#{url}?service=#{CGI.escape(service_url(controller))}" + 
+      def self.redirect_url(controller,url=@@login_url,service=nil)        
+        service = service || CGI.escape(service_url(controller))  
+
+        "#{url}?service=#{service}" + 
           ((@@renew)? "&renew=true":"") + 
           ((gateway)? "&gateway=true":"") + 
           ((@@query_string.blank?)? "" : "&" +
