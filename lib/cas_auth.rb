@@ -443,9 +443,16 @@ module CAS
       # on as appropriate. The <tt>url</tt> parameter can be used
       # to use something other than the login url as the base.
       #
+      # An optional <tt>service</tt> parameter can be provided to
+      # override the 'service' part of the URL.
+      #
       # FIXME: this method is really poorly named :(
-      def self.redirect_url(controller,url=@@login_url,service=nil)        
-        service = service || CGI.escape(service_url(controller))  
+      def self.redirect_url(controller,url=@@login_url,service=nil)     
+        if service
+          service = remove_ticket_from_service_uri(service)
+        end
+        
+        service = CGI.escape(service || service_url(controller))  
 
         "#{url}?service=#{service}" + 
           ((@@renew)? "&renew=true":"") + 
