@@ -425,6 +425,18 @@ module CAS
         clean
       end
       
+      def self.server_name=(s)
+        puts "!!!!!!!!!!!!!!!"
+        puts "!!! WARNING !!!"
+        puts "!!!!!!!!!!!!!!!"
+        puts
+        puts "CAS::Filter.server_name= no longer does anything."
+        puts 
+        puts "If you want to explicitly set the service, try using:"
+        puts "CAS::Filter.service_url = 'http://myservice.com'"
+        puts
+      end
+      
       # Returns the URL to the login page of the CAS server with
       # additional parameters like 'renew', and 'gateway' tacked
       # on as appropriate. The <tt>url</tt> parameter can be used
