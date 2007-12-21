@@ -1,6 +1,6 @@
 = RubyCAS-Client Changelog
 
-== Version 1.1.0 :: In Progress
+== Version 1.1.0 :: 2007-12-21
 
 * Fixed serious bug having to do with logouts. You can now end the
   CAS session on the client-side (i.e. force the client to re-authenticate)
