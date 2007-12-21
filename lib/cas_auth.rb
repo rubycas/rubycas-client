@@ -303,7 +303,7 @@ module CAS
         end
       end
       alias :filter :filter_r
-        
+      
       # Requests a proxy ticket from the CAS server and returns it as a ProxyTicketRequest object.
       #
       # Note that the ProxyTicketRequest object is returned regardless of whether the request
@@ -451,14 +451,20 @@ module CAS
         if service
           service = remove_ticket_from_service_uri(service)
         end
-        
+        RAILS_DEFAULT_LOGGER.debug "BEFORE: #{service.inspect}"
         service = CGI.escape(service || service_url(controller))  
-
+        RAILS_DEFAULT_LOGGER.debug "AFTER: #{service.inspect}"
         "#{url}?service=#{service}" + 
           ((@@renew)? "&renew=true":"") + 
           ((gateway)? "&gateway=true":"") + 
           ((@@query_string.blank?)? "" : "&" +
-          (@@query_string.collect { |k,v| "#{k}=#{v}"}.join("&")))
+          (rebuild_query_string(@@query_string)))
+      end
+      
+      def self.rebuild_query_string(query_string)
+        query_string.collect do |k,v|
+          "#{k}=#{v}"
+        end.join("&")
       end
       
       # Tries to figure out the current service URL. 
@@ -482,20 +488,50 @@ module CAS
         req = controller.request
         
         if controller.params
-          parms = controller.params.dup
+          params = controller.params.dup
         else
-          parms = {}
+          params = {}
         end
         
-        parms.delete("ticket")
-        service = controller.url_for(parms)
+        params.delete("ticket")
+        service = controller.url_for(flatten_param_hash(params))
+        
         
         logger.info "Guessed service is: #{service}"
         
         return service
       end
       
-      # URI-encodes the 
+      #
+      # Converts the given HASH array like 'params' to a flat
+      # HASH array that's compatible with url_for and link_to
+      #
+      # Borrowed from: http://www.gamecreatures.com/blog/2007/08/21/rails-url_for-and-params-missery/
+      def self.flatten_param_hash( params )
+        found = true
+      
+        while found
+          found = false
+          new_hash = {}
+      
+          params.each do |key,value|
+            if value.is_a?( Hash )
+              found = true
+              value.each do |key2,value2|
+                new_hash[ key.to_s + '[' + key2.to_s + ']' ] = value2
+              end
+            else
+              new_hash[ key.to_s ] = value
+            end
+          end
+          params = new_hash
+        end
+        params
+      end
+
+
+      
+      # URI-encodes the given service uri
       def self.escape_service_uri(uri)
         # FIXME: Why aren't we just using  CGi.escape?
         URI.encode(uri, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]", false, 'U').freeze)
