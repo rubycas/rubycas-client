@@ -1,5 +1,10 @@
 = RubyCAS-Client Changelog
 
+== In Progress...
+
+* Fixed bug in service redirection, where nested array parameters
+  in the url were getting mangled.
+
 == Version 1.1.0 :: 2007-12-21
 
 * Fixed serious bug having to do with logouts. You can now end the

@@ -506,7 +506,8 @@ module CAS
       # Converts the given HASH array like 'params' to a flat
       # HASH array that's compatible with url_for and link_to
       #
-      # Borrowed from: http://www.gamecreatures.com/blog/2007/08/21/rails-url_for-and-params-missery/
+      # Borrowed from http://www.gamecreatures.com/blog/2007/08/21/rails-url_for-and-params-missery/
+      #
       def self.flatten_param_hash( params )
         found = true
       
