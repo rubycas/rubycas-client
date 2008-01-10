@@ -1,98 +1,59 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 
+###
+# These tests require a working CAS server!
+###
+
+$LOGIN_URL = 'https://localhost:6543/cas/login'
+$VALIDATE_URL = 'https://localhost:6543/cas/proxyValidate'
+
+puts "Enter a valid username for #{$LOGIN_URL.inspect}:"
+$USERNAME = $stdin.gets.strip
+puts "Enter a valid password for #{$USERNAME.inspect}:"
+$PASSWORD = $stdin.gets.strip
+
 class CASClientTest < Test::Unit::TestCase
 
   def setup
-    @cas1_success = "yes\nmzukowski\n"
-    @cas1_failure = "no\n\n"
+    @login_url = $LOGIN_URL
+    @validate_url = $VALIDATE_URL
     
-    @cas2_success = %{
-      <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-        <cas:authenticationSuccess>
-          <cas:user>mzukowski</cas:user>
-          <cas:proxyGrantingTicket>PGTIOU-84678-8a9d</cas:proxyGrantingTicket>
-          <cas:proxies>
-            <cas:proxy>https://proxy2/pgtUrl</cas:proxy>
-            <cas:proxy>https://proxy1/pgtUrl</cas:proxy>
-          </cas:proxies>
-          <foo:email>mzukowski@example.foo</foo:email>
-          <full-name>Matt Zukowski</full-name>
-        </cas:authenticationSuccess>
-      </cas:serviceResponse>
-    }
-    
-    @cas2_success_minimal = %{
-      <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-        <cas:authenticationSuccess>
-          <cas:user>mzukowski</cas:user>
-        </cas:authenticationSuccess>
-      </cas:serviceResponse>
-    }
-    
-    @cas2_failure = %{
-      <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-        <cas:authenticationFailure code="INVALID_TICKET">
-            Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
-        </cas:authenticationFailure>
-      </cas:serviceResponse>
-    }
+    @valid_credentials = {:username => $USERNAME, :password => $PASSWORD}
     
     @client = CASClient::Client.new(
-      :login_url => 'https://localhost/cas/login', 
-      :validate_url => 'https://localhost/cas/serviceValidate'
+      :login_url => @login_url, :validate_url => @validate_url
     )
   end
   
-  def test_parse_cas2_success_response
-    r = CASClient::Response.new(@cas2_success)
+  def test_validate_bad_service_ticket
+    st = CASClient::ServiceTicket.new('TESTING-BAD-TICKET', 'http://test.foo')
+    @client.validate_service_ticket(st)
     
-    assert_equal 2.0, r.protocol
-    assert r.is_success?
-    assert !r.is_failure?
-    assert_equal 'mzukowski', r.user
-    assert_equal 'Matt Zukowski', r.extra_attributes['full_name']
-    assert_equal ['https://proxy2/pgtUrl', 'https://proxy1/pgtUrl'], r.proxies
-    assert_equal 'PGTIOU-84678-8a9d', r.pgt
-    
-    r = CASClient::Response.new(@cas2_success_minimal)
-    
-    assert_equal 2.0, r.protocol
-    assert r.is_success?
-    assert !r.is_failure?
-    assert_equal 'mzukowski', r.user
-    assert_nil r.extra_attributes['full_name']
-    assert_nil r.proxies
-    assert_nil r.pgt
+    assert st.response.is_failure?
+    assert_equal 'INVALID_TICKET', st.response.failure_code
   end
   
-  def test_parse_cas2_failure_response
-    r = CASClient::Response.new(@cas2_failure)
+  def test_request_login_ticket
+    lt = @client.request_login_ticket
     
-    assert_equal 2.0, r.protocol
-    assert !r.is_success?
-    assert r.is_failure?
-    assert_equal 'INVALID_TICKET', r.failure_code
-    assert_equal 'Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized', r.failure_message
-    assert_nil r.user
-    assert_nil r.extra_attributes
-    assert_nil r.proxies
-    assert_nil r.pgt
+    assert !lt.blank?
+    assert lt =~ /LT-.+/
+  end
+
+  def test_successful_login_to_service
+    credentials = @valid_credentials
+    lr = @client.login_to_service(credentials, 'http://test.foo?foo=bar')
+    
+    assert !lr.ticket.blank?
+    assert !lr.tgt.blank?
+    assert lr.service_redirect_url =~ /^http:\/\/test.foo\?foo=bar&ticket=/
   end
   
-  def test_parse_cas1_success_response
-    r = CASClient::Response.new(@cas1_success)
+  def test_login_to_service_with_bad_credentials
+    lr = @client.login_to_service({:username => "BAD_USERNAME", :password => "BAD_PASSWORD"}, 'http://test.foo?foo=bar')
     
-    assert_equal 1.0, r.protocol
-    assert r.is_success?
-    assert !r.is_failure?
-    assert_equal 'mzukowski', r.user
-  end
-  
-  def test_parse_cas1_fail_response
-    r = CASClient::Response.new(@cas1_failure)
-    
-    assert_equal 1.0, r.protocol
-    assert !r.is_success?
-    assert r.is_failure?
+    assert !lr.is_success?
+    assert lr.is_failure?
+    assert lr.failure_message =~ /username/ 
   end
 end
