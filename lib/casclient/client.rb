@@ -12,7 +12,7 @@ module CASClient
     def configure(conf)
       raise ArgumentError, "Missing :cas_base_url parameter!" unless conf[:cas_base_url]
       
-      @cas_url      = conf[:cas_base_url].gsub(/\/$/, '')       
+      @cas_base_url      = conf[:cas_base_url].gsub(/\/$/, '')       
       
       @login_url    = conf[:login_url]
       @validate_url = conf[:validate_url]
@@ -22,7 +22,7 @@ module CASClient
       @session_username_key         = conf[:session_username_key] || :cas_user
       @session_extra_attributes_key = conf[:session_extra_attributes_key] || :cas_extra_attributes
       
-      @log = CASClient::Logger.new
+      @log = CASClient::LoggerWrapper.new
       @log.set_real_logger(conf[:logger]) if conf[:logger]
     end
     
@@ -43,7 +43,7 @@ module CASClient
     end
     
     def validate_service_ticket(st)
-      uri = URI.parse(@validate_url)
+      uri = URI.parse(validate_url)
       h = uri.query ? query_to_hash(uri.query) : {}
       h['service'] = st.service
       h['ticket'] = st.ticket
@@ -66,7 +66,7 @@ module CASClient
         :service => service 
       )
       
-      res = submit_data_to_cas(@login_url, data)
+      res = submit_data_to_cas(login_url, data)
       CASClient::LoginResponse.new(res)
     end
   
@@ -76,7 +76,7 @@ module CASClient
     # This only works with RubyCAS-Server, since obtaining login
     # tickets in this manner is not part of the official CAS spec.
     def request_login_ticket
-      uri = URI.parse(@login_url+'Ticket')
+      uri = URI.parse(login_url+'Ticket')
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = (uri.scheme == 'https')
       res = https.post(uri.path, ';')
@@ -93,7 +93,7 @@ module CASClient
     # The pgt required to request a proxy ticket is obtained as part of
     # a ValidationResponse.
     def request_proxy_ticket(pgt, target_service)
-      uri = URI.parse(@login_url+'Ticket')
+      uri = URI.parse(login_url+'Ticket')
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = (uri.scheme == 'https')
       res = https.post(uri.path, ';')
@@ -101,6 +101,12 @@ module CASClient
       raise CASException, res.body unless res.kind_of? Net::HTTPSuccess
       
       res.body.strip
+    end
+    
+    def add_service_to_login_url(service_url)
+      uri = URI.parse(login_url)
+      uri.query = (uri.query ? uri.query + "&" : "") + "service=#{CGI.escape(service_url)}"
+      uri.to_s
     end
     
     private
