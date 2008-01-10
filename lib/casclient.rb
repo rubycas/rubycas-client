@@ -3,12 +3,21 @@ require 'cgi'
 require 'net/https'
 require 'rexml/document'
 
-require 'active_support'
+begin
+  require 'active_support'
+rescue LoadError
+  require 'rubygems'
+  require 'active_support'
+end
 
 module CASClient
   # The client brokers all HTTP transactions with the CAS server.
   class Client
     attr_reader :login_url, :validate_url, :protocol
+    
+    def initialize(conf = nil)
+      configure(conf) if conf
+    end
     
     def configure(conf)
       raise ArgumentError, "Missing :login_url parameter!" unless conf[:login_url]
@@ -48,6 +57,19 @@ module CASClient
       
       Response.new(raw_res.body)
     end
+    
+    def query_to_hash(query)
+      CGI.parse(query)
+    end
+      
+    def hash_to_query(hash)
+      pairs = []
+      hash.each do |k, vals|
+        vals = [vals] unless vals.kind_of Array
+        v.each {|v| paris << "#{CGI.escape(k)}=#{CGI.escape(v)}"}
+      end
+      pairs.join("&")
+    end
   end
   
   # Represents a CAS service ticket.
@@ -82,44 +104,51 @@ module CASClient
     end
   end
   
-  # Represents a response from a CAS server.
+  # Represents a response from the CAS server.
   class Response
     attr_reader :xml, :parsetime
     attr_reader :protocol, :user, :pgt, :proxies, :extra_attributes
+    attr_reader :failure_code, :failure_message
     
     def initialize(raw_text)
       parse(raw_text)
     end
     
     def parse(raw_text)
+      raise BadResponseException, "Cas response is empty/blank." if raw_text.blank?
       @parsetime = Time.now
       begin
-        doc = REXML::Document.new(raw_text)
-      rescue REXML::ParseException => e
         if raw_text =~ /^(yes|no)\n(.*?)\n$/m
           @protocol = 1.0
           @valid = $~[1] == 'yes'
           @user = $~[2]
           return
+        else
+          doc = REXML::Document.new(raw_text)
         end
+      rescue REXML::ParseException => e
         raise BadResponseException, "MALFORMED CAS RESPONSE:\n#{str.inspect}\n\nEXCEPTION:\n#{e}"
       end
       
       unless doc.elements && doc.elements["cas:serviceResponse"]
-        raise BadResponseException, "BAD CAS RESPONSE:\n#{str.inspect}\n\nXML DOC:\n#{doc.inspect}"
+        raise BadResponseException, "This does not appear to be a valid CAS response (missing cas:serviceResponse root element)!\nXML DOC:\n#{doc.to_s}"
       end
       
       # if we got this far then we've got a valid XML response, so we're doing CAS 2.0
       @protocol = 2.0
       
-      @xml = CASResponse.new(doc.elements["cas:serviceResponse"].elements[1])
+      @xml = doc.elements["cas:serviceResponse"].elements[1]
       
       if is_success?
         @user = @xml.elements["cas:user"].text.strip if @xml.elements["cas:user"]
-        @pgt =  @xml.elements["cas:proxyGrantingTicket"] if @xml.elements["cas:proxyGrantingTicket"]
+        @pgt =  @xml.elements["cas:proxyGrantingTicket"].text.strip if @xml.elements["cas:proxyGrantingTicket"]
         
-        @xml.elements.to_a('//cas:authenticationSuccess/cas:proxies/cas:proxy').each do |el|
-          @other_attributes.merge!(Hash.from_xml(el.to_s)) unless el.prefix == 'cas'
+        proxy_els = @xml.elements.to_a('//cas:authenticationSuccess/cas:proxies/cas:proxy')
+        if proxy_els.size > 0
+          @proxies = []
+          proxy_els.each do |el|
+            @proxies << el.text
+          end
         end
         
         @extra_attributes = {}
@@ -127,7 +156,8 @@ module CASClient
           @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless el.prefix == 'cas'
         end
       elsif is_failure?
-        
+        @failure_code = @xml.elements['//cas:authenticationFailure'].attributes['code']
+        @failure_message = @xml.elements['//cas:authenticationFailure'].text.strip
       else
         # this should never happen!
         raise BadResponseException, "BAD CAS RESPONSE:\n#{str.inspect}\n\nXML DOC:\n#{doc.inspect}"
@@ -136,25 +166,11 @@ module CASClient
     end
     
     def is_success?
-      @valid == true || @xml.name == "authenticationSuccess"
+      @valid == true || (protocol > 1.0 && @xml.name == "authenticationSuccess")
     end
     
     def is_failure?
-      @valid == false || @xml.name = "authenticationFailure" 
-    end
-    
-    private
-    def query_to_hash(query)
-      CGI.parse(query)
-    end
-      
-    def hash_to_query(hash)
-      pairs = []
-      hash.each do |k, vals|
-        vals = [vals] unless vals.kind_of Array
-        v.each {|v| paris << "#{CGI.escape(k)}=#{CGI.escape(v)}"}
-      end
-      pairs.join("&")
+      @valid == false || (protocol > 1.0 && @xml.name == "authenticationFailure" )
     end
   end
   
