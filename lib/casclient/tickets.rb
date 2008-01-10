@@ -30,4 +30,17 @@ module CASClient
       @renew = renew
     end
   end
+  
+  class ProxyGrantingTicket
+    attr_reader :ticket, :iou
+    
+    def initialize(ticket, iou)
+      @ticket = ticket
+      @iou = iou
+    end
+    
+    def to_s
+      ticket
+    end
+  end
 end

@@ -2,8 +2,8 @@ module CASClient
   # Represents a response from the CAS server to a 'validate' request
   # (i.e. when validating servie/proxy tickets).
   class ValidationResponse
-    attr_reader :xml, :parsetime
-    attr_reader :protocol, :user, :pgt, :proxies, :extra_attributes
+    attr_reader :xml, :parse_datetime
+    attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes
     attr_reader :failure_code, :failure_message
     
     def initialize(raw_text)
@@ -13,7 +13,7 @@ module CASClient
     def parse(raw_text)
       raise BadResponseException, 
         "Cas response is empty/blank." if raw_text.blank?
-      @parsetime = Time.now
+      @parse_datetime = Time.now
       begin
         if raw_text =~ /^(yes|no)\n(.*?)\n$/m
           @protocol = 1.0
@@ -40,7 +40,7 @@ module CASClient
       
       if is_success?
         @user = @xml.elements["cas:user"].text.strip if @xml.elements["cas:user"]
-        @pgt =  @xml.elements["cas:proxyGrantingTicket"].text.strip if @xml.elements["cas:proxyGrantingTicket"]
+        @pgt_iou =  @xml.elements["cas:proxyGrantingTicket"].text.strip if @xml.elements["cas:proxyGrantingTicket"]
         
         proxy_els = @xml.elements.to_a('//cas:authenticationSuccess/cas:proxies/cas:proxy')
         if proxy_els.size > 0

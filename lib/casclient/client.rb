@@ -2,8 +2,9 @@ module CASClient
   # The client brokers all HTTP transactions with the CAS server.
   class Client
     attr_reader :cas_base_url 
-    attr_reader :log, :session_username_key, :session_extra_attributes_key
+    attr_reader :log, :username_session_key, :extra_attributes_session_key
     attr_writer :login_url, :validate_url, :proxy_url, :logout_url
+    attr_accessor :proxy_retrieval_url
     
     def initialize(conf = nil)
       configure(conf) if conf
@@ -101,6 +102,20 @@ module CASClient
       raise CASException, res.body unless res.kind_of? Net::HTTPSuccess
       
       res.body.strip
+    end
+    
+    def retrieve_proxy_granting_ticket(pgt_iou)
+      uri = URI.parse(login_url)
+      uri.query = (uri.query ? uri.query + "&" : "") + "pgtIou=#{CGI.escape(pgt_iou)}"
+      retrieve_url = uri.to_s
+      
+      https = Net::HTTP.new(uri.host, uri.port)
+      https.use_ssl = (uri.scheme == 'https')
+      res = https.post(uri.path, ';')
+      
+      raise CASException, res.body unless res.kind_of? Net::HTTPSuccess
+      
+      ProxyGrantingTicket.new(res.body.strip)
     end
     
     def add_service_to_login_url(service_url)
