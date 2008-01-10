@@ -1,0 +1,9 @@
+Rakefile
+README.txt
+CHANGELOG.txt
+Manifest.txt
+setup.rb
+lib/rubycas-client/version.rb
+lib/rubycas-client.rb
+test/test_helper.rb
+test/rubycas-client_test.rb
