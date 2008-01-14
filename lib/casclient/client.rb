@@ -105,9 +105,8 @@ module CASClient
     end
     
     def retrieve_proxy_granting_ticket(pgt_iou)
-      uri = URI.parse(login_url)
+      uri = URI.parse(proxy_retrieval_url)
       uri.query = (uri.query ? uri.query + "&" : "") + "pgtIou=#{CGI.escape(pgt_iou)}"
-      retrieve_url = uri.to_s
       
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = (uri.scheme == 'https')
