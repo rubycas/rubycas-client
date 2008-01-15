@@ -2,16 +2,16 @@ module CASClient
   module Adapters
     module Rails
       class Filter
+        cattr_reader :config, :log, :client
+        
+        # These are initialized when you call configure.
         @@config = nil
+        @@client = nil
         @@log = nil
-        cattr_reader :config, :log
         
         class << self
           def filter(controller)
             raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
-            
-            client = CASClient::Client.new(config)
-            @@log = client.log
 
             st = read_ticket(controller)
             
@@ -28,6 +28,7 @@ module CASClient
             if st
               client.validate_service_ticket(st) unless st.has_been_validated?
               vr = st.response
+              
               if st.is_valid?
                 log.info("Ticket #{st.ticket.inspect} for service #{st.service.inspect} belonging to user #{vr.user.inspect} is VALID.")
                 controller.session[client.username_session_key] = vr.user
@@ -48,28 +49,32 @@ module CASClient
                   if pgt
                     log.debug("Got PGT #{pgt.ticket.inspect} for PGT IOU #{pgt.iou.inspect}. This will be stored in the session.")
                     controller.session[:cas_pgt] = pgt
+                    # For backwards compatibility with RubyCAS-Client 1.x configurations...
+                    controller.session[:casfilterpgt] = pgt
                   else
                     log.error("Failed to retrieve a PGT for PGT IOU #{vr.pgt_iou}!")
                   end
                 end
+                
+                return true
               else
                 log.warn("Ticket #{st.ticket.inspect} failed validation -- #{vr.failure_code}: #{vr.failure_message}")
-                redirect_to_cas_for_authentication(controller, client)
+                redirect_to_cas_for_authentication(controller)
                 return false
               end
             else
               if returning_from_gateway?(controller)
                 log.info "Returning from CAS gateway without authentication."
                 
-                if allow_gatewaying?
-                  log.info "This CAS client is configured to allow gatewaying, so we will permit the user to continue without authentication."
+                if use_gatewaying?
+                  log.info "This CAS client is configured to use gatewaying, so we will permit the user to continue without authentication."
                   return true
                 else
                   log.warn "The CAS client is NOT configured to allow gatewaying, yet this request was gatewayed. Something is not right!"
                 end
               end
               
-              redirect_to_cas_for_authentication(controller, client)
+              redirect_to_cas_for_authentication(controller)
               return false
             end
           end
@@ -77,14 +82,35 @@ module CASClient
           def configure(config)
             @@config = config
             @@config[:logger] = RAILS_DEFAULT_LOGGER unless @@config[:logger]
+            @@client = CASClient::Client.new(config)
+            @@log = client.log
           end
           
-          def allow_gatewaying?
-            @@config[:allow_gatewaying]
+          def use_gatewaying?
+            @@config[:use_gatewaying]
           end
           
           def returning_from_gateway?(controller)
             controller.session[:cas_sent_to_gateway]
+          end
+          
+          def redirect_to_cas_for_authentication(controller)
+            service_url = read_service_url(controller)
+            redirect_url = client.add_service_to_login_url(service_url)
+            
+            if use_gatewaying?
+              controller.session[:cas_sent_to_gateway] = true
+              redirect_url << "&gateway=true"
+            else
+              controller.session[:cas_sent_to_gateway] = false
+            end
+            
+            if config[:pgt_url]
+              
+            end
+            
+            log.debug("Redirecting to #{redirect_url.inspect}")
+            controller.send(:redirect_to, redirect_url)
           end
           
           private
@@ -114,27 +140,12 @@ module CASClient
             log.debug("Guessed service url: #{service_url.inspect}")
             return service_url
           end
-          
-          def redirect_to_cas_for_authentication(controller, client)
-            service_url = read_service_url(controller)
-            redirect_url = client.add_service_to_login_url(service_url)
-            
-            if allow_gatewaying?
-              controller.session[:cas_sent_to_gateway] = true
-              redirect_url << "&gateway=true"
-            else
-              controller.session[:cas_sent_to_gateway] = false
-            end
-            
-            log.debug("Redirecting to #{redirect_url.inspect}")
-            controller.send(:redirect_to, redirect_url)
-          end
         end
       end
     
       class GatewayFilter < Filter
-        def self.allow_gatewaying?
-          return true unless @@config[:allow_gatewaying] == false
+        def self.use_gatewaying?
+          return true unless @@config[:use_gatewaying] == false
         end
       end
     end

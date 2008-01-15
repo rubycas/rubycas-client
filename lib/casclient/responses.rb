@@ -1,31 +1,14 @@
 module CASClient
-  # Represents a response from the CAS server to a 'validate' request
-  # (i.e. when validating servie/proxy tickets).
-  class ValidationResponse
+  module XmlResponse
     attr_reader :xml, :parse_datetime
-    attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes
     attr_reader :failure_code, :failure_message
     
-    def initialize(raw_text)
-      parse(raw_text)
-    end
-    
-    def parse(raw_text)
-      raise BadResponseException, 
-        "Cas response is empty/blank." if raw_text.blank?
-      @parse_datetime = Time.now
+    def check_and_parse_xml(raw_xml)
       begin
-        if raw_text =~ /^(yes|no)\n(.*?)\n$/m
-          @protocol = 1.0
-          @valid = $~[1] == 'yes'
-          @user = $~[2]
-          return
-        end
-        
-        doc = REXML::Document.new(raw_text)
+        doc = REXML::Document.new(raw_xml)
       rescue REXML::ParseException => e
         raise BadResponseException, 
-          "MALFORMED CAS RESPONSE:\n#{str.inspect}\n\nEXCEPTION:\n#{e}"
+          "MALFORMED CAS RESPONSE:\n#{raw_xml.inspect}\n\nEXCEPTION:\n#{e}"
       end
       
       unless doc.elements && doc.elements["cas:serviceResponse"]
@@ -33,10 +16,41 @@ module CASClient
           "This does not appear to be a valid CAS response (missing cas:serviceResponse root element)!\nXML DOC:\n#{doc.to_s}"
       end
       
+      return doc.elements["cas:serviceResponse"].elements[1]
+    end
+    
+    def to_s
+      xml.to_s
+    end
+  end
+  
+  # Represents a response from the CAS server to a 'validate' request
+  # (i.e. after validating a service/proxy ticket).
+  class ValidationResponse
+    include XmlResponse
+    
+    attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes
+    
+    def initialize(raw_text)
+      parse(raw_text)
+    end
+    
+    def parse(raw_text)
+      raise BadResponseException, 
+        "CAS response is empty/blank." if raw_text.blank?
+      @parse_datetime = Time.now
+      
+      if raw_text =~ /^(yes|no)\n(.*?)\n$/m
+        @protocol = 1.0
+        @valid = $~[1] == 'yes'
+        @user = $~[2]
+        return
+      end
+      
+      @xml = check_and_parse_xml(raw_text)
+      
       # if we got this far then we've got a valid XML response, so we're doing CAS 2.0
       @protocol = 2.0
-      
-      @xml = doc.elements["cas:serviceResponse"].elements[1]
       
       if is_success?
         @user = @xml.elements["cas:user"].text.strip if @xml.elements["cas:user"]
@@ -59,21 +73,61 @@ module CASClient
         @failure_message = @xml.elements['//cas:authenticationFailure'].text.strip
       else
         # this should never happen, since the response should already have been recognized as invalid
-        raise BadResponseException, "BAD CAS RESPONSE:\n#{str.inspect}\n\nXML DOC:\n#{doc.inspect}"
+        raise BadResponseException, "BAD CAS RESPONSE:\n#{raw_text.inspect}\n\nXML DOC:\n#{doc.inspect}"
       end
       
     end
     
     def is_success?
-      @valid == true || (protocol > 1.0 && @xml.name == "authenticationSuccess")
+      @valid == true || (protocol > 1.0 && xml.name == "authenticationSuccess")
     end
     
     def is_failure?
-      @valid == false || (protocol > 1.0 && @xml.name == "authenticationFailure" )
+      @valid == false || (protocol > 1.0 && xml.name == "authenticationFailure" )
     end
   end
   
-  # Represents a response from the CAS server to a login request (i.e. when submitting a username/password).
+  # Represents a response from the CAS server to a proxy ticket request 
+  # (i.e. after requesting a proxy ticket).
+  class ProxyResponse
+    include XmlResponse
+    
+    attr_reader :proxy_ticket
+    
+    def initialize(raw_text)
+      parse(raw_text)
+    end
+    
+    def parse(raw_text)
+      raise BadResponseException, 
+        "CAS response is empty/blank." if raw_text.blank?
+      @parse_datetime = Time.now
+      
+      @xml = check_and_parse_xml(raw_text)
+      
+      if is_success?
+        @proxy_ticket = @xml.elements["cas:proxyTicket"].text.strip if @xml.elements["cas:proxyTicket"]
+      elsif is_failure?
+        @failure_code = @xml.elements['//cas:proxyFailure'].attributes['code']
+        @failure_message = @xml.elements['//cas:proxyFailure'].text.strip
+      else
+        # this should never happen, since the response should already have been recognized as invalid
+        raise BadResponseException, "BAD CAS RESPONSE:\n#{raw_text.inspect}\n\nXML DOC:\n#{doc.inspect}"
+      end
+      
+    end
+    
+    def is_success?
+      xml.name == "proxySuccess"
+    end
+    
+    def is_failure?
+      xml.name == "proxyFailure"
+    end
+  end
+  
+  # Represents a response from the CAS server to a login request 
+  # (i.e. after submitting a username/password).
   class LoginResponse
     attr_reader :tgt, :ticket, :service_redirect_url
     attr_reader :failure_message

@@ -21,14 +21,6 @@ module CASClient
   
   # Represents a CAS proxy ticket.
   class ProxyTicket < ServiceTicket
-    attr_reader :pgt_url
-    
-    def initialize(ticket, service, pgt_url, renew = false)
-      @ticket = ticket
-      @service = service
-      @pgt_url = pgt_url
-      @renew = renew
-    end
   end
   
   class ProxyGrantingTicket
