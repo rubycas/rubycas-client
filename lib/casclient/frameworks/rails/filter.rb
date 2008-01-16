@@ -1,5 +1,5 @@
 module CASClient
-  module Adapters
+  module Frameworks
     module Rails
       class Filter
         cattr_reader :config, :log, :client
