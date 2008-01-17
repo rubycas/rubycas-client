@@ -105,10 +105,6 @@ module CASClient
               controller.session[:cas_sent_to_gateway] = false
             end
             
-            if config[:pgt_url]
-              
-            end
-            
             log.debug("Redirecting to #{redirect_url.inspect}")
             controller.send(:redirect_to, redirect_url)
           end
@@ -122,7 +118,7 @@ module CASClient
             log.debug("Request contains ticket #{ticket.inspect}.")
             
             if ticket =~ /^PT-/
-              ProxyTicket.new(ticket, read_service_url(controller), pgt_url, controller.params[:renew])
+              ProxyTicket.new(ticket, read_service_url(controller), controller.params[:renew])
             else
               ServiceTicket.new(ticket, read_service_url(controller), controller.params[:renew])
             end
