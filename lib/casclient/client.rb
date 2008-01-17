@@ -22,8 +22,8 @@ module CASClient
       @proxy_callback_url  = conf[:proxy_callback_url]
       @proxy_retrieval_url = conf[:proxy_retrieval_url]
       
-      @session_username_key         = conf[:session_username_key] || :cas_user
-      @session_extra_attributes_key = conf[:session_extra_attributes_key] || :cas_extra_attributes
+      @username_session_key         = conf[:username_session_key] || :cas_user
+      @extra_attributes_session_key = conf[:extra_attributes_session_key] || :cas_extra_attributes
       
       @log = CASClient::LoggerWrapper.new
       @log.set_real_logger(conf[:logger]) if conf[:logger]
