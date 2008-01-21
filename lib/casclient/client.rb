@@ -3,7 +3,7 @@ module CASClient
   class Client
     attr_reader :cas_base_url 
     attr_reader :log, :username_session_key, :extra_attributes_session_key
-    attr_writer :login_url, :validate_url, :proxy_url, :logout_url
+    attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url
     attr_accessor :proxy_callback_url, :proxy_retrieval_url
     
     def initialize(conf = nil)
@@ -19,6 +19,7 @@ module CASClient
       @logout_url   = conf[:logout_url]
       @validate_url = conf[:validate_url]
       @proxy_url    = conf[:proxy_url]
+      @service_url  = conf[:service_url]
       @proxy_callback_url  = conf[:proxy_callback_url]
       @proxy_retrieval_url = conf[:proxy_retrieval_url]
       
