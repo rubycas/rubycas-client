@@ -1,9 +1,17 @@
 = RubyCAS-Client Changelog
 
-== In Progress...
+== Version 2.0.0 :: 2008-02-14
 
-* Fixed bug in service redirection, where nested array parameters
-  in the url were getting mangled.
+* COMPLETE RE-WRITE OF THE ENTIRE CLIENT FROM THE GROUND UP. Oh yes.
+* Core client has been abstracted out of the Rails adapter. It should now
+  be possible to use the client in other frameworks (e.g. Camping).
+* Configuration syntax has completely changed. In other words, your old
+  rubycas-client-1.x configuration will no longer work. See the README
+  for details.
+* Added support for reading extra attributes from the CAS response (i.e. in
+  addition to just the username). However currently this is somewhat useless
+  since RubyCAS-Server does not yet provide a method for adding extra
+  attributes to the responses it generates.
 
 == Version 1.1.0 :: 2007-12-21
 

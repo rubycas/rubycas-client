@@ -1,6 +1,6 @@
 require 'pstore'
 
-# Controller that responds to proxy generating ticket callbacks from the CAS server and allows
+# Rails controller that responds to proxy generating ticket callbacks from the CAS server and allows
 # for retrieval of those PGTs.
 class CasProxyCallbackController < ActionController::Base
 

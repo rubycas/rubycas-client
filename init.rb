@@ -1,20 +1,6 @@
-require 'cas_auth'
-require 'cas_logger'
-require 'cas_proxy_callback_controller'
+# This file makes it possible to install RubyCAS-Client as a Rails plugin.
 
-#CAS::Filter.logger = RAILS_DEFAULT_LOGGER if !RAILS_DEFAULT_LOGGER.nil?
-#CAS::Filter.logger = config.logger if !config.logger.nil?
+$: << File.expand_path(File.dirname(__FILE__))+'/lib'
 
-CAS::Filter.logger = CAS::Logger.new("#{RAILS_ROOT}/log/cas_client_#{RAILS_ENV}.log")
-CAS::Filter.logger.formatter = CAS::Logger::Formatter.new
-
-#if RAILS_ENV == "production"
-#  CAS::Filter.logger.level = Logger::WARN
-#else
-#  CAS::Filter.logger.level = Logger::DEBUG
-#end
-
-
-#class ActionController::Base
-#  append_before_filter CAS::Filter
-#end
+require 'casclient'
+require 'casclient/frameworks/rails/filter'
