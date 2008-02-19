@@ -70,10 +70,20 @@ require 'casclient/version'
 # Detect legacy configuration and show appropriate error message
 module CAS
   module Filter
-    def method_missing
-      $stderr.puts "Your RubyCAS-Client configuration is no longer valid."
-      $stderr.puts "Please see http://rubycas-client.googlecode.com/svn/trunk/rubycas-client/README.txt for information on the new configuration format."
+    class << self
+    def method_missing(method, *args)
+      $stderr.puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      $stderr.puts
+      $stderr.puts "WARNING: Your RubyCAS-Client configuration is no longer valid!!"
+      $stderr.puts
+      $stderr.puts "For information on the new configuration format please see: "
+      $stderr.puts
+      $stderr.puts "   http://rubycas-client.googlecode.com/svn/trunk/rubycas-client/README.txt"
+      $stderr.puts
       $stderr.puts "After upgrading your configuration you should also clear your application's session store."
+      $stderr.puts
+      $stderr.puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    end
     end
   end
 end
