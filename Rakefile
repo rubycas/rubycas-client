@@ -9,7 +9,7 @@ require 'rake/contrib/rubyforgepublisher'
 require 'fileutils'
 require 'hoe'
 include FileUtils
-require File.join(File.dirname(__FILE__), 'lib', 'rubycas-client', 'version')
+require File.join(File.dirname(__FILE__), 'lib', 'casclient', 'version')
 
 AUTHOR = ["Matt Zukowski", "Matt Walker"]  # can also be an array of Authors
 EMAIL = "matt at roughest dot net"
