@@ -66,3 +66,14 @@ require 'casclient/tickets'
 require 'casclient/responses'
 require 'casclient/client'
 require 'casclient/version'
+
+# Detect legacy configuration and show appropriate error message
+module CAS
+  module Filter
+    def method_missing
+      $stderr.puts "Your RubyCAS-Client configuration is no longer valid."
+      $stderr.puts "Please see http://rubycas-client.googlecode.com/svn/trunk/rubycas-client/README.txt for information on the new configuration format."
+      $stderr.puts "After upgrading your configuration you should also clear your application's session store."
+    end
+  end
+end
