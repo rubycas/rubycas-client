@@ -1,6 +1,6 @@
 = RubyCAS-Client Changelog
 
-== Version 2.0.1 :: In Progress...
+== Version 2.0.1 :: 2008-02-27
 
 * The Rails filter no longer by default redirects to the CAS server on 
   every request. This restores the behaviour of RubyCAS-Client 1.x.
