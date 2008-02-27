@@ -65,6 +65,8 @@ module CASClient
             elsif !config[:authenticate_on_every_request] && controller.session[client.username_session_key]
               # Don't re-authenticate with the CAS server if we already previously authenticated and the
               # :authenticate_on_every_request option is disabled (it's disabled by default).
+              log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
+                "User will not be re-authenticated."
               return true
             else
               if returning_from_gateway?(controller)
