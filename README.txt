@@ -93,7 +93,8 @@ Here is a more complicated configuration showing most of the configuration optio
     :validate_url  => "https://cas.example.foo/proxyValidate",
     :session_username_key => :cas_user,
     :session_extra_attributes_key => :cas_extra_attributes
-    :logger => cas_logger
+    :logger => cas_logger,
+    :authenticate_on_every_request => true
   )
 
 Note that it is normally not necessary to specify <tt>:login_url</tt>, <tt>:logout_url</tt>, and <tt>:validate_url</tt>.
@@ -107,6 +108,23 @@ info under <tt>session[:cas_extra_attributes]</tt>).
 
 An arbitrary Logger instance can be given as the :logger parameter. In the example above we log all CAS activity to a 
 <tt>log/cas.log</tt> file in your Rails app's directory.
+
+==== Re-authenticating on every request (i.e. the "single sign-out problem")
+
+By default, the Rails filter will only authenticate with the CAS server when no session[:cas_user] value exists. Once the user 
+has been authenticated, no further CAS forwarding is done until the user's session is wiped. This saves you
+the trouble of having to do this check yourself (since in most cases it is not advisable to go through the CAS server
+on every request -- this is slow and would potentially lead to problems, for example for AJAX requests). However,
+the disadvantage is that the filter no longer checks to make sure that the user's CAS session is still actually open.
+In other words it is possible for the user's authentication session to be closed on the CAS server without the
+client application knowing about it.
+
+In the future RubyCAS-Client will support the new "Single Sign-Out" functionality in CAS 3.1, allowing the server to 
+notify the client application that the CAS session is closed, but for now it is up to you  to handle this by, for example, 
+by wiping the local session[:cas_user] value periodically to force a CAS re-check.
+ 
+Alternatively, it is possible to disable this authentication persistence behaviour by setting the <tt>:authenticate_on_every_request</tt>
+configuration option to true as in the example above.
 
 
 ==== Defining a 'logout' action

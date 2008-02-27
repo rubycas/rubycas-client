@@ -13,6 +13,12 @@ module CASClient
           def filter(controller)
             raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
 
+            # Don't re-authenticate with the CAS server if we already previously authenticated and the
+            # :authenticate_on_every_request option is disable (it's off by default). 
+            if !config[:authenticate_on_every_request] && controller.session[client.username_session_key] 
+              return true
+            end
+
             st = read_ticket(controller)
             
             lst = controller.session[:cas_last_valid_ticket]
@@ -21,7 +27,7 @@ module CASClient
               # warn() rather than info() because we really shouldn't be re-validating the same ticket. 
               # The only time when this is acceptable is if the user manually does a refresh and the ticket
               # happens to be in the URL.
-              log.warn("Reusing previously validated ticket since the new ticket and service are the same.")
+              log.warn("Re-using previously validated ticket since the new ticket and service are the same.")
               st = lst
             end
             

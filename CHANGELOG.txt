@@ -1,5 +1,16 @@
 = RubyCAS-Client Changelog
 
+== Version 2.0.1 :: In Progress...
+
+* The Rails filter no longer by default redirects to the CAS server on 
+  every request. This restores the behaviour of RubyCAS-Client 1.x.
+  In other words, if a session[:cas_user] value exists, the filter
+  will assume that the user is authenticated without going through the
+  CAS server. This behaviour can be disabled (so that a CAS re-check is 
+  done on every request) by setting the 'authenticate_on_every_request' 
+  option to true. See the "Re-authenticating on every request" section 
+  in the README.txt for details. 
+
 == Version 2.0.0 :: 2008-02-14
 
 * COMPLETE RE-WRITE OF THE ENTIRE CLIENT FROM THE GROUND UP. Oh yes.
