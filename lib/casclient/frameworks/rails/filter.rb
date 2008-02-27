@@ -13,12 +13,6 @@ module CASClient
           def filter(controller)
             raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
 
-            # Don't re-authenticate with the CAS server if we already previously authenticated and the
-            # :authenticate_on_every_request option is disable (it's off by default). 
-            if !config[:authenticate_on_every_request] && controller.session[client.username_session_key] 
-              return true
-            end
-
             st = read_ticket(controller)
             
             lst = controller.session[:cas_last_valid_ticket]
@@ -68,6 +62,10 @@ module CASClient
                 redirect_to_cas_for_authentication(controller)
                 return false
               end
+            elsif !config[:authenticate_on_every_request] && controller.session[client.username_session_key]
+              # Don't re-authenticate with the CAS server if we already previously authenticated and the
+              # :authenticate_on_every_request option is disabled (it's disabled by default).
+              return true
             else
               if returning_from_gateway?(controller)
                 log.info "Returning from CAS gateway without authentication."
