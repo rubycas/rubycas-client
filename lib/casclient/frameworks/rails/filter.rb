@@ -15,14 +15,28 @@ module CASClient
 
             st = read_ticket(controller)
             
-            lst = controller.session[:cas_last_valid_ticket]
+            last_st = controller.session[:cas_last_valid_ticket]
             
-            if st && lst && lst.ticket == st.ticket && lst.service == st.service
+            if st && 
+                last_st && 
+                last_st.ticket == st.ticket && 
+                last_st.service == st.service
               # warn() rather than info() because we really shouldn't be re-validating the same ticket. 
               # The only time when this is acceptable is if the user manually does a refresh and the ticket
               # happens to be in the URL.
               log.warn("Re-using previously validated ticket since the new ticket and service are the same.")
-              st = lst
+              st = last_st
+            elsif last_st &&
+                !config[:authenticate_on_every_request] && 
+                controller.session[client.username_session_key]
+              # Re-use the previous ticket if the user already has a local CAS session (i.e. if they were already
+              # previously authenticated for this service). This is to prevent redirection to the CAS server on every
+              # request.
+              # This behaviour can be disabled (so that every request is routed through the CAS server) by setting
+              # the :authenticate_on_every_request config option to false. 
+              log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
+                "User will not be re-authenticated."
+              st = last_st
             end
             
             if st
@@ -62,12 +76,6 @@ module CASClient
                 redirect_to_cas_for_authentication(controller)
                 return false
               end
-            elsif !config[:authenticate_on_every_request] && controller.session[client.username_session_key]
-              # Don't re-authenticate with the CAS server if we already previously authenticated and the
-              # :authenticate_on_every_request option is disabled (it's disabled by default).
-              log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
-                "User will not be re-authenticated."
-              return true
             else
               if returning_from_gateway?(controller)
                 log.info "Returning from CAS gateway without authentication."
