@@ -35,7 +35,7 @@ module CASClient
               # This behaviour can be disabled (so that every request is routed through the CAS server) by setting
               # the :authenticate_on_every_request config option to false. 
               log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
-                "Previous ticket #{last_st} will be re-used."
+                "Previous ticket #{last_st.ticket.inspect} will be re-used."
               st = last_st
             end
             
