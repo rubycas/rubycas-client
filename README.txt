@@ -122,7 +122,7 @@ client application knowing about it.
 
 In the future RubyCAS-Client will support the new "Single Sign-Out" functionality in CAS 3.1, allowing the server to 
 notify the client application that the CAS session is closed, but for now it is up to you  to handle this by, for example, 
-by wiping the local session[:cas_user] value periodically to force a CAS re-check.
+by wiping the local <tt>session[:cas_user]</tt> value periodically to force a CAS re-check.
  
 Alternatively, it is possible to disable this authentication persistence behaviour by setting the <tt>:authenticate_on_every_request</tt>
 configuration option to true as in the example above.
