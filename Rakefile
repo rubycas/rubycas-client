@@ -18,6 +18,7 @@ GEM_NAME = "rubycas-client" # what ppl will type to install your gem
 RUBYFORGE_PROJECT = "rubycas-client" # The unix name for your project
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 
+ENV['NODOT'] = '1'
 
 NAME = "rubycas-client"
 REV = nil

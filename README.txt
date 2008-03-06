@@ -53,7 +53,8 @@ are aimed at {Ruby on Rails}[http://rubyonrails.org].
 
 <i>Note that from this point on we are assuming that you have a working CAS server up and running!</i>
 
-After installing RubyCAS-Client as a plugin (see above), add the following to your app's <tt>config/environment.rb</tt>:
+After installing RubyCAS-Client as a plugin (see above), add the following to your app's <tt>config/environment.rb</tt>
+(make sure that you put it at the bottom of the file, *after* the Rails Initializer):
   
   CASClient::Frameworks::Rails::Filter.configure(
     :cas_base_url => "https://cas.example.foo/"
@@ -97,7 +98,7 @@ Here is a more complicated configuration showing most of the configuration optio
     :authenticate_on_every_request => true
   )
 
-Note that it is normally not necessary to specify <tt>:login_url</tt>, <tt>:logout_url</tt>, and <tt>:validate_url</tt>.
+Note that normally it is not necessary to specify <tt>:login_url</tt>, <tt>:logout_url</tt>, and <tt>:validate_url</tt>.
 These values are automatically set to standard CAS defaults based on the given <tt>:cas_base_url</tt>.
 
 The <tt>:session_username_key</tt> value determines the key under which you can find the CAS username in the Rails session hash.
@@ -132,16 +133,18 @@ configuration option to true as in the example above.
 Your Rails application's controller(s) will probably have some sort of logout function. In it you will likely reset the 
 user's session for your application, and then redirect to the CAS server's logout URL. Here's an example of how to do this:
 
-class ApplicationController < ActionController::Base
+  class ApplicationController < ActionController::Base
+    
+    # ...
   
-  # ...
-
-  def logout
-    reset_session
-    redirect_to CAS::Filter.logout_url(self, request.referer)
+    def logout
+      reset_session
+      redirect_to CASClient::Frameworks::Rails::Filter.client.logout_url(request.referer)
+    end
   end
-end
 
+Passing the <tt>request.referer</tt> value as the parameter allows the client to build a logout URL that
+links back to the original service URL. You can of course provide any other URL as the parameter here.
 
 ==== Gatewayed (i.e. optional) authentication
 
