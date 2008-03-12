@@ -12,10 +12,32 @@ module CASClient
         class << self
           def filter(controller)
             raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
-
-            st = read_ticket(controller)
             
             last_st = controller.session[:cas_last_valid_ticket]
+            
+            if controller.request.post? &&
+                controller.request.raw_post =~ 
+                  /^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)<\/samlp:SessionIndex>/m
+              # TODO: Maybe check that the request came from the registered CAS server? Although this might be
+              #       pointless since it's easily spoofable...
+              si = $~[1]
+              log.debug "Intercepted logout request for CAS session previously opened for service ticket #{si.inspect}."
+              
+              required_sess_store = CGI::Session::ActiveRecordStore
+              current_sess_store  = ActionController::Base.session_options[:database_manager]
+              
+              if current_sess_store == required_sess_store
+                # FIXME: This is potentially catastrophic if we have a lot of sessions...
+                CGI::Session::ActiveRecordStore::Session.find(:all)
+              else
+                log.error "Cannot process logout request because this Rails application's session store is "+
+                  " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
+                  " #{required_sess_store.name.inspect} session store."
+              end
+              return false
+            end
+
+            st = read_ticket(controller)
             
             if st && 
                 last_st && 
