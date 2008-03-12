@@ -92,8 +92,8 @@ Here is a more complicated configuration showing most of the configuration optio
     :login_url     => "https://cas.example.foo/login",
     :logout_url    => "https://cas.example.foo/logout",
     :validate_url  => "https://cas.example.foo/proxyValidate",
-    :session_username_key => :cas_user,
-    :session_extra_attributes_key => :cas_extra_attributes
+    :username_session_key => :cas_user,
+    :extra_attributes_session_key => :cas_extra_attributes
     :logger => cas_logger,
     :authenticate_on_every_request => true
   )
@@ -101,10 +101,10 @@ Here is a more complicated configuration showing most of the configuration optio
 Note that normally it is not necessary to specify <tt>:login_url</tt>, <tt>:logout_url</tt>, and <tt>:validate_url</tt>.
 These values are automatically set to standard CAS defaults based on the given <tt>:cas_base_url</tt>.
 
-The <tt>:session_username_key</tt> value determines the key under which you can find the CAS username in the Rails session hash.
+The <tt>:username_session_key</tt> value determines the key under which you can find the CAS username in the Rails session hash.
 
 Any additional info that the CAS server might have supplied about the user during authentication will be found under the
-<tt>:session_extra_attributes_key</tt> value in the Rails session hash (i.e. given the above configuration, you would find this
+<tt>:extra_attributes_session_key</tt> value in the Rails session hash (i.e. given the above configuration, you would find this
 info under <tt>session[:cas_extra_attributes]</tt>).
 
 An arbitrary Logger instance can be given as the :logger parameter. In the example above we log all CAS activity to a 
