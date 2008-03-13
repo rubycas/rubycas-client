@@ -131,8 +131,23 @@ module CASClient
             @@config[:use_gatewaying]
           end
           
-          def logout(controller)
-            
+          # Clears the given controller's local Rails session, does some local 
+          # CAS cleanup, and redirects to the CAS logout page. Additionally, the
+          # <tt>request.referer</tt> value from the <tt>controller</tt> instance 
+          # is passed to the CAS server as a 'destination' parameter. This 
+          # allows RubyCAS server to provide a follow-up login page allowing
+          # the user to log back in to the service they just logged out from 
+          # using a different username and password. Other CAS server 
+          # implemenations may use this 'destination' parameter in different 
+          # ways. 
+          # If given, the optional <tt>service</tt> URL overrides 
+          # <tt>request.referer</tt>.
+          def logout(controller, service = nil)
+            referer = controller.request.referer
+            st = controller.session[:cas_last_valid_ticket]
+            delete_service_session_lookup(st) if st
+            controller.send(:reset_session)
+            controller.send(:redirect_to, client.logout_url(referer))
           end
           
           def redirect_to_cas_for_authentication(controller)

@@ -130,21 +130,25 @@ configuration option to true as in the example above.
 
 ==== Defining a 'logout' action
 
-Your Rails application's controller(s) will probably have some sort of logout function. In it you will likely reset the 
-user's session for your application, and then redirect to the CAS server's logout URL. Here's an example of how to do this:
+Your Rails application's controller(s) will probably have some sort of logout function. Here you can do any necessary local
+cleanup, and then call <tt>CASClient::Frameworks::Rails::Filter.logout(controller)</tt>. For example:
 
   class ApplicationController < ActionController::Base
     
     # ...
   
     def logout
-      reset_session
-      redirect_to CASClient::Frameworks::Rails::Filter.client.logout_url(request.referer)
+      # optionally do some local cleanup here
+      # ...
+      CASClient::Frameworks::Rails::Filter.logout(self)
     end
   end
 
-Passing the <tt>request.referer</tt> value as the parameter allows the client to build a logout URL that
-links back to the original service URL. You can of course provide any other URL as the parameter here.
+By default, the logout method will clear the local Rails session, do some local CAS cleanup, and redirect to the CAS
+logout page. Additionally, the <tt>request.referer</tt> value from the <tt>controller</tt> instance is passed to the
+CAS server as a 'destination' parameter. This allows RubyCAS server to provide a follow-up login page allowing
+the user to log back in to the service they just logged out from using a different username and password. Other
+CAS server implemenations may use this 'destination' parameter in different ways. 
 
 ==== Gatewayed (i.e. optional) authentication
 
