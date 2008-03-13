@@ -172,6 +172,46 @@ module CASClient
             log.debug("Guessed service url: #{service_url.inspect}")
             return service_url
           end
+          
+          # Creates a file in tmp/sessions linking a SessionTicket
+          # with the local Rails session id. The file is named
+          # cas_sess.<session ticket> and its text contents is the corresponding 
+          # Rails session id.
+          def store_service_session_lookup(st, sid)
+            st = st.ticket if st.kind_of? ServiceTicket
+            f = File.new(service_session_lookup_filename(st), 'w')
+            f.write(sid)
+            f.close
+            return service_session_lookup_filename(st)
+          end
+          
+          # Returns the local Rails session ID corresponding to the given
+          # ServiceTicket. This is done by reading the contents of the
+          # cas_sess.<session ticket> file created in a prior call to 
+          # #store_service_session_lookup.
+          def read_service_session_lookup(st)
+            st = st.ticket if st.kind_of? ServiceTicket
+            return IO.read(service_session_lookup_filename(st))
+          end
+          
+          # Removes a stored relationship between a ServiceTicket and a local
+          # Rails session id. This should be called when the session is being
+          # closed.
+          #
+          # See #store_service_session_lookup.
+          def delete_service_session_lookup(st)
+            st = st.ticket if st.kind_of? ServiceTicket
+            File.delete(service_session_lookup_filename(st))
+          end
+          
+          # Returns the path and filename of the service session lookup file.
+          # The returned path is relative, starting at RAILS_ROOT, so you may
+          # need to prepend RAILS_ROOT to the return value and/or call
+          # File.expand_path.
+          def service_session_lookup_filename(st)
+            st = st.ticket if st.kind_of? ServiceTicket
+            return "tmp/sessions/cas_sess.#{st}"
+          end
         end
       end
     
