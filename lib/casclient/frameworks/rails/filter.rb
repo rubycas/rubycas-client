@@ -27,8 +27,9 @@ module CASClient
               current_sess_store  = ActionController::Base.session_options[:database_manager]
               
               if current_sess_store == required_sess_store
-                # FIXME: This is potentially catastrophic if we have a lot of sessions...
-                CGI::Session::ActiveRecordStore::Session.find(:all)
+                session_id = read_service_session_lookup(si)
+                session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
+                session.destroy!
               else
                 log.error "Cannot process logout request because this Rails application's session store is "+
                   " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
