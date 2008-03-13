@@ -21,7 +21,7 @@ module CASClient
               # TODO: Maybe check that the request came from the registered CAS server? Although this might be
               #       pointless since it's easily spoofable...
               si = $~[1]
-              log.debug "Intercepted logout request for CAS session previously opened for service ticket #{si.inspect}."
+              log.debug "Intercepted logout request for CAS session #{si.inspect}."
               
               required_sess_store = CGI::Session::ActiveRecordStore
               current_sess_store  = ActionController::Base.session_options[:database_manager]
@@ -29,7 +29,8 @@ module CASClient
               if current_sess_store == required_sess_store
                 session_id = read_service_session_lookup(si)
                 session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
-                session.destroy!
+                session.destroy
+                log.debug("Destroyed session id #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
               else
                 log.error "Cannot process logout request because this Rails application's session store is "+
                   " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
@@ -93,6 +94,9 @@ module CASClient
                   end
                 end
                 
+                f = store_service_session_lookup(st, controller.session.session_id)
+                log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
+                
                 return true
               else
                 log.warn("Ticket #{st.ticket.inspect} failed validation -- #{vr.failure_code}: #{vr.failure_message}")
@@ -127,8 +131,8 @@ module CASClient
             @@config[:use_gatewaying]
           end
           
-          def returning_from_gateway?(controller)
-            controller.session[:cas_sent_to_gateway]
+          def logout(controller)
+            
           end
           
           def redirect_to_cas_for_authentication(controller)
@@ -161,6 +165,10 @@ module CASClient
             end
           end
           
+          def returning_from_gateway?(controller)
+            controller.session[:cas_sent_to_gateway]
+          end
+          
           def read_service_url(controller)
             if config[:service_url]
               log.debug("Using explicitly set service url: #{config[:service_url]}")
@@ -178,12 +186,13 @@ module CASClient
           # with the local Rails session id. The file is named
           # cas_sess.<session ticket> and its text contents is the corresponding 
           # Rails session id.
+          # Returns the filename of the lookup file created.
           def store_service_session_lookup(st, sid)
             st = st.ticket if st.kind_of? ServiceTicket
-            f = File.new(service_session_lookup_filename(st), 'w')
+            f = File.new(filename_of_service_session_lookup(st), 'w')
             f.write(sid)
             f.close
-            return service_session_lookup_filename(st)
+            return filename_of_service_session_lookup(st)
           end
           
           # Returns the local Rails session ID corresponding to the given
@@ -192,7 +201,7 @@ module CASClient
           # #store_service_session_lookup.
           def read_service_session_lookup(st)
             st = st.ticket if st.kind_of? ServiceTicket
-            return IO.read(service_session_lookup_filename(st))
+            return IO.read(filename_of_service_session_lookup(st))
           end
           
           # Removes a stored relationship between a ServiceTicket and a local
@@ -202,14 +211,14 @@ module CASClient
           # See #store_service_session_lookup.
           def delete_service_session_lookup(st)
             st = st.ticket if st.kind_of? ServiceTicket
-            File.delete(service_session_lookup_filename(st))
+            File.delete(filename_of_service_session_lookup(st))
           end
           
           # Returns the path and filename of the service session lookup file.
           # The returned path is relative, starting at RAILS_ROOT, so you may
           # need to prepend RAILS_ROOT to the return value and/or call
           # File.expand_path.
-          def service_session_lookup_filename(st)
+          def filename_of_service_session_lookup(st)
             st = st.ticket if st.kind_of? ServiceTicket
             return "tmp/sessions/cas_sess.#{st}"
           end
