@@ -54,7 +54,7 @@ module CASClient
     def logout_url(destination_url = nil, follow_url = nil)
       url = @logout_url || (cas_base_url + "/logout")
       
-      if service_url || back_url
+      if destination_url || follow_url
         uri = URI.parse(url)
         h = uri.query ? query_to_hash(uri.query) : {}
         h['destination'] = destination_url if destination_url
