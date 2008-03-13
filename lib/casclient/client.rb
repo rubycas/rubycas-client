@@ -43,20 +43,22 @@ module CASClient
     # If a logout_url has not been explicitly configured,
     # the default is cas_base_url + "/logout".
     #
-    # service_url:: Set this if you want the user to be
-    #               able to immediately log back in. Generally
-    #               you'll want to use something like <tt>request.referer</tt>.
-    #               Note that this only works with RubyCAS-Server.
-    # back_url:: This satisfies section 2.3.1 of the CAS protocol spec.
-    #            See http://www.ja-sig.org/products/cas/overview/protocol
-    def logout_url(service_url = nil, back_url = nil)
+    # destination_url:: Set this if you want the user to be
+    #                   able to immediately log back in. Generally
+    #                   you'll want to use something like <tt>request.referer</tt>.
+    #                   Note that the above behaviour describes RubyCAS-Server 
+    #                   -- other CAS server implementations might use this
+    #                   parameter differently (or not at all).
+    # follow_url:: This satisfies section 2.3.1 of the CAS protocol spec.
+    #              See http://www.ja-sig.org/products/cas/overview/protocol
+    def logout_url(destination_url = nil, follow_url = nil)
       url = @logout_url || (cas_base_url + "/logout")
       
       if service_url || back_url
         uri = URI.parse(url)
         h = uri.query ? query_to_hash(uri.query) : {}
-        h['service'] = service_url if service_url
-        h['url'] = back_url if back_url
+        h['destination'] = destination_url if destination_url
+        h['url'] = follow_url if follow_url
         uri.query = hash_to_query(h)
         uri.to_s
       else
