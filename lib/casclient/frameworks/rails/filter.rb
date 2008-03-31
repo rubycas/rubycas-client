@@ -15,40 +15,17 @@ module CASClient
             
             last_st = controller.session[:cas_last_valid_ticket]
             
-            if controller.request.post? &&
-                controller.request.raw_post =~ 
-                  /^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)<\/samlp:SessionIndex>/m
-              # TODO: Maybe check that the request came from the registered CAS server? Although this might be
-              #       pointless since it's easily spoofable...
-              si = $~[1]
-              log.debug "Intercepted logout request for CAS session #{si.inspect}."
-              
-              required_sess_store = CGI::Session::ActiveRecordStore
-              current_sess_store  = ActionController::Base.session_options[:database_manager]
-              
-              if current_sess_store == required_sess_store
-                session_id = read_service_session_lookup(si)
-                session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
-                session.destroy
-                log.debug("Destroyed session id #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
-              else
-                log.error "Cannot process logout request because this Rails application's session store is "+
-                  " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
-                  " #{required_sess_store.name.inspect} session store."
-              end
-              return false
-            end
+            return false if single_sign_out(controller)
 
             st = read_ticket(controller)
             
-            if st && 
-                last_st && 
+            if st && last_st && 
                 last_st.ticket == st.ticket && 
                 last_st.service == st.service
               # warn() rather than info() because we really shouldn't be re-validating the same ticket. 
-              # The only time when this is acceptable is if the user manually does a refresh and the ticket
-              # happens to be in the URL.
-              log.warn("Re-using previously validated ticket since the new ticket and service are the same.")
+              # The only situation where this is acceptable is if the user manually does a refresh and 
+              # the same ticket happens to be in the URL.
+              log.warn("Re-using previously validated ticket since the ticket id and service are the same.")
               st = last_st
             elsif last_st &&
                 !config[:authenticate_on_every_request] && 
@@ -161,13 +138,50 @@ module CASClient
               controller.session[:cas_sent_to_gateway] = false
             end
             
+            if controller.session[:previous_redirect_to_cas] &&
+                controller.session[:previous_redirect_to_cas] > (Time.now - 1.second)
+              log.warn("Previous redirect to the CAS server was less than a second ago. The client may be stuck in a redirection loop!")
+            end
+            controller.session[:previous_redirect_to_cas] = Time.now
+            
             log.debug("Redirecting to #{redirect_url.inspect}")
             controller.send(:redirect_to, redirect_url)
           end
           
           private
+          def single_sign_out(controller)
+            if controller.request.post? &&
+                controller.request.raw_post =~ 
+                  /^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)<\/samlp:SessionIndex>/m
+              # TODO: Maybe check that the request came from the registered CAS server? Although this might be
+              #       pointless since it's easily spoofable...
+              si = $~[1]
+              log.debug "Intercepted logout request for CAS session #{si.inspect}."
+              
+              required_sess_store = CGI::Session::ActiveRecordStore
+              current_sess_store  = ActionController::Base.session_options[:database_manager]
+              
+              if current_sess_store == required_sess_store
+                session_id = read_service_session_lookup(si)
+                session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
+                session.destroy
+                log.debug("Destroyed session id #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
+                
+                return true
+              else
+                log.error "Cannot process logout request because this Rails application's session store is "+
+                  " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
+                  " #{required_sess_store.name.inspect} session store."
+                
+                return false
+              end
+            else
+              return false
+            end
+          end
+          
           def read_ticket(controller)
-            ticket = controller.params[:ticket]
+            ticket = controller.params[:ticket]+"!"
             
             return nil unless ticket
             
