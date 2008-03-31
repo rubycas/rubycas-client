@@ -181,7 +181,7 @@ module CASClient
           end
           
           def read_ticket(controller)
-            ticket = controller.params[:ticket]+"!"
+            ticket = controller.params[:ticket]
             
             return nil unless ticket
             
