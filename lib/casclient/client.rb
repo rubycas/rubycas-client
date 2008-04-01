@@ -59,7 +59,6 @@ module CASClient
         duri = URI.parse(destination_url)
         h = duri.query ? query_to_hash(duri.query) : {}
         h.delete('ticket')
-        puts h.inspect
         duri.query = hash_to_query(h)
         destination_url = duri.to_s.gsub(/\?$/, '')
       end
