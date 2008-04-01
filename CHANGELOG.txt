@@ -23,6 +23,9 @@
   in a redirection loop with the CAS server (i.e. if it hasalready redirected 
   back to the CAS server due to a failed ticket validation less than a second
   ago.)
+* Fixed bug where the the service/destination parameter in the logout url
+  would retain the 'ticket' value. The ticket is now automatically stripped
+  from the logout url.
 
 == Version 2.0.1 :: 2008-02-27
 

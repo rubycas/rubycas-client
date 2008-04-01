@@ -54,6 +54,16 @@ module CASClient
     def logout_url(destination_url = nil, follow_url = nil)
       url = @logout_url || (cas_base_url + "/logout")
       
+      if destination_url
+        # if present, remove the 'ticket' parameter from the destination_url
+        duri = URI.parse(destination_url)
+        h = duri.query ? query_to_hash(duri.query) : {}
+        h.delete('ticket')
+        puts h.inspect
+        duri.query = hash_to_query(h)
+        destination_url = duri.to_s.gsub(/\?$/, '')
+      end
+      
       if destination_url || follow_url
         uri = URI.parse(url)
         h = uri.query ? query_to_hash(uri.query) : {}
@@ -169,7 +179,7 @@ module CASClient
     # Fetches a CAS response of the given type from the given URI.
     # Type should be either ValidationResponse or ProxyResponse.
     def request_cas_response(uri, type)
-      log.debug "Requesting CAS response form URI #{uri.inspect}"
+      log.debug "Requesting CAS response for URI #{uri.inspect}"
       
       uri = URI.parse(uri) unless uri.kind_of? URI
       https = Net::HTTP.new(uri.host, uri.port)
