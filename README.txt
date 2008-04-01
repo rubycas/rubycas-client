@@ -140,6 +140,7 @@ cleanup, and then call <tt>CASClient::Frameworks::Rails::Filter.logout(controlle
     def logout
       # optionally do some local cleanup here
       # ...
+      
       CASClient::Frameworks::Rails::Filter.logout(self)
     end
   end
