@@ -20,7 +20,7 @@
   in the 2.0.1 release). From the user's and integrator's point of view 
   there shouldn't be any obvious difference from 2.0.1.
 * The client now logs a warning message when it believes that it is stuck
-  in a redirection loop with the CAS server (i.e. if it hasalready redirected 
+  in a redirection loop with the CAS server (i.e. if it has already redirected 
   back to the CAS server due to a failed ticket validation less than a second
   ago.)
 * Fixed bug where the the service/destination parameter in the logout url
