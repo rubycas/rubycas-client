@@ -63,11 +63,6 @@ After installing RubyCAS-Client as a plugin (see above), add the following to yo
 (Change the <tt>:cas_base_url</tt> value to your CAS server's base URL; also note that many CAS servers are configured
 with a base URL that looks more like "https://cas.example.foo/cas".)
 
-If Rails complains about missing constants, try adding this before the CASClient configuration:
-
-  require 'casclient'
-  require 'casclient/frameworks/rails/filter'
-
 Then, in your <tt>app/controllers/application.rb</tt> (or in whichever controller you want to add the CAS filter for):
 
   before_filter CASClient::Frameworks::Rails::Filter
@@ -81,6 +76,11 @@ filter. For example:
 <b>Once the user has been authenticated, their authenticated username is available under <tt>session[:cas_user]</tt>,</b>
 If you want to do something with this username (for example load a user record from the database), you can append another 
 filter method that checks for this value and does whatever you need it to do.
+
+<b>Note:</b> If Rails complains about missing constants, try adding this before the CASClient configuration:
+
+  require 'casclient'
+  require 'casclient/frameworks/rails/filter'
 
 
 ==== A more complicated example
