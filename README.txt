@@ -63,6 +63,11 @@ After installing RubyCAS-Client as a plugin (see above), add the following to yo
 (Change the <tt>:cas_base_url</tt> value to your CAS server's base URL; also note that many CAS servers are configured
 with a base URL that looks more like "https://cas.example.foo/cas".)
 
+If Rails complains about missing constants, try adding this before the CASClient configuration:
+
+  require 'casclient'
+  require 'casclient/frameworks/rails/filter'
+
 Then, in your <tt>app/controllers/application.rb</tt> (or in whichever controller you want to add the CAS filter for):
 
   before_filter CASClient::Frameworks::Rails::Filter
