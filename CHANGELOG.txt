@@ -27,6 +27,8 @@
 * Fixed bug where the the service/destination parameter in the logout url
   would retain the 'ticket' value. The ticket is now automatically stripped
   from the logout url.
+* Extra user attributes are now automatically unserialized if the incoming data 
+  is in YAML format.
 
 == Version 2.0.1 :: 2008-02-27
 

@@ -68,6 +68,11 @@ module CASClient
         @xml.elements.to_a('//cas:authenticationSuccess/*').each do |el|
           @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless el.prefix == 'cas'
         end
+        
+        # unserialize extra attributes
+        @extra_attributes.each do |k, v|
+          @extra_attributes[k] = YAML.load(v)
+        end
       elsif is_failure?
         @failure_code = @xml.elements['//cas:authenticationFailure'].attributes['code']
         @failure_message = @xml.elements['//cas:authenticationFailure'].text.strip
