@@ -160,6 +160,13 @@ module CASClient
           
           private
           def single_sign_out(controller)
+            # Avoid calling raw_post (which may consume the post body) if
+            # this seems to be a file upload
+            if content_type = controller.request.headers["CONTENT_TYPE"] and
+                content_type =~ %r{^multipart/}
+              return false
+            end
+            
             if controller.request.post? &&
                 controller.request.raw_post =~ 
                   /^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)<\/samlp:SessionIndex>/m
