@@ -162,7 +162,7 @@ module CASClient
           def single_sign_out(controller)
             # Avoid calling raw_post (which may consume the post body) if
             # this seems to be a file upload
-            if content_type = controller.request.headers["CONTENT_TYPE"] and
+            if content_type = controller.request.headers["CONTENT_TYPE"] &&
                 content_type =~ %r{^multipart/}
               return false
             end
