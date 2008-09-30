@@ -53,6 +53,10 @@ module CASClient
                 controller.session[client.username_session_key] = vr.user
                 controller.session[client.extra_attributes_session_key] = vr.extra_attributes
                 
+                if v.extra_attributes
+                  log.debug("Extra attributes read from ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
+                end
+                
                 # RubyCAS-Client 1.x used :casfilteruser as it's username session key,
                 # so we need to set this here to ensure compatibility with configurations
                 # built around the old client.
