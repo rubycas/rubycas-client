@@ -120,7 +120,7 @@ module CASClient
           # If given, the optional <tt>service</tt> URL overrides 
           # <tt>request.referer</tt>.
           def logout(controller, service = nil)
-            referer = controller.request.referer
+            referer = service || controller.request.referer
             st = controller.session[:cas_last_valid_ticket]
             delete_service_session_lookup(st) if st
             controller.send(:reset_session)
