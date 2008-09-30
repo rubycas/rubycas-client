@@ -19,6 +19,8 @@ module CASClient
 
             st = read_ticket(controller)
             
+            is_new_session = true
+            
             if st && last_st && 
                 last_st.ticket == st.ticket && 
                 last_st.service == st.service
@@ -27,6 +29,7 @@ module CASClient
               # the same ticket happens to be in the URL.
               log.warn("Re-using previously validated ticket since the ticket id and service are the same.")
               st = last_st
+              is_new_session = false
             elsif last_st &&
                 !config[:authenticate_on_every_request] && 
                 controller.session[client.username_session_key]
@@ -34,10 +37,11 @@ module CASClient
               # previously authenticated for this service). This is to prevent redirection to the CAS server on every
               # request.
               # This behaviour can be disabled (so that every request is routed through the CAS server) by setting
-              # the :authenticate_on_every_request config option to false. 
+              # the :authenticate_on_every_request config option to false.
               log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
                 "Previous ticket #{last_st.ticket.inspect} will be re-used."
               st = last_st
+              is_new_session = false
             end
             
             if st
@@ -71,8 +75,10 @@ module CASClient
                   end
                 end
                 
-                f = store_service_session_lookup(st, controller.session.session_id)
-                log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
+                if is_new_session
+                  f = store_service_session_lookup(st, controller.session.session_id)
+                  log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
+                end
                 
                 return true
               else

@@ -15,7 +15,7 @@
   now return "https://cas.example?destination=https%3A%2F%2Ffoo.example"
   instead of the old "https://cas.example?service=https%3A%2F%2Ffoo.example".
   RubyCAS-Server has been modified to deal with this as of version 0.6.0.
-* Some behind-the-scenes change to the way previous authentication info is
+* Some behind-the-scenes changes to the way previous authentication info is
   reused by the Rails filter in subsequent requests (see the note below 
   in the 2.0.1 release). From the user's and integrator's point of view 
   there shouldn't be any obvious difference from 2.0.1.
