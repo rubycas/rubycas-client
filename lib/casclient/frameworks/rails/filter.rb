@@ -51,8 +51,8 @@ module CASClient
               if st.is_valid?
                 if is_new_session
                   log.info("Ticket #{st.ticket.inspect} for service #{st.service.inspect} belonging to user #{vr.user.inspect} is VALID.")
-                  controller.session[client.username_session_key] = vr.user
-                  controller.session[client.extra_attributes_session_key] = vr.extra_attributes
+                  controller.session[client.username_session_key] = vr.user.dup
+                  controller.session[client.extra_attributes_session_key] = vr.extra_attributes.dup
                   
                   if vr.extra_attributes
                     log.debug("Extra attributes read from ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
