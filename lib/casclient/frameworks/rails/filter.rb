@@ -180,6 +180,10 @@ module CASClient
               
               if current_sess_store == required_sess_store
                 session_id = read_service_session_lookup(si)
+                unless session_id
+                  log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session file could be found.")
+                  return false
+                end
                 session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
                 session.destroy
                 log.debug("Destroyed session id #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
@@ -247,7 +251,8 @@ module CASClient
           # #store_service_session_lookup.
           def read_service_session_lookup(st)
             st = st.ticket if st.kind_of? ServiceTicket
-            return IO.read(filename_of_service_session_lookup(st))
+            return File.exists?(filename_of_service_session_lookup(st)) &&
+              IO.read(filename_of_service_session_lookup(st))
           end
           
           # Removes a stored relationship between a ServiceTicket and a local
