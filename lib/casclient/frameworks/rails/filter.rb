@@ -49,19 +49,24 @@ module CASClient
               vr = st.response
               
               if st.is_valid?
-                log.info("Ticket #{st.ticket.inspect} for service #{st.service.inspect} belonging to user #{vr.user.inspect} is VALID.")
-                controller.session[client.username_session_key] = vr.user
-                controller.session[client.extra_attributes_session_key] = vr.extra_attributes
-                
-                if v.extra_attributes
-                  log.debug("Extra attributes read from ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
+                if is_new_session
+                  log.info("Ticket #{st.ticket.inspect} for service #{st.service.inspect} belonging to user #{vr.user.inspect} is VALID.")
+                  controller.session[client.username_session_key] = vr.user
+                  controller.session[client.extra_attributes_session_key] = vr.extra_attributes
+                  
+                  if v.extra_attributes
+                    log.debug("Extra attributes read from ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
+                  end
+                  
+                  # RubyCAS-Client 1.x used :casfilteruser as it's username session key,
+                  # so we need to set this here to ensure compatibility with configurations
+                  # built around the old client.
+                  controller.session[:casfilteruser] = vr.user
+                  
+                  f = store_service_session_lookup(st, controller.session.session_id)
+                  log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
                 end
-                
-                # RubyCAS-Client 1.x used :casfilteruser as it's username session key,
-                # so we need to set this here to ensure compatibility with configurations
-                # built around the old client.
-                controller.session[:casfilteruser] = vr.user
-                
+              
                 # Store the ticket in the session to avoid re-validating the same service
                 # ticket with the CAS server.
                 controller.session[:cas_last_valid_ticket] = st
@@ -77,11 +82,6 @@ module CASClient
                   else
                     log.error("Failed to retrieve a PGT for PGT IOU #{vr.pgt_iou}!")
                   end
-                end
-                
-                if is_new_session
-                  f = store_service_session_lookup(st, controller.session.session_id)
-                  log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
                 end
                 
                 return true
