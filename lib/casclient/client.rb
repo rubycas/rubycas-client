@@ -94,6 +94,30 @@ module CASClient
     end
     alias validate_proxy_ticket validate_service_ticket
     
+    # Returns true if the configured CAS server is up and responding;
+    # false otherwise.
+    def cas_server_is_up?
+      uri = URI.parse(login_url)
+      
+      log.debug "Checking if CAS server at URI '#{uri}' is up..."
+      
+      https = Net::HTTP.new(uri.host, uri.port)
+      https.use_ssl = (uri.scheme == 'https')
+      
+      begin
+        raw_res = https.start do |conn|
+          conn.get("#{uri.path}?#{uri.query}")
+        end
+      rescue Errno::ECONNREFUSED => e
+        log.warn "CAS server did not respond! (#{e.inspect})"
+        return false
+      end
+      
+      log.debug "CAS server responded with #{raw_res.inspect}:\n#{raw_res.body}"
+      
+      return raw_res.kind_of?(Net::HTTPSuccess)
+    end
+    
     # Requests a login using the given credentials for the given service; 
     # returns a LoginResponse object.
     def login_to_service(credentials, service)
@@ -178,18 +202,27 @@ module CASClient
     # Fetches a CAS response of the given type from the given URI.
     # Type should be either ValidationResponse or ProxyResponse.
     def request_cas_response(uri, type)
-      log.debug "Requesting CAS response for URI #{uri.inspect}"
+      log.debug "Requesting CAS response for URI #{uri}"
       
       uri = URI.parse(uri) unless uri.kind_of? URI
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = (uri.scheme == 'https')
-      raw_res = https.start do |conn|
-        conn.get("#{uri.path}?#{uri.query}")
+      
+      begin
+        raw_res = https.start do |conn|
+          conn.get("#{uri.path}?#{uri.query}")
+        end
+      rescue Errno::ECONNREFUSED => e
+        log.error "CAS server did not respond! (#{e.inspect})"
+        raise "The CAS authentication server at #{uri} is not responding!"
       end
       
-      #TODO: check to make sure that response code is 200 and handle errors otherwise
-      
-      log.debug "CAS Responded with #{raw_res.inspect}:\n#{raw_res.body}"
+      if raw_res.kind_of?(Net::HTTPSuccess)
+        log.debug "CAS server responded with #{raw_res.inspect}:\n#{raw_res.body}"
+      else
+        log.error "CAS server responded with an error! (#{raw_res.inspect})"
+        raise "The CAS authentication server at #{uri} responded with an error (#{raw_res.inspect})!"
+      end
       
       type.new(raw_res.body)
     end
