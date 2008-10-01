@@ -261,8 +261,8 @@ module CASClient
           # #store_service_session_lookup.
           def read_service_session_lookup(st)
             st = st.ticket if st.kind_of? ServiceTicket
-            return File.exists?(filename_of_service_session_lookup(st)) &&
-              IO.read(filename_of_service_session_lookup(st))
+            ssl_filename = filename_of_service_session_lookup(st)
+            return File.exists?(ssl_filename) && IO.read(ssl_filename)
           end
           
           # Removes a stored relationship between a ServiceTicket and a local
@@ -272,7 +272,8 @@ module CASClient
           # See #store_service_session_lookup.
           def delete_service_session_lookup(st)
             st = st.ticket if st.kind_of? ServiceTicket
-            File.delete(filename_of_service_session_lookup(st))
+            ssl_filename = filename_of_service_session_lookup(st)
+            File.delete(ssl_filename) if File.exists?(ssl_filename)
           end
           
           # Returns the path and filename of the service session lookup file.
