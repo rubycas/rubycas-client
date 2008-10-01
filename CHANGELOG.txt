@@ -29,6 +29,9 @@
   from the logout url.
 * Extra user attributes are now automatically unserialized if the incoming data 
   is in YAML format.
+* Added cas_server_is_up? method to the client as requested in issue #5.
+* Somewhat better handling and logging of errors resulting from CAS server
+  connection/response problems.
 
 == Version 2.0.1 :: 2008-02-27
 
