@@ -32,6 +32,10 @@
 * Added cas_server_is_up? method to the client as requested in issue #5.
 * Somewhat better handling and logging of errors resulting from CAS server
   connection/response problems.
+* We now accept HTTP responses from the CAS server with status code 422 since 
+  RubyCAS-Server 0.7.0+ generates these in response to requests that are 
+  processable but contain invalid CAS data (for example an invalid service 
+  ticket).
 
 == Version 2.0.1 :: 2008-02-27
 
