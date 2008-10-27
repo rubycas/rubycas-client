@@ -217,7 +217,10 @@ module CASClient
         raise "The CAS authentication server at #{uri} is not responding!"
       end
       
-      if raw_res.kind_of?(Net::HTTPSuccess)
+      # We accept responses of type 422 since RubyCAS-Server generates these
+      # in response to requests from the client that are processable but contain
+      # invalid CAS data (for example an invalid service ticket).
+      if raw_res.kind_of?(Net::HTTPSuccess) || raw_res.code.to_i == 422
         log.debug "CAS server responded with #{raw_res.inspect}:\n#{raw_res.body}"
       else
         log.error "CAS server responded with an error! (#{raw_res.inspect})"
