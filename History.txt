@@ -2,40 +2,47 @@
 
 == Version 2.1.0 :: In Progress...
 
-* Implemented single-sign-out functionality. The client will now intercept
-  single-sign-out requests and deal with them appropriately if the
-  :enable_single_sign_out config option is set to true. This is currently
-  disabled by default.
-* Added logout method to Rails adapter to simplify the logout process. The
-  logout method resets the local Rails session and redirects to the CAS
-  logout page.
-* The 'service' parameter in the logout method has been renamed to
-  'destination' to better match the behaviour of other CAS clients. So for
-  example, when you call logout_url("http://foo.example"), the method will
-  now return "https://cas.example?destination=https%3A%2F%2Ffoo.example"
-  instead of the old "https://cas.example?service=https%3A%2F%2Ffoo.example".
-  RubyCAS-Server has been modified to deal with this as of version 0.6.0.
-* Some behind-the-scenes changes to the way previous authentication info is
-  reused by the Rails filter in subsequent requests (see the note below 
-  in the 2.0.1 release). From the user's and integrator's point of view 
-  there shouldn't be any obvious difference from 2.0.1.
-* Redirection loop interception: The client now logs a warning message when it 
-  believes that it is stuck in a redirection loop with the CAS server. If more 
-  than three of these redirects occur within one second, the client will
-  redirect back to the login page with renew=1, forcing the user to try
-  authenticating again. 
-* Fixed bug where the the service/destination parameter in the logout url
-  would retain the 'ticket' value. The ticket is now automatically stripped
-  from the logout url.
-* Extra user attributes are now automatically unserialized if the incoming data 
-  is in YAML format.
-* Added cas_server_is_up? method to the client as requested in issue #5.
-* Somewhat better handling and logging of errors resulting from CAS server
-  connection/response problems.
-* We now accept HTTP responses from the CAS server with status code 422 since 
-  RubyCAS-Server 0.7.0+ generates these in response to requests that are 
-  processable but contain invalid CAS data (for example an invalid service 
-  ticket).
+* New functionality:
+  * Implemented single-sign-out functionality. The client will now intercept
+    single-sign-out requests and deal with them appropriately if the
+    :enable_single_sign_out config option is set to true. This is currently
+    disabled by default.
+  * Added logout method to Rails adapter to simplify the logout process. The
+    logout method resets the local Rails session and redirects to the CAS
+    logout page.
+  * Extra user attributes are now automatically unserialized if the incoming data 
+    is in YAML format.
+  * Added cas_server_is_up? method to the client as requested in issue #5.
+    
+* Changes to existing functionality:
+  * The 'service' parameter in the logout method has been renamed to
+    'destination' to better match the behaviour of other CAS clients. So for
+    example, when you call logout_url("http://foo.example"), the method will
+    now return "https://cas.example?destination=https%3A%2F%2Ffoo.example"
+    instead of the old "https://cas.example?service=https%3A%2F%2Ffoo.example".
+    RubyCAS-Server has been modified to deal with this as of version 0.6.0.
+  * We now accept HTTP responses from the CAS server with status code 422 since 
+    RubyCAS-Server 0.7.0+ generates these in response to requests that are 
+    processable but contain invalid CAS data (for example an invalid service 
+    ticket).
+  * Some behind-the-scenes changes to the way previous authentication info is
+    reused by the Rails filter in subsequent requests (see the note below 
+    in the 2.0.1 release). From the user's and integrator's point of view 
+    there shouldn't be any obvious difference from 2.0.1.
+  * Redirection loop interception: The client now logs a warning message when it 
+    believes that it is stuck in a redirection loop with the CAS server. If more 
+    than three of these redirects occur within one second, the client will
+    redirect back to the login page with renew=1, forcing the user to try
+    authenticating again. 
+  * Somewhat better handling and logging of errors resulting from CAS server
+    connection/response problems.
+
+* Bug Fixes:
+  * Fixed bug where the the service/destination parameter in the logout url
+    would sometimes retain the 'ticket' value. The ticket is now automatically
+    stripped from the logout url.
+  * The client will no longer attempt to retrieve a PGT for an IOU that had
+    already been previously retrieved. [yipdw1]
 
 == Version 2.0.1 :: 2008-02-27
 

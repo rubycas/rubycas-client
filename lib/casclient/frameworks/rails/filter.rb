@@ -75,16 +75,22 @@ module CASClient
                 controller.session[:cas_last_valid_ticket] = st
                 
                 if vr.pgt_iou
-                  log.info("Receipt has a proxy-granting ticket IOU. Attempting to retrieve the proxy-granting ticket...")
-                  pgt = client.retrieve_proxy_granting_ticket(vr.pgt_iou)
-                  if pgt
-                    log.debug("Got PGT #{pgt.ticket.inspect} for PGT IOU #{pgt.iou.inspect}. This will be stored in the session.")
-                    controller.session[:cas_pgt] = pgt
-                    # For backwards compatibility with RubyCAS-Client 1.x configurations...
-                    controller.session[:casfilterpgt] = pgt
+                  unless controller.session[:cas_pgt] && controller.session[:cas_pgt].ticket && controller.session[:cas_pgt].iou == vr.pgt_iou
+                    log.info("Receipt has a proxy-granting ticket IOU. Attempting to retrieve the proxy-granting ticket...")
+                    pgt = client.retrieve_proxy_granting_ticket(vr.pgt_iou)
+
+                    if pgt
+                      log.debug("Got PGT #{pgt.ticket.inspect} for PGT IOU #{pgt.iou.inspect}. This will be stored in the session.")
+                      controller.session[:cas_pgt] = pgt
+                      # For backwards compatibility with RubyCAS-Client 1.x configurations...
+                      controller.session[:casfilterpgt] = pgt
+                    else
+                      log.error("Failed to retrieve a PGT for PGT IOU #{vr.pgt_iou}!")
+                    end
                   else
-                    log.error("Failed to retrieve a PGT for PGT IOU #{vr.pgt_iou}!")
+                    log.info("PGT is present in session and PGT IOU #{vr.pgt_iou} matches the saved PGT IOU.  Not retrieving new PGT.")
                   end
+
                 end
                 
                 return true
