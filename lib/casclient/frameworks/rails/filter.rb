@@ -15,7 +15,10 @@ module CASClient
             
             last_st = controller.session[:cas_last_valid_ticket]
             
-            return false if single_sign_out(controller)
+            if single_sign_out(controller)
+              controller.send(:render, :text => "CAS Single-Sign-Out request intercepted.")
+              return false 
+            end
 
             st = read_ticket(controller)
             
@@ -55,7 +58,7 @@ module CASClient
                   controller.session[client.extra_attributes_session_key] = HashWithIndifferentAccess.new(vr.extra_attributes.dup)
                   
                   if vr.extra_attributes
-                    log.debug("Extra attributes read from ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
+                    log.debug("Extra user attributes provided along with ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
                   end
                   
                   # RubyCAS-Client 1.x used :casfilteruser as it's username session key,
@@ -170,6 +173,7 @@ module CASClient
           
           private
           def single_sign_out(controller)
+            
             # Avoid calling raw_post (which may consume the post body) if
             # this seems to be a file upload
             if content_type = controller.request.headers["CONTENT_TYPE"] &&
@@ -178,37 +182,46 @@ module CASClient
             end
             
             if controller.request.post? &&
-                controller.request.raw_post =~ 
-                  /^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)<\/samlp:SessionIndex>/m
+                controller.params['logoutRequest'] &&
+                controller.params['logoutRequest'] =~
+                  %r{^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)</samlp:SessionIndex>}m
               # TODO: Maybe check that the request came from the registered CAS server? Although this might be
               #       pointless since it's easily spoofable...
               si = $~[1]
-              log.debug "Intercepted logout request for CAS session #{si.inspect}."
+              log.debug "Intercepted single-sign-out request for CAS session #{si.inspect}."
               
               required_sess_store = CGI::Session::ActiveRecordStore
               current_sess_store  = ActionController::Base.session_options[:database_manager]
               
               if current_sess_store == required_sess_store
                 session_id = read_service_session_lookup(si)
-                unless session_id
-                  log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session file could be found.")
-                  return false
-                end
-                session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
-                session.destroy
-                log.debug("Destroyed session id #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
                 
-                return true
+                if session_id
+                  session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
+                  if session
+                    session.destroy
+                    log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
+                  else
+                    log.debug("Data for session #{session_id.inspect} was not found. It may have already been cleared by a local CAS logout request.")
+                  end
+                  
+                  log.info("Single-sign-out for session #{session_id.inspect} completed successfuly.")
+                else
+                  log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session id could be looked up.")
+                end
               else
                 log.error "Cannot process logout request because this Rails application's session store is "+
                   " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
                   " #{required_sess_store.name.inspect} session store."
-                
-                return false
               end
-            else
-              return false
+              
+              # Return true to indicate that a single-sign-out request was detected
+              # and that further processing of the request is unnecessary.
+              return true
             end
+            
+            # This is not a single-sign-out request.
+            return false
           end
           
           def read_ticket(controller)
