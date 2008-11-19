@@ -4,20 +4,19 @@
 # install the rubycas-client gem
 # http://rubyforge.org/projects/rubycas-client/
 #
+require 'casclient'
 class Merb::Authentication
   module Strategies
     class CAS < Merb::Authentication::Strategy
 
-      require 'casclient'
       include CASClient
-      include Merb::Rack::Helpers
 
       def run!
         @client ||= Client.new(config)
 
-        service_ticket = read_ticket(self)
+        service_ticket = read_ticket
 
-        cas_login_url = @client.add_service_to_login_url(read_service_url(self))
+        cas_login_url = @client.add_service_to_login_url(service_url)
 
         last_service_ticket = session[:cas_last_valid_ticket]
         if (service_ticket && last_service_ticket && 
@@ -70,29 +69,29 @@ class Merb::Authentication
         end
       end
 
-      def read_ticket(controller)
-        ticket = controller.params[:ticket]
+      def read_ticket
+        ticket = request.params[:ticket]
 
         return nil unless ticket
 
         log.debug("Request contains ticket #{ticket.inspect}.")
 
         if ticket =~ /^PT-/
-          ProxyTicket.new(ticket, read_service_url(controller), controller.params[:renew])
+          ProxyTicket.new(ticket, service_url, request.params[:renew])
         else
-          ServiceTicket.new(ticket, read_service_url(controller), controller.params[:renew])
+          ServiceTicket.new(ticket, service_url, request.params[:renew])
         end
       end
 
-      def read_service_url(controller)
+      def service_url
         if config[:service_url]
           log.debug("Using explicitly set service url: #{config[:service_url]}")
           return config[:service_url]
         end
 
-        params = controller.params.dup
+        params = request.params.dup
         params.delete(:ticket)
-        service_url = request.protocol + '://' + request.host / params.to_hash.symbolize_keys!
+        service_url = "#{request.protocol}://#{request.host}" + request.path
         log.debug("Guessed service url: #{service_url.inspect}")
         return service_url
       end
