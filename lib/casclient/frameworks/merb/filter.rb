@@ -87,7 +87,7 @@ module CASClient
 
           params = controller.params.dup
           params.delete(:ticket)
-          service_url = request.protocol + '://' + request.host / controller.url(params.to_hash.symbolize_keys!)
+          service_url = request.protocol + request.host / controller.url(params.to_hash.symbolize_keys!)
           log.debug("Guessed service url: #{service_url.inspect}")
           return service_url
         end
