@@ -49,8 +49,14 @@ you always have the latest bleeding-edge version of RubyCAS-Client:
 
 == Usage Examples
 
-Although RubyCAS-Client can be used with other web Frameworks (for example Camping), the following examples
-are aimed at {Ruby on Rails}[http://rubyonrails.org].
+If you'd rather jump right in, have a look at the example Rails and Merb applications pre-configured for CAS
+authentication:
+
+http://github.com/gunark/rubycas-client/tree/master/examples
+
+
+Otherwise, continue reading for a step-by-step guide for integrating RubyCAS-Client with Rails:
+
 
 ==== Using RubyCAS-Client in Rails controllers
 
