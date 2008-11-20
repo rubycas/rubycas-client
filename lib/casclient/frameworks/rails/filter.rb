@@ -127,6 +127,16 @@ module CASClient
             @@config[:use_gatewaying]
           end
           
+          # Returns the login URL for the current controller. 
+          # Useful when you want to provide a "Login" link in a GatewayFilter'ed
+          # action. 
+          def login_url(controller)
+            service_url = read_service_url(controller)
+            url = client.add_service_to_login_url(service_url)
+            log.debug("Generated login url: #{url}")
+            return url
+          end
+          
           # Clears the given controller's local Rails session, does some local 
           # CAS cleanup, and redirects to the CAS logout page. Additionally, the
           # <tt>request.referer</tt> value from the <tt>controller</tt> instance 
@@ -147,8 +157,7 @@ module CASClient
           end
           
           def redirect_to_cas_for_authentication(controller)
-            service_url = read_service_url(controller)
-            redirect_url = client.add_service_to_login_url(service_url)
+            redirect_url = login_url(controller)
             
             if use_gatewaying?
               controller.session[:cas_sent_to_gateway] = true

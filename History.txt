@@ -3,16 +3,22 @@
 == Version 2.1.0 :: In Progress...
 
 * New functionality:
+  * Added an adapter for the Merb framework. Thanks to Andrew O'Brien and
+    Antono Vasiljev.
   * Implemented single-sign-out functionality. The client will now intercept
     single-sign-out requests and deal with them appropriately if the
     :enable_single_sign_out config option is set to true. This is currently
-    disabled by default.
+    disabled by default. (Currently this is only implemented for the Rails
+    adapter)
   * Added logout method to Rails adapter to simplify the logout process. The
     logout method resets the local Rails session and redirects to the CAS
     logout page.
+  * Added login_url method to the Rails filter. This will return the login
+    URL for the current controller; useful when you want to show a "Login"
+    link in a gatewayed page for an unauthenticated user.
+  * Added cas_server_is_up? method to the client, as requested in issue #5.
   * Extra user attributes are now automatically unserialized if the incoming data 
     is in YAML format.
-  * Added cas_server_is_up? method to the client as requested in issue #5.
     
 * Changes to existing functionality:
   * The 'service' parameter in the logout method has been renamed to
@@ -43,6 +49,10 @@
     stripped from the logout url.
   * The client will no longer attempt to retrieve a PGT for an IOU that had
     already been previously retrieved. [yipdw1]
+    
+* Misc:
+  * Added complete CAS client integration examples for Rails and Merb 
+    applications under /examples.
 
 == Version 2.0.1 :: 2008-02-27
 
