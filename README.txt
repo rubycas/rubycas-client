@@ -188,6 +188,9 @@ CAS authentication for all actions in a controller except the index action:
     # ...
   end
   
+To provide a login URL for unauthenticated users:
+
+  <%= link_to("Login", CASClient::Frameworks::Rails::Filter.login_url(controller)) %>
 
 ==== How to act as a CAS proxy
 
