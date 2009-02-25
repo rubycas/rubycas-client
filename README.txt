@@ -19,6 +19,10 @@ For general information about the open CAS protocol, please have a look at http:
 If your organization does not already have a CAS server, you may be interested in RubyCAS-Client's sister project,
 RubyCAS-Server[http://code.google.com/p/rubycas-server/].
 
+The RubyCAS-Client package includes adapters for Rails and Merb, although the client library itself can be
+adapted for other frameworks (for example an implementation for Camping is available via the Picnic[http://github.com/zuk/picnic/tree/master]
+library).
+
 
 == Getting help and reporting problems
 
@@ -26,13 +30,15 @@ If you need help, try posting to the RubyCAS discussion group at http://groups.g
 
 To report problems, please use the Google Code issue tracker at http://code.google.com/p/rubycas-client/issues/list.
 
+API documentation (i.e. the RDocs) are available at http://rubycas-client.rubyforge.org
+
 
 == Installation
 
 You can download the latest version of RubyCAS-Client from the project's rubyforge page at 
 http://rubyforge.org/projects/rubycas-client.
 
-However, it is easier to install the CAS client into a Ruby on Rails app as a plugin:
+However, if you're using Rails, it's easier to install the CAS client as a plugin:
 
   cd <your rails app>
   ./script/plugin install http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
@@ -46,6 +52,9 @@ you always have the latest bleeding-edge version of RubyCAS-Client:
 
   ./script/plugin install -x http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
 
+With Rails 2.1 or newer, it is also possible to install the plugin directly from the bleeding-edge git repository:
+
+  ./script/plugin install git://github.com/gunark/rubycas-client.git
 
 == Usage Examples
 
