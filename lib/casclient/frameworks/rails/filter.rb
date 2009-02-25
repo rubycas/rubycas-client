@@ -15,7 +15,7 @@ module CASClient
             
             last_st = controller.session[:cas_last_valid_ticket]
             
-            if config[:enable_signle_sign_out] && single_sign_out(controller)
+            if config[:enable_single_sign_out] && single_sign_out(controller)
               controller.send(:render, :text => "CAS Single-Sign-Out request intercepted.")
               return false 
             end
@@ -66,7 +66,7 @@ module CASClient
                   # built around the old client.
                   controller.session[:casfilteruser] = vr.user
                   
-                  f = store_service_session_lookup(st, controller.session.session_id) if config[:enable_signle_sign_out]
+                  f = store_service_session_lookup(st, controller.session.session_id) if config[:enable_single_sign_out]
                   log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
                 end
               
