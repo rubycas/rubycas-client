@@ -15,7 +15,7 @@ module CASClient
             
             last_st = controller.session[:cas_last_valid_ticket]
             
-            if config[:enable_single_sign_out] && single_sign_out(controller)
+            if single_sign_out(controller)
               controller.send(:render, :text => "CAS Single-Sign-Out request intercepted.")
               return false 
             end
@@ -66,8 +66,10 @@ module CASClient
                   # built around the old client.
                   controller.session[:casfilteruser] = vr.user
                   
-                  f = store_service_session_lookup(st, controller.session.session_id) if config[:enable_single_sign_out]
-                  log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
+                  if config[:enable_single_sign_out]
+                    f = store_service_session_lookup(st, controller.session.session_id)
+                    log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
+                  end
                 end
               
                 # Store the ticket in the session to avoid re-validating the same service
@@ -203,6 +205,12 @@ module CASClient
               # TODO: Maybe check that the request came from the registered CAS server? Although this might be
               #       pointless since it's easily spoofable...
               si = $~[1]
+              
+              unless config[:enable_single_sign_out]
+                log.warn "Ignoring single-sign-out request for CAS session #{si.inspect} because ssout functionality is not enabled (see the :enable_single_sign_out config option)."
+                return false
+              end
+              
               log.debug "Intercepted single-sign-out request for CAS session #{si.inspect}."
               
               required_sess_store = CGI::Session::ActiveRecordStore
