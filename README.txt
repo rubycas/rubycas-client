@@ -116,7 +116,7 @@ Here is a more complicated configuration showing most of the configuration optio
     :logout_url    => "https://cas.example.foo/logout",
     :validate_url  => "https://cas.example.foo/proxyValidate",
     :username_session_key => :cas_user,
-    :extra_attributes_session_key => :cas_extra_attributes
+    :extra_attributes_session_key => :cas_extra_attributes,
     :logger => cas_logger,
     :authenticate_on_every_request => true
   )
