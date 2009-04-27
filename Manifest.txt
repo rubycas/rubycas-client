@@ -2,7 +2,7 @@ CHANGELOG.txt
 History.txt
 LICENSE.txt
 Manifest.txt
-README.txt
+README.rdoc
 Rakefile
 examples/merb/README.textile
 examples/merb/Rakefile
