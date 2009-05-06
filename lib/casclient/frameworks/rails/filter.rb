@@ -288,7 +288,7 @@ module CASClient
             f = File.new(filename_of_service_session_lookup(st), 'w')
             f.write(sid)
             f.close
-            return filename_of_service_session_lookup(st)
+            return f.path
           end
           
           # Returns the local Rails session ID corresponding to the given
