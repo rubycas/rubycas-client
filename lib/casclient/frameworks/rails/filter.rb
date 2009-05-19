@@ -296,15 +296,20 @@ module CASClient
           end
           
           def read_service_url(controller)
-            if config[:service_url]
-              log.debug("Using explicitly set service url: #{config[:service_url]}")
-              return config[:service_url]
-            end
-            
             params = controller.params.dup
             params.delete(:ticket)
-            service_url = controller.url_for(params)
-            log.debug("Guessed service url: #{service_url.inspect}")
+            
+            service_url = if config[:service_url]
+              log.debug("Using explicitly set service url: #{config[:service_url]}")
+              config[:service_url]
+            elsif params[:service_url]
+              log.debug("Using provided service url: #{params[:service_url]}")
+              params[:service_url]
+            else
+              log.debug("Guessed service url: #{service_url.inspect}")
+              controller.url_for(params)
+            end
+            
             return service_url
           end
           
