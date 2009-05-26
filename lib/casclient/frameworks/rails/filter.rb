@@ -8,10 +8,20 @@ module CASClient
         @@config = nil
         @@client = nil
         @@log = nil
+        @@fake_user = nil
+        
         
         class << self
           def filter(controller)
             raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
+            
+            
+            if @@fake_user
+              controller.session[client.username_session_key] = @@fake_user
+              controller.session[:casfilteruser] = vr.user
+              return true
+            end
+            
             
             last_st = controller.session[:cas_last_valid_ticket]
             
@@ -128,6 +138,14 @@ module CASClient
             @@config[:logger] = RAILS_DEFAULT_LOGGER unless @@config[:logger]
             @@client = CASClient::Client.new(config)
             @@log = client.log
+          end
+          
+          # used to allow faking for testing
+          # with cucumber and other tools.
+          # use like 
+          #  CASClient::Frameworks::Rails::Filter.fake("homer")
+          def fake(username)
+            @@fake_user = username
           end
           
           def use_gatewaying?

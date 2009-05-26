@@ -304,7 +304,17 @@ To install the library on an Debian/Ubuntu system:
 
 For other platforms you'll have to figure it out yourself.
 
+== Testing
 
+In some cases, especially those using Cucumber or other tools that simply can't work with 
+CAS, it may be necessary to work around CAS instead.  
+
+In your test or Cucumber step definition, simply fake out CAS.
+
+  CASClient::Frameworks::Rails::Filter.fake("homer")
+
+This functionality was present in the original version of this plugin.
+The value of the username is stored in session[:cas_user] (or the user specified field) and session[:casfilteruser] for backwards-compatibility.
 
 == License
 
