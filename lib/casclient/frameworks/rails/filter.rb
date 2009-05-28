@@ -18,7 +18,7 @@ module CASClient
             
             if @@fake_user
               controller.session[client.username_session_key] = @@fake_user
-              controller.session[:casfilteruser] = vr.user
+              controller.session[:casfilteruser] = @@fake_user
               return true
             end
             
