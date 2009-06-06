@@ -88,11 +88,11 @@ module CASClient
     end
     
     def is_success?
-      @valid == true || (protocol > 1.0 && xml.name == "authenticationSuccess")
+      (instance_variable_defined?(:@valid) &&  @valid) || (protocol > 1.0 && xml.name == "authenticationSuccess")
     end
     
     def is_failure?
-      @valid == false || (protocol > 1.0 && xml.name == "authenticationFailure" )
+      (instance_variable_defined?(:@valid) && !@valid) || (protocol > 1.0 && xml.name == "authenticationFailure" )
     end
   end
   
