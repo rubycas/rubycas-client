@@ -46,7 +46,7 @@ module CASClient
   # will quietly swallow any logging calls.
   class LoggerWrapper
     def initialize(real_logger=nil)
-      set_logger(real_logger)
+      set_real_logger(real_logger)
     end
     # Assign the 'real' Logger instance that this dummy instance wraps around.
     def set_real_logger(real_logger)
@@ -55,7 +55,7 @@ module CASClient
     # Log using the appropriate method if we have a logger
     # if we dont' have a logger, gracefully ignore.
     def method_missing(name, *args)
-      if @real_logger && @real_logger.respond_to?(name)
+      if instance_variable_defined?(@real_logger) && @real_logger.respond_to?(name)
         @real_logger.send(name, *args)
       end
     end
