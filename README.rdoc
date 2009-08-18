@@ -118,7 +118,7 @@ Here is a more complicated configuration showing most of the configuration optio
     :username_session_key => :cas_user,
     :extra_attributes_session_key => :cas_extra_attributes,
     :logger => cas_logger,
-    :authenticate_on_every_request => true
+    :enable_single_sign_out => true
   )
 
 Note that normally it is not necessary to specify <tt>:login_url</tt>, <tt>:logout_url</tt>, and <tt>:validate_url</tt>.
@@ -152,6 +152,8 @@ requsts from the CAS server, but in order for this to work you must configure yo
    the contents of this directory must be shared between all server instances. 
 3. Cross-site request forgery protection must be disabled. In your <tt>application.rb</tt>: <tt>self.allow_forgery_protection = false</tt>.
    (Or rather you may want to disable forgery protection only for actions that are behind the CAS filter.)
+4. Finally, you must add <tt>:enable_single_sign_out => true</tt> to your CAS client config (a similar option must be
+   enabled on the CAS server, if you're using RubyCAS-Server).
 
 The best way to debug single-sign out functionality is to configure your CAS client with logging (see above) and then watch the
 log to ensure that single-sign out requests from the server are being processed correctly.
