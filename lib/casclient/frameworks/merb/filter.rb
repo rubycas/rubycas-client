@@ -53,12 +53,12 @@ module CASClient
               log.warn("Ticket #{service_ticket.ticket.inspect} failed validation -- " + 
                 "#{validation_response.failure_code}: #{validation_response.failure_message}")
               redirect cas_login_url
-              return false
+              throw :halt
             end
           else
             log.warn("No ticket -- redirecting to #{cas_login_url}")
             redirect cas_login_url
-            return false
+            throw :halt
           end
         end
 
