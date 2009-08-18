@@ -1,6 +1,6 @@
 = RubyCAS-Client Changelog
 
-== Version 2.1.0 :: In Progress...
+== Version 2.1.0 :: 2009-08-18
 
 * New functionality:
   * Added an adapter for the Merb framework. Thanks to Andrew O'Brien and
