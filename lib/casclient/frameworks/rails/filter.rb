@@ -104,7 +104,10 @@ module CASClient
             else
               if returning_from_gateway?(controller)
                 log.info "Returning from CAS gateway without authentication."
-                
+
+                # reset, so that we can retry authentication if there is a subsequent request
+                controller.session[:cas_sent_to_gateway] = false
+
                 if use_gatewaying?
                   log.info "This CAS client is configured to use gatewaying, so we will permit the user to continue without authentication."
                   return true
