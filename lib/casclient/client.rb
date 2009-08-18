@@ -11,6 +11,8 @@ module CASClient
     end
     
     def configure(conf)
+      #TODO: raise error if conf contains unrecognized cas options (this would help detect user typos in the config)
+
       raise ArgumentError, "Missing :cas_base_url parameter!" unless conf[:cas_base_url]
       
       @cas_base_url      = conf[:cas_base_url].gsub(/\/$/, '')       
