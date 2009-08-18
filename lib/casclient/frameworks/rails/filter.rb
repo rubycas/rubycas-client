@@ -67,8 +67,8 @@ module CASClient
                   controller.session[:casfilteruser] = vr.user
                   
                   if config[:enable_single_sign_out]
-                    f = store_service_session_lookup(st, controller.session.session_id)
-                    log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.session.session_id.inspect}.")
+                    f = store_service_session_lookup(st, controller.request.session_options[:id] || controller.session.session_id)
+                    log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.request.session_options[:id] || controller.session.session_id.inspect}.")
                   end
                 end
               
@@ -213,14 +213,21 @@ module CASClient
               
               log.debug "Intercepted single-sign-out request for CAS session #{si.inspect}."
               
-              required_sess_store = CGI::Session::ActiveRecordStore
-              current_sess_store  = ActionController::Base.session_options[:database_manager]
-              
+              begin
+                required_sess_store = ActiveRecord::SessionStore
+                current_sess_store  = ActionController::Base.session_store
+              rescue NameError
+                # for older versions of Rails (prior to 2.3)
+                required_sess_store = CGI::Session::ActiveRecordStore
+                current_sess_store  = ActionController::Base.session_options[:database_manager]
+              end
+
+
               if current_sess_store == required_sess_store
                 session_id = read_service_session_lookup(si)
-                
+
                 if session_id
-                  session = CGI::Session::ActiveRecordStore::Session.find_by_session_id(session_id)
+                  session = current_sess_store::Session.find_by_session_id(session_id)
                   if session
                     session.destroy
                     log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
