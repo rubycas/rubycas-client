@@ -39,8 +39,10 @@ module CASClient
               # Re-use the previous ticket if the user already has a local CAS session (i.e. if they were already
               # previously authenticated for this service). This is to prevent redirection to the CAS server on every
               # request.
+              #
               # This behaviour can be disabled (so that every request is routed through the CAS server) by setting
-              # the :authenticate_on_every_request config option to false.
+              # the :authenticate_on_every_request config option to true. However, this is not desirable since
+              # it will almost certainly break POST request, AJAX calls, etc.
               log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
                 "Previous ticket #{last_st.ticket.inspect} will be re-used."
               st = last_st
@@ -101,11 +103,11 @@ module CASClient
                 redirect_to_cas_for_authentication(controller)
                 return false
               end
-            else
+            else # no service ticket was present in the request
               if returning_from_gateway?(controller)
                 log.info "Returning from CAS gateway without authentication."
 
-                # reset, so that we can retry authentication if there is a subsequent request
+                # unset, to allow for the next request to be authenticated if necessary
                 controller.session[:cas_sent_to_gateway] = false
 
                 if use_gatewaying?
