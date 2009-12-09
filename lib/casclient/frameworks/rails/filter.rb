@@ -211,7 +211,7 @@ module CASClient
             controller.send(:redirect_to, redirect_url)
           end
           
-          protected
+          private
           def single_sign_out(controller)
             
             # Avoid calling raw_post (which may consume the post body) if
@@ -358,19 +358,6 @@ module CASClient
       class GatewayFilter < Filter
         def self.use_gatewaying?
           return true unless @@config[:use_gatewaying] == false
-        end
-      end
-
-      class SingleSignoutFilter < Filter
-        def self.filter(controller)
-          raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
-          
-          if single_sign_out(controller)
-            controller.send(:render, :text => "CAS Single-Sign-Out request intercepted.")
-            return false 
-          end
-          
-          return true
         end
       end
     end
