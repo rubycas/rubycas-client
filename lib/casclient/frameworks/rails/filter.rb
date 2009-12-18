@@ -164,6 +164,41 @@ module CASClient
             log.debug("Generated login url: #{url}")
             return url
           end
+
+          # allow controllers to reuse the existing config to auto-login to
+          # the service
+          # 
+          # Use this from within a controller. Pass the controller, the
+          # login-credentials and the path that you want the user
+          # resdirected to on success.
+          #
+          # When writing a login-action you must check the return-value of
+          # the response to see if it failed!
+          #
+          # If it worked - you need to redirect the user to the service -
+          # path, because that has the ticket that will *actually* log them
+          # into your system
+          #
+          # example:
+          # def autologin
+          #   resp = CASClient::Frameworks::Rails::Filter.login_to_service(self, credentials, dashboard_url)
+          #   if resp.is_faiulure?
+          #     flash[:error] = 'Login failed'
+          #     render :action => 'login'
+          #   else
+          #     return redirect_to(@resp.service_redirect_url)
+          #   end
+          # end
+          def login_to_service(controller, credentials, return_path)
+            resp = @@client.login_to_service(credentials, return_path)
+            if resp.is_failure?
+              log.info("Validation failed for service #{return_path.inspect} reason: '#{resp.failure_message}'")
+            else
+              log.info("Ticket #{resp.ticket.inspect} for service #{return_path.inspect} is VALID.")
+            end
+            
+            resp
+          end
           
           # Clears the given controller's local Rails session, does some local 
           # CAS cleanup, and redirects to the CAS logout page. Additionally, the
