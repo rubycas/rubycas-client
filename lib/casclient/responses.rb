@@ -53,7 +53,8 @@ module CASClient
       @protocol = 2.0
       
       if is_success?
-        @user = @xml.elements["cas:user"].text.strip if @xml.elements["cas:user"]
+        cas_user = @xml.elements["cas:user"]
+        @user = cas_user.text.strip if cas_user
         @pgt_iou =  @xml.elements["cas:proxyGrantingTicket"].text.strip if @xml.elements["cas:proxyGrantingTicket"]
         
         proxy_els = @xml.elements.to_a('//cas:authenticationSuccess/cas:proxies/cas:proxy')
@@ -66,7 +67,9 @@ module CASClient
         
         @extra_attributes = {}
         @xml.elements.to_a('//cas:authenticationSuccess/*').each do |el|
-          @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless el.prefix == 'cas'
+          # generating the hash requires prefixes to be defined, so add all of the namespaces
+          el.namespaces.each {|k,v| el.add_namespace(k,v)}
+          @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless (el == cas_user)
         end
         
         # unserialize extra attributes
