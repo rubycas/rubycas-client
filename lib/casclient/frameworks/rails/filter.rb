@@ -15,7 +15,6 @@ module CASClient
           def filter(controller)
             raise "Cannot use the CASClient filter because it has not yet been configured." if config.nil?
             
-            
             if @@fake_user
               controller.session[client.username_session_key] = @@fake_user
               controller.session[:casfilteruser] = @@fake_user
@@ -131,6 +130,10 @@ module CASClient
               unauthorized!(controller)
               return false
             end
+          rescue OpenSSL::SSL::SSLError
+            log.error("SSL Error: hostname was not match with the server certificate. You can try to disable the ssl verification with a :force_ssl_verification => false in your configurations file.")
+            unauthorized!(controller)
+            return false
           end
           
           def configure(config)
