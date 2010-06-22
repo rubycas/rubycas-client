@@ -1,5 +1,30 @@
 = RubyCAS-Client Changelog
 
+== Version 2.2.0 :: 2010-06-22
+
+RubyCAS-Client is now licensed under the MIT License.
+See http://www.opensource.org/licenses/mit-license.php
+
+* New functionality:
+  * Added config parameter force_ssl_verification (self explanatory) [Roberto Klein]
+  * Added explicit SingleSignutFilter for Rails (convenient?) [Adam Elliot]
+  * Added support for faking out the filter; useful when testing. See
+    http://github.com/gunark/rubycas-client/commit/1eb10cc285d59193eede3d4406f95cad9db9d93a
+    [Brian Hogan]
+
+* Changes to existing functionality:
+  * Unauthorized requests to URLs ending in .xml now show an XML formatted
+    response (<errors><error>#{failure_message}</error></errors>) [Roberto Klein]
+  * Accepts HTTPFound (302) as a successful response from the CAS server (in
+    addition to HTTPSuccess (2xx) [taryneast]
+
+* Bug fixes:
+  * Got rid of warnings if @valid is not initialized in Responses [jamesarosen]
+  * Fixed warning when setting the logger [jamesarosen]
+  * Client should no longer crap out when using CAS v1 and extra_attributes is
+    empty [jorahood]
+
+
 == Version 2.1.0 :: 2009-08-18
 
 * New functionality:
