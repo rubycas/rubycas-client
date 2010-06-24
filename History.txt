@@ -1,5 +1,10 @@
 = RubyCAS-Client Changelog
 
+== Version 2.2.1 :: 2010-06-24
+
+* Removed a 3rd party patch to the logging mechanism that broke the client under
+  some circumstances. Ouch. 2.2.0 should never have made it through QA.
+
 == Version 2.2.0 :: 2010-06-22
 
 RubyCAS-Client is now licensed under the MIT License.
