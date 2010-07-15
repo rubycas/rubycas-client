@@ -42,7 +42,7 @@ http://rubyforge.org/projects/rubycas-client.
 However, if you're using Rails, it's easier to install the CAS client as a plugin:
 
   cd <your rails app>
-  ./script/plugin install http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
+  ./script/plugin install git://github.com/gunark/rubycas-client.git
 
 Alternatively, the library is also installable as a RubyGem[http://rubygems.org]:
 
@@ -51,11 +51,8 @@ Alternatively, the library is also installable as a RubyGem[http://rubygems.org]
 If your Rails application is under Subversion control, you can also install the plugin as an svn:external, ensuring that
 you always have the latest bleeding-edge version of RubyCAS-Client:
 
-  ./script/plugin install -x http://rubycas-client.googlecode.com/svn/trunk/rubycas-client
+  ./script/plugin install -x http://svn.github.com/gunark/rubycas-client.git
 
-With Rails 2.1 or newer, it is also possible to install the plugin directly from the bleeding-edge git repository:
-
-  ./script/plugin install git://github.com/gunark/rubycas-client.git
 
 == Usage Examples
 
