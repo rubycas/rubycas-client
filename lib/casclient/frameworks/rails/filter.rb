@@ -9,7 +9,7 @@ module CASClient
         @@client = nil
         @@log = nil
         @@fake_user = nil
-        
+        @@fake_extra_attributes = nil
         
         class << self
           def filter(controller)
@@ -18,6 +18,7 @@ module CASClient
             if @@fake_user
               controller.session[client.username_session_key] = @@fake_user
               controller.session[:casfilteruser] = @@fake_user
+              controller.session[client.extra_attributes_session_key] = @@fake_extra_attributes
               return true
             end
             
@@ -148,8 +149,11 @@ module CASClient
           # with cucumber and other tools.
           # use like 
           #  CASClient::Frameworks::Rails::Filter.fake("homer")
-          def fake(username)
+          # you can also fake extra attributes by including a second parameter
+          #  CASClient::Frameworks::Rails::Filter.fake("homer", {:roles => ['dad', 'husband']})
+          def fake(username, extra_attributes = nil)
             @@fake_user = username
+            @@fake_extra_attributes = extra_attributes
           end
           
           def use_gatewaying?
