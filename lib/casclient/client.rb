@@ -133,7 +133,13 @@ module CASClient
       )
       
       res = submit_data_to_cas(login_url, data)
-      CASClient::LoginResponse.new(res)
+      response = CASClient::LoginResponse.new(res)
+
+      if response.is_success?
+        log.info("Login was successful for ticket: #{response.ticket.inspect}.")
+      end
+
+      return response
     end
   
     # Requests a login ticket from the CAS server for use in a login request;
