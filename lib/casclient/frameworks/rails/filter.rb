@@ -121,6 +121,7 @@ module CASClient
 
                 if use_gatewaying?
                   log.info "This CAS client is configured to use gatewaying, so we will permit the user to continue without authentication."
+                  controller.session[client.username_session_key] = nil
                   return true
                 else
                   log.warn "The CAS client is NOT configured to allow gatewaying, yet this request was gatewayed. Something is not right!"
