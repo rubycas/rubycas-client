@@ -133,7 +133,13 @@ module CASClient
       )
       
       res = submit_data_to_cas(login_url, data)
-      CASClient::LoginResponse.new(res)
+      response = CASClient::LoginResponse.new(res)
+
+      if response.is_success?
+        log.info("Login was successful for ticket: #{response.ticket.inspect}.")
+      end
+
+      return response
     end
   
     # Requests a login ticket from the CAS server for use in a login request;
@@ -257,7 +263,7 @@ module CASClient
       pairs = []
       hash.each do |k, vals|
         vals = [vals] unless vals.kind_of? Array
-        vals.each {|v| pairs << "#{CGI.escape(k)}=#{CGI.escape(v)}"}
+        vals.each {|v| pairs << (v.nil? ? CGI.escape(k) : "#{CGI.escape(k)}=#{CGI.escape(v)}")}
       end
       pairs.join("&")
     end
