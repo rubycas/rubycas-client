@@ -1,10 +1,12 @@
+require 'date'
+
 Gem::Specification.new do |s|
-  s.name = %q{rubycas-client}
-  s.version = "2.1.0"
+  s.name = %q{vibes-rubycas-client}
+  s.version = "2.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Matt Zukowski", "Matt Walker"]
-  s.date = %q{2008-11-18}
+  s.authors = ["Matt Zukowski", "Matt Walker", "Vibes Media"]
+  s.date = Date.today.to_s
   s.description = %q{Client library for the Central Authentication Service (CAS) protocol.}
   s.email = %q{matt at roughest dot net}
   s.extra_rdoc_files = ["CHANGELOG.txt", "History.txt", "LICENSE.txt", "Manifest.txt", "README.rdoc"]

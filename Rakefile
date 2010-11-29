@@ -56,8 +56,9 @@ hoe = Hoe.new(GEM_NAME, VERS) do |p|
   p.extra_deps = ['activesupport']
 end
 
-desc 'Build and install rubycas-client'
+desc 'Build and install vibes-rubycas-client'
 task :install do
+  proj_dir = File.dirname(__FILE__)
   system "gem build rubycas-client.gemspec"
-  system "sudo gem install rubycas-client-#{VERS}.gem"
+  system "cd #{ENV['ZEEP_HOME']} && bin/install_gem #{proj_dir}/vibes-rubycas-client-#{VERS}.gem"
 end
