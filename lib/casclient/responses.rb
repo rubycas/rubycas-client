@@ -74,10 +74,15 @@ module CASClient
         
         # unserialize extra attributes
         @extra_attributes.each do |k, v|
+          Rails.logger.debug "#{k.inspect} => #{v.inspect}"
           if v.blank?
             @extra_attributes[k] = nil
           else
-            @extra_attributes[k] = YAML.load(v)
+            begin
+              @extra_attributes[k] = JSON.parse(v)
+            rescue JSON::ParserError => e
+              @extra_attributes[k] = v
+            end
           end
         end
       elsif is_failure?
