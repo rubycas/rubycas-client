@@ -293,7 +293,7 @@ module CASClient
               
               begin
                 required_sess_store = ActiveRecord::SessionStore
-                if ::Rails::VERSION::STRING.match /3[0-9.]+/
+                if ::Rails::VERSION::STRING.match /^3[0-9.]+/
                   # => Rails 3
                   current_sess_store = ::Rails.application.config.session_store
                 else
