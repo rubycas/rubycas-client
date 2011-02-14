@@ -140,7 +140,7 @@ module CASClient
           
           def configure(config)
             @@config = config
-            @@config[:logger] = Rails.logger unless @@config[:logger]
+            @@config[:logger] = ::Rails.logger unless @@config[:logger]
             @@client = CASClient::Client.new(config)
             @@log = client.log
           end
