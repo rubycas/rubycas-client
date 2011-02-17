@@ -2,7 +2,7 @@ module CASClient
   module Frameworks
     module Rails
       class Filter
-        cattr_reader :config, :log, :client
+        cattr_reader :config, :log, :client, :fake_user, :fake_extra_attribues
         
         # These are initialized when you call configure.
         @@config = nil
@@ -18,7 +18,7 @@ module CASClient
             if @@fake_user
               controller.session[client.username_session_key] = @@fake_user
               controller.session[:casfilteruser] = @@fake_user
-              controller.session[client.extra_attributes_session_key] = @@fake_extra_attributes
+              controller.session[client.extra_attributes_session_key] = @@fake_extra_attributes  
               return true
             end
             
