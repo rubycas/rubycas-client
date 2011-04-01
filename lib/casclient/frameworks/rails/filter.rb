@@ -314,6 +314,8 @@ module CASClient
                 if session_id
                   session = current_sess_store::Session.find_by_session_id(session_id)
                   if session
+                    st = session.data[:cas_last_valid_ticket] || si
+                    delete_service_session_lookup(st) if st
                     session.destroy
                     log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
                   else
