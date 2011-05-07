@@ -69,7 +69,7 @@ module CASClient
         @xml.elements.to_a('//cas:authenticationSuccess/*').each do |el|
           # generating the hash requires prefixes to be defined, so add all of the namespaces
           el.namespaces.each {|k,v| el.add_namespace(k,v)}
-          @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless (el == cas_user)
+          @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless ([cas_user, @xml.elements["cas:proxyGrantingTicket"], @xml.elements["cas:proxies"]].include?(el))
         end
         
         # unserialize extra attributes
