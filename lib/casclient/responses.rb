@@ -31,7 +31,8 @@ module CASClient
     
     attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes
     
-    def initialize(raw_text)
+    def initialize(raw_text, options={})
+      conf_options = options
       parse(raw_text)
     end
     
@@ -66,23 +67,22 @@ module CASClient
         end
         
         @extra_attributes = {}
-        @xml.elements.to_a('//cas:authenticationSuccess/*').each do |el|
+        @xml.elements.to_a('//cas:authenticationSuccess/cas:attributes/*').each do |el|
           # generating the hash requires prefixes to be defined, so add all of the namespaces
           el.namespaces.each {|k,v| el.add_namespace(k,v)}
-          @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless ([cas_user, @xml.elements["cas:proxyGrantingTicket"], @xml.elements["cas:proxies"]].include?(el))
+          @extra_attributes.merge!(Hash.from_xml(el.to_s)) #unless ([cas_user, @xml.elements["cas:proxyGrantingTicket"], @xml.elements["cas:proxies"]].include?(el))
         end
         
         # unserialize extra attributes
         @extra_attributes.each do |k, v|
-          Rails.logger.debug "#{k.inspect} => #{v.inspect}"
           if v.blank?
             @extra_attributes[k] = nil
+          elsif v.kind_of?(String)
+             @extra_attributes[k] = v
+           elsif conf.has_key? ('encode_extra_attributes_as') && conf_options[:encode_extra_attributes_as] == 'json' 
+            @extra_attributes[k] = JSON.parse(v)
           else
-            begin
-              @extra_attributes[k] = JSON.parse(v)
-            rescue JSON::ParserError => e
-              @extra_attributes[k] = v
-            end
+            @extra_attributes[k] = YAML.load(v)
           end
         end
       elsif is_failure?
@@ -92,7 +92,6 @@ module CASClient
         # this should never happen, since the response should already have been recognized as invalid
         raise BadResponseException, "BAD CAS RESPONSE:\n#{raw_text.inspect}\n\nXML DOC:\n#{doc.inspect}"
       end
-      
     end
     
     def is_success?
@@ -111,7 +110,7 @@ module CASClient
     
     attr_reader :proxy_ticket
     
-    def initialize(raw_text)
+    def initialize(raw_text, options={})
       parse(raw_text)
     end
     
@@ -149,7 +148,7 @@ module CASClient
     attr_reader :tgt, :ticket, :service_redirect_url
     attr_reader :failure_message
     
-    def initialize(http_response = nil)
+    def initialize(http_response = nil, options={})
       parse_http_response(http_response) if http_response
     end
     
