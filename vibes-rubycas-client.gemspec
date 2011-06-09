@@ -9,18 +9,23 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
-  s.date = %q{2011-06-08}
+  s.date = %q{2011-06-09}
   s.description = %q{We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
   ]
   s.files = [
+    ".rvmrc",
+    ".source_index",
     "CHANGELOG.txt",
+    "Gemfile",
+    "Gemfile.lock",
     "History.txt",
     "LICENSE.txt",
     "README.rdoc",
     "Rakefile",
+    "VERSION",
     "examples/merb/.gitignore",
     "examples/merb/README.textile",
     "examples/merb/Rakefile",
@@ -58,7 +63,8 @@ Gem::Specification.new do |s|
     "lib/casclient/frameworks/rails/filter.rb",
     "lib/casclient/responses.rb",
     "lib/casclient/tickets.rb",
-    "lib/rubycas-client.rb"
+    "lib/vibes-rubycas-client.rb",
+    "vibes-rubycas-client.gemspec"
   ]
   s.homepage = %q{http://github.com/vibes/rubycas-client}
   s.licenses = ["MIT"]
