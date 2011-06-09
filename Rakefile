@@ -1,64 +1,53 @@
+# encoding: utf-8
+
 require 'rubygems'
+require 'bundler'
+begin
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
 require 'rake'
-require 'rake/clean'
+
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
+  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
+  gem.name = "vibes-rubycas-client"
+  gem.homepage = "http://github.com/vibes/rubycas-client"
+  gem.license = "MIT"
+  gem.summary = "Client library for the Central Authentication Service (CAS) protocol."
+  gem.description = "We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server"
+  gem.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
+  gem.rdoc_options = ['--main', 'README.rdoc']
+  # dependencies defined in Gemfile
+end
+Jeweler::RubygemsDotOrgTasks.new
+
 require 'rake/testtask'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.pattern = 'test/**/test_*.rb'
+  test.verbose = true
+end
+
+require 'rcov/rcovtask'
+Rcov::RcovTask.new do |test|
+  test.libs << 'test'
+  test.pattern = 'test/**/test_*.rb'
+  test.verbose = true
+  test.rcov_opts << '--exclude "gems/*"'
+end
+
+task :default => :test
+
 require 'rake/rdoctask'
-require 'rake/contrib/rubyforgepublisher'
-require 'fileutils'
-require 'hoe'
-include FileUtils
-require File.join(File.dirname(__FILE__), 'lib', 'casclient', 'version')
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
-AUTHOR = ["Matt Zukowski", "Matt Walker"]  # can also be an array of Authors
-EMAIL = "matt at roughest dot net"
-DESCRIPTION = "Client library for the Central Authentication Service (CAS) protocol."
-GEM_NAME = "rubycas-client" # what ppl will type to install your gem
-RUBYFORGE_PROJECT = "rubycas-client" # The unix name for your project
-HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
-
-ENV['NODOT'] = '1'
-
-NAME = "rubycas-client"
-REV = nil
-#REV = `svn info`[/Revision: (\d+)/, 1] rescue nil
-VERS = ENV['VERSION'] || (CASClient::VERSION::STRING + (REV ? ".#{REV}" : ""))
-                          CLEAN.include ['**/.*.sw?', '*.gem', '.config']
-RDOC_OPTS = ['--quiet', '--title', "rubycas-client documentation",
-    "--opname", "index.html",
-    "--line-numbers", 
-    "--main", "README",
-    "--inline-source"]
-
-class Hoe
-  def extra_deps 
-    @extra_deps.reject { |x| Array(x).first == 'hoe' } 
-  end 
-end
-
-# Generate all the Rake tasks
-# Run 'rake -T' to see list of generated tasks (from gem root directory)
-hoe = Hoe.new(GEM_NAME, VERS) do |p|
-  p.author = AUTHOR 
-  p.description = DESCRIPTION
-  p.email = EMAIL
-  p.summary = DESCRIPTION
-  p.url = HOMEPATH
-  p.rubyforge_name = RUBYFORGE_PROJECT if RUBYFORGE_PROJECT
-  p.test_globs = ["test/**/*_test.rb"]
-  p.clean_globs = CLEAN  #An array of file patterns to delete on clean.
-  
-  # == Optional
-  #p.changes        - A description of the release's latest changes.
-  #p.extra_deps     - An array of rubygem dependencies.
-  #p.spec_extras    - A hash of extra values to set in the gemspec.
-  p.extra_deps = ['activesupport']
-end
-
-desc 'Build and install vibes-rubycas-client'
-task :install do
-  proj_dir = File.dirname(__FILE__)
-  system "gem build rubycas-client.gemspec"
-  system "cd #{ENV['ZEEP_HOME']} && bin/install_gem #{proj_dir}/vibes-rubycas-client-#{VERS}.gem"
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "vibes-rubycas-client #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end
