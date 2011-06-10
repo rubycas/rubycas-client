@@ -15,6 +15,12 @@ module CASClient
 
       raise ArgumentError, "Missing :cas_base_url parameter!" unless conf[:cas_base_url]
       
+      if conf.has_key? ("encode_extra_attributes_as")
+        unless (conf[:encode_extra_attributes_as] == 'json' ||  conf[:encode_extra_attributes_as] == 'yaml')
+          raise ArgumentError, "Unkown Value for :encode_extra_attributes_as parameter! Allowed options are json or yaml - #{conf[:encode_extra_attributes_as]}"
+        end
+      end
+   
       @cas_base_url      = conf[:cas_base_url].gsub(/\/$/, '')       
       
       @login_url    = conf[:login_url]
@@ -31,6 +37,7 @@ module CASClient
       
       @log = CASClient::LoggerWrapper.new
       @log.set_real_logger(conf[:logger]) if conf[:logger]
+      @conf_options = conf
     end
     
     def login_url
@@ -214,7 +221,7 @@ module CASClient
     private
     # Fetches a CAS response of the given type from the given URI.
     # Type should be either ValidationResponse or ProxyResponse.
-    def request_cas_response(uri, type)
+    def request_cas_response(uri, type, options={})
       log.debug "Requesting CAS response for URI #{uri}"
       
       uri = URI.parse(uri) unless uri.kind_of? URI
@@ -240,8 +247,8 @@ module CASClient
         log.error "CAS server responded with an error! (#{raw_res.inspect})"
         raise "The CAS authentication server at #{uri} responded with an error (#{raw_res.inspect})!"
       end
-      
-      type.new(raw_res.body)
+     
+      type.new(raw_res.body, @conf_options)
     end
     
     # Submits some data to the given URI and returns a Net::HTTPResponse.
