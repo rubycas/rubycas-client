@@ -22,7 +22,6 @@ module CASClient
               return true
             end
             
-            
             last_st = controller.session[:cas_last_valid_ticket]
             
             if single_sign_out(controller)
@@ -225,11 +224,19 @@ module CASClient
           end
           
           def unauthorized!(controller, vr = nil)
-            if controller.params[:format] == "xml"
+            format = controller.request.format.to_sym
+            format = (format == :js ? :json : format)
+            case format
+            when :xml, :json
               if vr
-                controller.send(:render, :xml => "<errors><error>#{vr.failure_message}</error></errors>", :status => 401)
+                case format
+                when :xml
+                  controller.send(:render, :xml => { :error => vr.failure_message }.to_xml(:root => 'errors'), :status => :unauthorized)
+                when :json
+                  controller.send(:render, :json => { :errors => { :error => vr.failure_message }}, :status => :unauthorized)
+                end
               else
-                controller.send(:head, 401)
+                controller.send(:head, :unauthorized)
               end
             else
               redirect_to_cas_for_authentication(controller)
