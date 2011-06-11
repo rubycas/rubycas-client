@@ -1,5 +1,24 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.0 :: Prerelease
+
+* New Functionality
+  * Add configuration option to expect complex extra attributes to be encoded
+    in json instead of yaml
+
+* Changes to existing functionality
+  * Change gem building from hoe to jeweler
+  * expect extra attributes to be nested under a cas:attributes elemenet to
+    improve compatibility with other extra attribute implementations
+  * Unauthorized requests to URLs ending in .json now show an JSON formatted
+    response
+
+* Bug Fixes
+  * Fixed bug introduced by upstream patch that broke proxy ticket validation
+    when using extra attributes
+  * Fixed bug where extra attributes key was set on the session with a null
+    value when faking with no extra attributes
+
 == Version 2.2.1 :: 2010-06-24
 
 * Removed a 3rd party patch to the logging mechanism that broke the client under
