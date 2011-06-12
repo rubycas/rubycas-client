@@ -234,7 +234,6 @@ In your <tt>config/environment.rb</tt>:
 
   CASClient::Frameworks::Rails::Filter.configure(
     :cas_base_url => "https://cas.example.foo/",
-    :proxy_retrieval_url => "https://cas-proxy-callback.example.foo/cas_proxy_callback/retrieve_pgt",
     :proxy_callback_url => "https://cas-proxy-callback.example.foo/cas_proxy_callback/receive_pgt",
     :logger => cas_logger
   )
@@ -254,12 +253,9 @@ but your Rails server wouldn't respond to the CAS server's callback until the CA
 
 The simplest workaround is this:
 
-1. Create an empty rails app (i.e. something like <tt>rails cas_proxy_callback</tt>)
-2. Make sure that you have the CAS plugin installed. If you installed it as a gem, you don't have to do anything since
-   it is already installed. If you want to install as a plugin, see the instructions in the "Installing" section above.
-3. Make sure that the server is up and running, and configure your proxy_callback_url and proxy_retrieval_url to point
-   to the new server as described above (or rather, make Pound point to the new server, if that's how you're handling https).
-   
+Run rails using a server that handles multiple concurrent requests. In development, you can use Phusion Passenger Standalone,
+POW (http://pow.cx/), unicorn and many others. In production, I imagine you already support multiple concurrent requests.
+
 That's it. The proxy_callback_controller doesn't require any additional configuration. It doesn't access the database
 or anything of that sort.
 
@@ -314,6 +310,12 @@ In your test or Cucumber step definition, simply fake out CAS.
 
 This functionality was present in the original version of this plugin.
 The value of the username is stored in session[:cas_user] (or the user specified field) and session[:casfilteruser] for backwards-compatibility.
+
+If you need to fake out extra attributes, you can do so like this:
+
+  CASClient::Frameworks::Rails::Filter.fake("homer", {:role => "user", :email => "homer@test.foo"})
+
+And the extra attributes will get put in the proper place in the session.
 
 == License
 

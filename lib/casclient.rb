@@ -66,6 +66,7 @@ end
 require 'casclient/tickets'
 require 'casclient/responses'
 require 'casclient/client'
+require 'casclient/tickets/storage'
 
 # Detect legacy configuration and show appropriate error message
 module CAS

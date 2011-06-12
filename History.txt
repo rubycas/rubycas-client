@@ -5,6 +5,8 @@
 * New Functionality
   * Add configuration option to expect complex extra attributes to be encoded
     in json instead of yaml
+  * Split out storage mechanism for single sign out and proxy ticket storage so
+    that it is modular
 
 * Changes to existing functionality
   * Change gem building from hoe to jeweler

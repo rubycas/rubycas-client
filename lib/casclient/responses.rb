@@ -70,7 +70,7 @@ module CASClient
         @xml.elements.to_a('//cas:authenticationSuccess/cas:attributes/*').each do |el|
           # generating the hash requires prefixes to be defined, so add all of the namespaces
           el.namespaces.each {|k,v| el.add_namespace(k,v)}
-          @extra_attributes.merge!(Hash.from_xml(el.to_s)) #unless ([cas_user, @xml.elements["cas:proxyGrantingTicket"], @xml.elements["cas:proxies"]].include?(el))
+          @extra_attributes.merge!(Hash.from_xml(el.to_s))
         end
         
         # unserialize extra attributes
@@ -78,8 +78,8 @@ module CASClient
           if v.blank?
             @extra_attributes[k] = nil
           elsif v.kind_of?(String)
-             @extra_attributes[k] = v
-           elsif conf.has_key?('encode_extra_attributes_as') && conf_options[:encode_extra_attributes_as] == 'json' 
+            @extra_attributes[k] = v
+          elsif conf.has_key?('encode_extra_attributes_as') && conf_options[:encode_extra_attributes_as] == :json 
             @extra_attributes[k] = JSON.parse(v)
           else
             @extra_attributes[k] = YAML.load(v)
@@ -93,7 +93,7 @@ module CASClient
         raise BadResponseException, "BAD CAS RESPONSE:\n#{raw_text.inspect}\n\nXML DOC:\n#{doc.inspect}"
       end
     end
-    
+
     def is_success?
       (instance_variable_defined?(:@valid) &&  @valid) || (protocol > 1.0 && xml.name == "authenticationSuccess")
     end

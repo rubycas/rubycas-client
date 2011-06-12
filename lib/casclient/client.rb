@@ -3,6 +3,7 @@ module CASClient
   class Client
     attr_reader :cas_base_url 
     attr_reader :log, :username_session_key, :extra_attributes_session_key
+    attr_reader :ticket_store
     attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url
     attr_accessor :proxy_callback_url, :proxy_retrieval_url
     
@@ -16,7 +17,7 @@ module CASClient
       raise ArgumentError, "Missing :cas_base_url parameter!" unless conf[:cas_base_url]
       
       if conf.has_key?("encode_extra_attributes_as")
-        unless (conf[:encode_extra_attributes_as] == 'json' ||  conf[:encode_extra_attributes_as] == 'yaml')
+        unless (conf[:encode_extra_attributes_as] == :json || conf[:encode_extra_attributes_as] == :yaml)
           raise ArgumentError, "Unkown Value for :encode_extra_attributes_as parameter! Allowed options are json or yaml - #{conf[:encode_extra_attributes_as]}"
         end
       end
@@ -30,10 +31,12 @@ module CASClient
       @service_url  = conf[:service_url]
       @force_ssl_verification  = conf[:force_ssl_verification]
       @proxy_callback_url  = conf[:proxy_callback_url]
-      @proxy_retrieval_url = conf[:proxy_retrieval_url]
       
       @username_session_key         = conf[:username_session_key] || :cas_user
       @extra_attributes_session_key = conf[:extra_attributes_session_key] || :cas_extra_attributes
+      @ticket_store_class = conf[:ticket_store] || CASClient::Tickets::Storage::LocalDirTicketStore
+      @ticket_store = @ticket_store_class.new conf[:ticket_store_config]
+      raise CASException, "The Ticket Store is not a subclass of AbstractTicketStore, it is a #{@ticket_store_class}" unless @ticket_store.kind_of? CASClient::Tickets::Storage::AbstractTicketStore
       
       @log = CASClient::LoggerWrapper.new
       @log.set_real_logger(conf[:logger]) if conf[:logger]
@@ -188,28 +191,11 @@ module CASClient
     end
     
     def retrieve_proxy_granting_ticket(pgt_iou)
-      uri = URI.parse(proxy_retrieval_url)
-      uri.query = (uri.query ? uri.query + "&" : "") + "pgtIou=#{CGI.escape(pgt_iou)}"
-      retrieve_url = uri.to_s
-      
-      log.debug "Retrieving PGT for PGT IOU #{pgt_iou.inspect} from #{retrieve_url.inspect}"
-      
-#      https = Net::HTTP.new(uri.host, uri.port)
-#      https.use_ssl = (uri.scheme == 'https')
-#      res = https.post(uri.path, ';')
-      uri = URI.parse(uri) unless uri.kind_of? URI
-      https = Net::HTTP.new(uri.host, uri.port)
-      https.use_ssl = (uri.scheme == 'https')
-      https.verify_mode = (@force_ssl_verification ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE)
-      
-      res = https.start do |conn|
-        conn.get("#{uri.path}?#{uri.query}")
-      end
-      
-      
-      raise CASException, res.body unless res.kind_of? Net::HTTPSuccess
-      
-      ProxyGrantingTicket.new(res.body.strip, pgt_iou)
+      pgt = @ticket_store.retrieve_pgt(pgt_iou)
+
+      raise CASException, "Couldn't find pgt for pgt_iou #{pgt_iou}" unless pgt
+
+      ProxyGrantingTicket.new(pgt, pgt_iou)
     end
     
     def add_service_to_login_url(service_url)
