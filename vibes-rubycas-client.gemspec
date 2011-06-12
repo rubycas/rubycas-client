@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
-  s.date = %q{2011-06-09}
+  s.date = %q{2011-06-11}
   s.description = %q{We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".rvmrc",
-    ".source_index",
     "CHANGELOG.txt",
     "Gemfile",
     "Gemfile.lock",
@@ -57,13 +56,14 @@ Gem::Specification.new do |s|
     "examples/rails/script/server",
     "lib/casclient.rb",
     "lib/casclient/client.rb",
-    "lib/casclient/frameworks/merb/filter.rb",
-    "lib/casclient/frameworks/merb/strategy.rb",
     "lib/casclient/frameworks/rails/cas_proxy_callback_controller.rb",
     "lib/casclient/frameworks/rails/filter.rb",
     "lib/casclient/responses.rb",
     "lib/casclient/tickets.rb",
+    "lib/casclient/tickets/storage.rb",
     "lib/vibes-rubycas-client.rb",
+    "test/teststrap.rb",
+    "test/units/casclient/frameworks/rails/filter_test.rb",
     "vibes-rubycas-client.gemspec"
   ]
   s.homepage = %q{http://github.com/vibes/rubycas-client}
@@ -78,20 +78,23 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, ["~> 2.3.11"])
-      s.add_development_dependency(%q<shoulda>, [">= 0"])
+      s.add_development_dependency(%q<riot>, [">= 0"])
+      s.add_development_dependency(%q<rr>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
       s.add_dependency(%q<activesupport>, ["~> 2.3.11"])
-      s.add_dependency(%q<shoulda>, [">= 0"])
+      s.add_dependency(%q<riot>, [">= 0"])
+      s.add_dependency(%q<rr>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
     s.add_dependency(%q<activesupport>, ["~> 2.3.11"])
-    s.add_dependency(%q<shoulda>, [">= 0"])
+    s.add_dependency(%q<riot>, [">= 0"])
+    s.add_dependency(%q<rr>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
     s.add_dependency(%q<rcov>, [">= 0"])
