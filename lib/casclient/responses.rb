@@ -77,10 +77,10 @@ module CASClient
         @extra_attributes.each do |k, v|
           if v.blank?
             @extra_attributes[k] = nil
-          elsif v.kind_of?(String)
-            @extra_attributes[k] = v
-          elsif conf.has_key?('encode_extra_attributes_as') && conf_options[:encode_extra_attributes_as] == :json 
-            @extra_attributes[k] = JSON.parse(v)
+          #elsif v.kind_of?(String)
+          #  @extra_attributes[k] = v
+          #elsif conf.has_key?('encode_extra_attributes_as') && conf_options[:encode_extra_attributes_as] == :json 
+          #  @extra_attributes[k] = JSON.parse(v)
           else
             @extra_attributes[k] = YAML.load(v)
           end
