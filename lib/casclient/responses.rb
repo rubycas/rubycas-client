@@ -32,15 +32,13 @@ module CASClient
     attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes
     
     def initialize(raw_text, options={})
-      conf_options = options
-      parse(raw_text)
+      parse(raw_text, options)
     end
     
-    def parse(raw_text)
+    def parse(raw_text, options)
       raise BadResponseException, 
         "CAS response is empty/blank." if raw_text.blank?
       @parse_datetime = Time.now
-      
       if raw_text =~ /^(yes|no)\n(.*?)\n$/m
         @protocol = 1.0
         @valid = $~[1] == 'yes'
@@ -77,12 +75,22 @@ module CASClient
         @extra_attributes.each do |k, v|
           if v.blank?
             @extra_attributes[k] = nil
-          elsif v.kind_of?(String)
-            @extra_attributes[k] = v
-          elsif conf.has_key?('encode_extra_attributes_as') && conf_options[:encode_extra_attributes_as] == :json 
-            @extra_attributes[k] = JSON.parse(v)
-          else
-            @extra_attributes[k] = YAML.load(v)
+          elsif !options[:encode_extra_attributes_as]
+            begin
+                @extra_attributes[k] = YAML.load(v)
+              rescue ArgumentError
+                raise ArgumentError, "Did not find :encode_extra_attributes_as config parameter, hence default encoding scheme is YAML but CAS response recieved in encoded differently "
+              end
+          else 
+            if options[:encode_extra_attributes_as] == :json
+              begin
+                @extra_attributes[k] = JSON.parse(v)
+              rescue JSON::ParserError
+                @extra_attributes[k] = YAML.load(v)
+              end
+            else
+              @extra_attributes[k] = YAML.load(v)
+            end
           end
         end
       elsif is_failure?
