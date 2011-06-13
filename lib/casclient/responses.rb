@@ -67,7 +67,7 @@ module CASClient
         end
         
         @extra_attributes = {}
-        @xml.elements.to_a('//cas:authenticationSuccess/cas:attributes/*').each do |el|
+        @xml.elements.to_a('//cas:authenticationSuccess/cas:attributes/* | //cas:authenticationSuccess/*[local-name() != \'proxies\' and local-name() != \'proxyGrantingTicket\' and local-name() != \'user\' and local-name() != \'attributes\']').each do |el|
           # generating the hash requires prefixes to be defined, so add all of the namespaces
           el.namespaces.each {|k,v| el.add_namespace(k,v)}
           @extra_attributes.merge!(Hash.from_xml(el.to_s))
