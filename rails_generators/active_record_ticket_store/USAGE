@@ -1,0 +1,9 @@
+Description:
+  Create a migration to add the service_ticket column to the sessions
+  table and create the cas_pgtious table for proxy ticket storage.
+  Pass the migration name as an optional parameter. The migration name
+  defaults to CreateActiveRecordTicketStore.
+
+Requirements:
+  You need to already have created the ActiveRecord::SessionStore sessions
+  table.

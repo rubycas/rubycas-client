@@ -1,0 +1,1 @@
+You need to make sure you have already created the sessions table for the ActiveRecord::SessionStore

@@ -62,6 +62,10 @@ Gem::Specification.new do |s|
     "lib/casclient/tickets.rb",
     "lib/casclient/tickets/storage.rb",
     "lib/vibes-rubycas-client.rb",
+    "rails_generators/active_record_ticket_store/USAGE",
+    "rails_generators/active_record_ticket_store/active_record_ticket_store_generator.rb",
+    "rails_generators/active_record_ticket_store/templates/README",
+    "rails_generators/active_record_ticket_store/templates/migration.rb",
     "test/teststrap.rb",
     "test/units/casclient/frameworks/rails/filter_test.rb",
     "vibes-rubycas-client.gemspec"
