@@ -78,8 +78,7 @@ module CASClient
                   controller.session[:casfilteruser] = vr.user
                   
                   if config[:enable_single_sign_out]
-                    f = @@client.ticket_store.store_service_session_lookup(st, controller.request.session_options[:id] || controller.session.session_id)
-                    log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.request.session_options[:id] || controller.session.session_id.inspect}.")
+                    @@client.ticket_store.store_service_session_lookup(st, controller)
                   end
                 end
               
@@ -218,7 +217,7 @@ module CASClient
           def logout(controller, service = nil)
             referer = service || controller.request.referer
             st = controller.session[:cas_last_valid_ticket]
-            @@client.ticket_store.delete_service_session_lookup(st) if st
+            @@client.ticket_store.cleanup_service_session_lookup(st) if st
             controller.send(:reset_session)
             controller.send(:redirect_to, client.logout_url(referer))
           end
@@ -297,38 +296,8 @@ module CASClient
               end
               
               log.debug "Intercepted single-sign-out request for CAS session #{si.inspect}."
-              
-              begin
-                required_sess_store = ActiveRecord::SessionStore
-                current_sess_store  = ActionController::Base.session_store
-              rescue NameError
-                # for older versions of Rails (prior to 2.3)
-                required_sess_store = CGI::Session::ActiveRecordStore
-                current_sess_store  = ActionController::Base.session_options[:database_manager]
-              end
 
-
-              if current_sess_store == required_sess_store
-                session_id = @@client.ticket_store.read_service_session_lookup(si)
-
-                if session_id
-                  session = current_sess_store::Session.find_by_session_id(session_id)
-                  if session
-                    session.destroy
-                    log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
-                  else
-                    log.debug("Data for session #{session_id.inspect} was not found. It may have already been cleared by a local CAS logout request.")
-                  end
-                  
-                  log.info("Single-sign-out for session #{session_id.inspect} completed successfuly.")
-                else
-                  log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session id could be looked up.")
-                end
-              else
-                log.error "Cannot process logout request because this Rails application's session store is "+
-                  " #{current_sess_store.name.inspect}. Single Sign-Out only works with the "+
-                  " #{required_sess_store.name.inspect} session store."
-              end
+              @@client.ticket_store.process_single_sign_out(si)             
               
               # Return true to indicate that a single-sign-out request was detected
               # and that further processing of the request is unnecessary.

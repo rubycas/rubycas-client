@@ -40,6 +40,7 @@ module CASClient
       
       @log = CASClient::LoggerWrapper.new
       @log.set_real_logger(conf[:logger]) if conf[:logger]
+      @ticket_store.log = @log
       @conf_options = conf
     end
     

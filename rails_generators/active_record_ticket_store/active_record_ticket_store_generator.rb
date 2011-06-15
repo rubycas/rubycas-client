@@ -14,6 +14,10 @@ class ActiveRecordTicketStoreGenerator < Rails::Generator::NamedBase
   end
 
   protected
+  def banner
+    "Usage: #{$0} #{spec.name} [CreateActiveRecordTicketStore] [options]"
+  end
+
   def default_session_table_name
     ActiveRecord::Base.pluralize_table_names ? 'session'.pluralize : 'session'
   end

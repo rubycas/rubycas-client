@@ -2,15 +2,42 @@ module CASClient
   module Tickets
     module Storage
       class AbstractTicketStore
-        def store_service_session_lookup(st, sid)
+
+        attr_accessor :log
+        @log = CASClient::LoggerWrapper.new
+
+        def process_single_sign_out(si)
+
+          session_id, session = get_session_for_service_ticket(si)
+          if session
+            session.destroy
+            log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
+          else
+            log.debug("Data for session #{session_id.inspect} was not found. It may have already been cleared by a local CAS logout request.")
+          end
+
+          if session_id
+            log.info("Single-sign-out for service ticket #{session_id.inspect} completed successfuly.")
+          else
+            log.debug("No session id found for CAS ticket #{si}")
+          end
+        end
+
+        def get_session_for_service_ticket(st)
+          session_id = read_service_session_lookup(si)
+          if session_id
+            session = ActiveRecord::SessionStore::Session.find_by_session_id(session_id)
+          else
+            log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session id could be looked up.")
+          end
+          session_id, session
+        end
+
+        def store_service_session_lookup(st, controller)
           raise 'Implement this in a subclass!'
         end
 
-        def read_servcie_session_lookup(st)
-          raise 'Implement this in a subclass!'
-        end
-
-        def delete_service_session_lookup(st)
+        def cleanup_service_session_lookup(st)
           raise 'Implement this in a subclass!'
         end
 
@@ -19,6 +46,11 @@ module CASClient
         end
 
         def retrieve_pgt(pgt_iou)
+          raise 'Implement this in a subclass!'
+        end
+
+        protected
+        def read_service_session_lookup(st)
           raise 'Implement this in a subclass!'
         end
       end
@@ -49,9 +81,11 @@ module CASClient
         # cas_sess.<session ticket> and its text contents is the corresponding 
         # Rails session id.
         # Returns the filename of the lookup file created.
-        def store_service_session_lookup(st, sid)
+        def store_service_session_lookup(st, controller)
           raise CASException, "No service_ticket specified." unless st
-          raise CASException, "No session_id specified." unless sid
+          raise CASException, "No controller specified." unless controller
+
+          sid = controller.request.session_options[:id] || controller.session.session_id
 
           st = st.ticket if st.kind_of? ServiceTicket
           f = File.new(filename_of_service_session_lookup(st), 'w')
@@ -77,7 +111,7 @@ module CASClient
         # closed.
         #
         # See #store_service_session_lookup.
-        def delete_service_session_lookup(st)
+        def cleanup_service_session_lookup(st)
           raise CASException, "No service_ticket specified." unless st
 
           st = st.ticket if st.kind_of? ServiceTicket
