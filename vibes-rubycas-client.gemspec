@@ -5,18 +5,17 @@
 
 Gem::Specification.new do |s|
   s.name = %q{vibes-rubycas-client}
-  s.version = "2.3.0.alpha4"
+  s.version = "2.3.0.alpha5"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
-  s.date = %q{2011-06-13}
+  s.date = %q{2011-06-14}
   s.description = %q{We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
   ]
   s.files = [
-    ".rvmrc",
     "CHANGELOG.txt",
     "Gemfile",
     "Gemfile.lock",
@@ -25,12 +24,6 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "examples/merb/.gitignore",
-    "examples/merb/README.textile",
-    "examples/merb/Rakefile",
-    "examples/merb/merb.thor",
-    "examples/merb/merb_auth_cas.rb",
-    "examples/merb/spec/spec_helper.rb",
     "examples/rails/README",
     "examples/rails/app/controllers/advanced_example_controller.rb",
     "examples/rails/app/controllers/application.rb",
@@ -61,6 +54,7 @@ Gem::Specification.new do |s|
     "lib/casclient/responses.rb",
     "lib/casclient/tickets.rb",
     "lib/casclient/tickets/storage.rb",
+    "lib/casclient/tickets/storage/active_record_ticket_store.rb",
     "lib/vibes-rubycas-client.rb",
     "rails_generators/active_record_ticket_store/USAGE",
     "rails_generators/active_record_ticket_store/active_record_ticket_store_generator.rb",
