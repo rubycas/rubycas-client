@@ -30,7 +30,7 @@ module CASClient
           else
             log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session id could be looked up.")
           end
-          session_id, session
+          [session_id, session]
         end
 
         def store_service_session_lookup(st, controller)
