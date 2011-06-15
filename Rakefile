@@ -21,6 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.description = "We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server"
   gem.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
   gem.rdoc_options = ['--main', 'README.rdoc']
+  gem.files.exclude '.rvmrc'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
