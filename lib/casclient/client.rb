@@ -102,7 +102,13 @@ module CASClient
       h['pgtUrl'] = proxy_callback_url if proxy_callback_url
       uri.query = hash_to_query(h)
       
-      st.response = request_cas_response(uri, ValidationResponse)
+      response = request_cas_response(uri, ValidationResponse)
+      st.user = response.user
+      st.extra_attributes = response.extra_attributes
+      st.pgt_iou = response.pgt_iou
+      st.success = response.is_success?
+      st.failure_code = response.failure_code
+      st.failure_message = response.failure_message
       
       return st
     end
@@ -183,10 +189,15 @@ module CASClient
       h['targetService'] = target_service
       uri.query = hash_to_query(h)
       
-      pr = request_cas_response(uri, ProxyResponse)
+      response = request_cas_response(uri, ProxyResponse)
       
-      pt = ProxyTicket.new(pr.proxy_ticket, target_service)
-      pt.response = pr
+      pt = ProxyTicket.new(response.proxy_ticket, target_service)
+      pt.user = response.user
+      pt.extra_attributes = response.extra_attributes
+      pt.pgt_iou = response.pgt_iou
+      pt.success = response.is_success?
+      pt.failure_code = response.failure_code
+      pt.failure_message = response.failure_message
       
       return pt
     end

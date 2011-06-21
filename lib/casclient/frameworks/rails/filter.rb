@@ -23,6 +23,7 @@ module CASClient
             end
             
             last_st = controller.session[:cas_last_valid_ticket]
+            last_st_service = controller.session[:cas_last_valid_ticket_service]
             
             if single_sign_out(controller)
               controller.send(:render, :text => "CAS Single-Sign-Out request intercepted.")
@@ -31,17 +32,17 @@ module CASClient
 
             st = read_ticket(controller)
             
-            is_new_session = true
+            #is_new_session = true
             
             if st && last_st && 
-                last_st.ticket == st.ticket && 
-                last_st.service == st.service
+                last_st == st.ticket && 
+                last_st_service == st.service
               # warn() rather than info() because we really shouldn't be re-validating the same ticket. 
               # The only situation where this is acceptable is if the user manually does a refresh and 
               # the same ticket happens to be in the URL.
               log.warn("Re-using previously validated ticket since the ticket id and service are the same.")
-              st = last_st
-              is_new_session = false
+              #st = last_st
+              return true
             elsif last_st &&
                 !config[:authenticate_on_every_request] && 
                 controller.session[client.username_session_key]
@@ -54,42 +55,42 @@ module CASClient
               # it will almost certainly break POST request, AJAX calls, etc.
               log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
                 "Previous ticket #{last_st.ticket.inspect} will be re-used."
-              st = last_st
-              is_new_session = false
+              #st = last_st
+              return true
             end
             
             if st
               client.validate_service_ticket(st) unless st.has_been_validated?
-              vr = st.response
               
               if st.is_valid?
-                if is_new_session
-                  log.info("Ticket #{st.ticket.inspect} for service #{st.service.inspect} belonging to user #{vr.user.inspect} is VALID.")
-                  controller.session[client.username_session_key] = vr.user.dup
-                  controller.session[client.extra_attributes_session_key] = HashWithIndifferentAccess.new(vr.extra_attributes) if vr.extra_attributes
+                #if is_new_session
+                  log.info("Ticket #{st.ticket.inspect} for service #{st.service.inspect} belonging to user #{st.user.inspect} is VALID.")
+                  controller.session[client.username_session_key] = st.user.dup
+                  controller.session[client.extra_attributes_session_key] = HashWithIndifferentAccess.new(st.extra_attributes) if st.extra_attributes
                   
-                  if vr.extra_attributes
-                    log.debug("Extra user attributes provided along with ticket #{st.ticket.inspect}: #{vr.extra_attributes.inspect}.")
+                  if st.extra_attributes
+                    log.debug("Extra user attributes provided along with ticket #{st.ticket.inspect}: #{st.extra_attributes.inspect}.")
                   end
                   
                   # RubyCAS-Client 1.x used :casfilteruser as it's username session key,
                   # so we need to set this here to ensure compatibility with configurations
                   # built around the old client.
-                  controller.session[:casfilteruser] = vr.user
+                  controller.session[:casfilteruser] = st.user
                   
                   if config[:enable_single_sign_out]
-                    @@client.ticket_store.store_service_session_lookup(st, controller)
+                    client.ticket_store.store_service_session_lookup(st, controller)
                   end
-                end
+                #end
               
                 # Store the ticket in the session to avoid re-validating the same service
                 # ticket with the CAS server.
-                controller.session[:cas_last_valid_ticket] = st
+                controller.session[:cas_last_valid_ticket] = st.ticket
+                controller.session[:cas_last_valid_ticket_service] = st.service
                 
-                if vr.pgt_iou
-                  unless controller.session[:cas_pgt] && controller.session[:cas_pgt].ticket && controller.session[:cas_pgt].iou == vr.pgt_iou
+                if st.pgt_iou
+                  unless controller.session[:cas_pgt] && controller.session[:cas_pgt].ticket && controller.session[:cas_pgt].iou == st.pgt_iou
                     log.info("Receipt has a proxy-granting ticket IOU. Attempting to retrieve the proxy-granting ticket...")
-                    pgt = client.retrieve_proxy_granting_ticket(vr.pgt_iou)
+                    pgt = client.retrieve_proxy_granting_ticket(st.pgt_iou)
 
                     if pgt
                       log.debug("Got PGT #{pgt.ticket.inspect} for PGT IOU #{pgt.iou.inspect}. This will be stored in the session.")
@@ -97,18 +98,27 @@ module CASClient
                       # For backwards compatibility with RubyCAS-Client 1.x configurations...
                       controller.session[:casfilterpgt] = pgt
                     else
-                      log.error("Failed to retrieve a PGT for PGT IOU #{vr.pgt_iou}!")
+                      log.error("Failed to retrieve a PGT for PGT IOU #{st.pgt_iou}!")
                     end
                   else
-                    log.info("PGT is present in session and PGT IOU #{vr.pgt_iou} matches the saved PGT IOU.  Not retrieving new PGT.")
+                    log.info("PGT is present in session and PGT IOU #{st.pgt_iou} matches the saved PGT IOU.  Not retrieving new PGT.")
                   end
 
                 end
                 
+                log.debug '################'
+                log.debug '################'
+                controller.session.each do |v|
+                  log.debug v.inspect
+                end
+                log.debug '################'
+                log.debug '################'
+              
+                
                 return true
               else
-                log.warn("Ticket #{st.ticket.inspect} failed validation -- #{vr.failure_code}: #{vr.failure_message}")
-                unauthorized!(controller, vr)
+                log.warn("Ticket #{st.ticket.inspect} failed validation -- #{st.failure_code}: #{st.failure_message}")
+                unauthorized!(controller, st)
                 return false
               end
             else # no service ticket was present in the request
