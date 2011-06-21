@@ -32,8 +32,6 @@ module CASClient
 
             st = read_ticket(controller)
             
-            #is_new_session = true
-            
             if st && last_st && 
                 last_st == st.ticket && 
                 last_st_service == st.service
@@ -41,7 +39,6 @@ module CASClient
               # The only situation where this is acceptable is if the user manually does a refresh and 
               # the same ticket happens to be in the URL.
               log.warn("Re-using previously validated ticket since the ticket id and service are the same.")
-              #st = last_st
               return true
             elsif last_st &&
                 !config[:authenticate_on_every_request] && 
@@ -55,7 +52,6 @@ module CASClient
               # it will almost certainly break POST request, AJAX calls, etc.
               log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
                 "Previous ticket #{last_st.inspect} will be re-used."
-              #st = last_st
               return true
             end
             
@@ -103,18 +99,7 @@ module CASClient
                   else
                     log.info("PGT is present in session and PGT IOU #{st.pgt_iou} matches the saved PGT IOU.  Not retrieving new PGT.")
                   end
-
                 end
-                
-                log.debug '################'
-                log.debug '################'
-                controller.session.each do |v|
-                  log.debug v.inspect
-                end
-                log.debug '################'
-                log.debug '################'
-              
-                
                 return true
               else
                 log.warn("Ticket #{st.ticket.inspect} failed validation -- #{st.failure_code}: #{st.failure_message}")
