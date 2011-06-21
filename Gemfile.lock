@@ -1,29 +1,16 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    actionmailer (2.3.12)
-      actionpack (= 2.3.12)
-    actionpack (2.3.12)
-      activesupport (= 2.3.12)
+    actionpack (2.3.11)
+      activesupport (= 2.3.11)
       rack (~> 1.1.0)
-    activerecord (2.3.12)
-      activesupport (= 2.3.12)
-    activeresource (2.3.12)
-      activesupport (= 2.3.12)
-    activesupport (2.3.12)
+    activesupport (2.3.11)
     git (1.2.5)
     jeweler (1.6.2)
       bundler (~> 1.0)
       git (>= 1.2.5)
       rake
     rack (1.1.2)
-    rails (2.3.12)
-      actionmailer (= 2.3.12)
-      actionpack (= 2.3.12)
-      activerecord (= 2.3.12)
-      activeresource (= 2.3.12)
-      activesupport (= 2.3.12)
-      rake (>= 0.8.3)
     rake (0.8.7)
     rcov (0.9.9)
     riot (0.12.4)
@@ -34,10 +21,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (~> 2.3.11)
+  actionpack (= 2.3.11)
+  activesupport (= 2.3.11)
   bundler (~> 1.0.0)
   jeweler (~> 1.6.2)
-  rails (~> 2.3.10)
   rake (~> 0.8.3)
   rcov
   riot

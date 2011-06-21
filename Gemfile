@@ -12,7 +12,7 @@ group :development do
   gem "jeweler", "~> 1.6.2"
   gem "rcov"
   gem "rake", "~> 0.8.3"
-  gem "rails", "~> 2.3.10"
+  gem "actionpack", "~> 2.3.11"
 end
 
 gem "activesupport", "~> 2.3.11"
