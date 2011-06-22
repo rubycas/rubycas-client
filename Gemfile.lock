@@ -25,7 +25,6 @@ DEPENDENCIES
   activesupport (~> 2.3.11)
   bundler (~> 1.0.0)
   jeweler (~> 1.6.2)
-  rake (~> 0.8.3)
   rcov
   riot
   rr

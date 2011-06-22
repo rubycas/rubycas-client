@@ -11,7 +11,6 @@ group :development do
   gem "bundler", "~> 1.0.0"
   gem "jeweler", "~> 1.6.2"
   gem "rcov"
-  gem "rake", "~> 0.8.3"
   gem "actionpack", "~> 2.3.11"
 end
 
