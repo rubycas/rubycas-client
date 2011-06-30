@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{vibes-rubycas-client}
-  s.version = "2.3.0.alpha7"
+  s.version = "2.3.0.alpha8"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
-  s.date = %q{2011-06-22}
+  s.authors = [%q{Matt Campbell}, %q{Rahul Joshi}, %q{Matt Zukowski}, %q{Matt Walker}]
+  s.date = %q{2011-06-30}
   s.description = %q{We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -65,10 +65,10 @@ Gem::Specification.new do |s|
     "vibes-rubycas-client.gemspec"
   ]
   s.homepage = %q{http://github.com/vibes/rubycas-client}
-  s.licenses = ["MIT"]
-  s.rdoc_options = ["--main", "README.rdoc"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
+  s.licenses = [%q{MIT}]
+  s.rdoc_options = [%q{--main}, %q{README.rdoc}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.5}
   s.summary = %q{Client library for the Central Authentication Service (CAS) protocol.}
 
   if s.respond_to? :specification_version then
