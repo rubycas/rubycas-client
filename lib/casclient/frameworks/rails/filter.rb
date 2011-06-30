@@ -278,8 +278,10 @@ module CASClient
             
             if controller.request.post? &&
                 controller.params['logoutRequest'] &&
-                controller.params['logoutRequest'] =~
-                  %r{^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)</samlp:SessionIndex>}m
+                #This next line checks the logoutRequest value for both its regular and URI.escape'd form. I couldn't get
+                #it to work without URI.escaping it from rubycas server's side, this way it will work either way.
+                [controller.params['logoutRequest'],URI.unescape(controller.params['logoutRequest'])].find{|xml| xml =~
+                    %r{^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)</samlp:SessionIndex>}m}
               # TODO: Maybe check that the request came from the registered CAS server? Although this might be
               #       pointless since it's easily spoofable...
               si = $~[1]
