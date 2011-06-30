@@ -192,9 +192,6 @@ module CASClient
       response = request_cas_response(uri, ProxyResponse)
       
       pt = ProxyTicket.new(response.proxy_ticket, target_service)
-      pt.user = response.user
-      pt.extra_attributes = response.extra_attributes
-      pt.pgt_iou = response.pgt_iou
       pt.success = response.is_success?
       pt.failure_code = response.failure_code
       pt.failure_message = response.failure_message
