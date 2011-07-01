@@ -1,5 +1,3 @@
-#require 'active_record'
-
 module CASClient
   module Tickets
     module Storage
