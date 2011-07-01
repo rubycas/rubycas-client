@@ -1,5 +1,3 @@
-require 'pstore'
-
 # Rails controller that responds to proxy generating ticket callbacks from the CAS server and allows
 # for retrieval of those PGTs.
 class CasProxyCallbackController < ActionController::Base
@@ -29,12 +27,6 @@ class CasProxyCallbackController < ActionController::Base
 
     casclient.ticket_store.save_pgt_iou(pgtIou, pgtId)
 
-    pstore = open_pstore
-    
-    pstore.transaction do
-      pstore[pgtIou] = pgtId
-    end
-    
     render :text => "PGT received. Thank you!" and return
   end
   
