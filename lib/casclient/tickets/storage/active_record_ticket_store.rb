@@ -31,7 +31,8 @@ module CASClient
         def get_session_for_service_ticket(st)
           st = st.ticket if st.kind_of? ServiceTicket
           session = ActiveRecord::SessionStore::Session.find_by_service_ticket(st)
-          [session.session_id, session]
+          session_id = session ? session.session_id : nil
+          [session_id, session]
         end
 
         def cleanup_service_session_lookup(st)
