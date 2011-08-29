@@ -140,7 +140,13 @@ module CASClient
           
           def configure(config)
             @@config = config
-            @@config[:logger] = RAILS_DEFAULT_LOGGER unless @@config[:logger]
+            @@config[:logger] ||= begin
+              if defined?(Rails) && Rails.respond_to?(:logger)
+                Rails.logger
+              elsif defined?(RAILS_DEFAULT_LOGGER)
+                RAILS_DEFAULT_LOGGER
+              end
+            end
             @@client = CASClient::Client.new(config)
             @@log = client.log
           end
