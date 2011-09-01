@@ -301,8 +301,15 @@ module CASClient
               
               begin
                 required_sess_store = ActiveRecord::SessionStore
-                current_sess_store  = ActionController::Base.session_store
-              rescue NameError
+                if ::Rails::VERSION::STRING.match /^3[0-9.]+/
+                  # => Rails 3
+                  current_sess_store = ::Rails.application.config.session_store
+                else
+                  # => Rails 2
+                  current_sess_store  = ActionController::Base.session_store
+                end
+              rescue NameError => e
+                log.debug "Got the name error: #{e.inspect}"
                 # for older versions of Rails (prior to 2.3)
                 required_sess_store = CGI::Session::ActiveRecordStore
                 current_sess_store  = ActionController::Base.session_options[:database_manager]
@@ -315,6 +322,8 @@ module CASClient
                 if session_id
                   session = current_sess_store::Session.find_by_session_id(session_id)
                   if session
+                    st = session.data[:cas_last_valid_ticket] || si
+                    delete_service_session_lookup(st) if st
                     session.destroy
                     log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
                   else
