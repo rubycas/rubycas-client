@@ -10,7 +10,6 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["CHANGELOG.txt", "History.txt", "LICENSE.txt", "Manifest.txt", "README.rdoc"]
   s.files = ["CHANGELOG.txt", "History.txt", "LICENSE.txt", "Manifest.txt", "README.rdoc", "Rakefile", "init.rb", "lib/casclient.rb", "lib/casclient/client.rb",
   "lib/casclient/frameworks/rails/cas_proxy_callback_controller.rb", "lib/casclient/frameworks/rails/filter.rb", "lib/casclient/frameworks/merb/strategy.rb", "lib/casclient/responses.rb", "lib/casclient/tickets.rb", "lib/casclient/version.rb", "lib/rubycas-client.rb", "setup.rb"]
-  s.has_rdoc = true
   s.homepage = %q{http://rubycas-client.rubyforge.org}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
