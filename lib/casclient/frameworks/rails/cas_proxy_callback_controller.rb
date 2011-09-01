@@ -71,6 +71,6 @@ class CasProxyCallbackController < ActionController::Base
     end
     
     def open_pstore
-      PStore.new("#{Rails.root}/tmp/cas_pgt.pstore")
+      PStore.new("#{::Rails.root}/tmp/cas_pgt.pstore")
     end
 end
