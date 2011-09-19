@@ -16,7 +16,7 @@ Jeweler::Tasks.new do |gem|
   gem.name = "rubycas-client"
   gem.homepage = "http://github.com/rubycas/rubycas-client"
   gem.license = "MIT"
-  gem.description = "Client library for the Central Authentication Service (CAS) protocol."
+  gem.summary = "Client library for the Central Authentication Service (CAS) protocol."
   gem.authors = ["Matt Zukowski", "Matt Walker", "Matt Campbell"]
   gem.rdoc_options = ['--main', 'README.rdoc']
   gem.files.exclude '.rvmrc', '.infinity_test'
