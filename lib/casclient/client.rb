@@ -1,7 +1,7 @@
 module CASClient
   # The client brokers all HTTP transactions with the CAS server.
   class Client
-    attr_reader :cas_base_url 
+    attr_reader :cas_base_url, :cas_destination_logout_param_name
     attr_reader :log, :username_session_key, :extra_attributes_session_key
     attr_reader :ticket_store
     attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url
@@ -23,6 +23,7 @@ module CASClient
       end
    
       @cas_base_url      = conf[:cas_base_url].gsub(/\/$/, '')       
+      @cas_destination_logout_param_name = conf[:cas_destination_logout_param_name]
       
       @login_url    = conf[:login_url]
       @logout_url   = conf[:logout_url]
@@ -44,6 +45,10 @@ module CASClient
       @conf_options = conf
     end
     
+    def cas_destination_logout_param_name
+      @cas_destination_logout_param_name || "destination"
+    end
+
     def login_url
       @login_url || (cas_base_url + "/login")
     end
@@ -80,7 +85,7 @@ module CASClient
       if destination_url || follow_url
         uri = URI.parse(url)
         h = uri.query ? query_to_hash(uri.query) : {}
-        h['destination'] = destination_url if destination_url
+        h[cas_destination_logout_param_name] = destination_url if destination_url
         h['url'] = follow_url if follow_url
         uri.query = hash_to_query(h)
         uri.to_s

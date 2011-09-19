@@ -24,7 +24,7 @@ CASClient::Frameworks::Rails::Filter.configure(
 
 # More complicated configuration
 
-#cas_logger = CASClient::Logger.new(RAILS_ROOT+'/log/cas.log')
+#cas_logger = CASClient::Logger.new(Rails.root+'/log/cas.log')
 #cas_logger.level = Logger::DEBUG
 #
 #CASClient::Frameworks::Rails::Filter.configure(

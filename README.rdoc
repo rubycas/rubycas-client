@@ -38,6 +38,9 @@ API documentation (i.e. the RDocs) are available at http://rubycas-client.rubyfo
 
 <b>NOTE:</b> For compatibility with Rails 3 have a look at https://github.com/zuk/rubycas-client-rails
 
+The current version of RubyCAS-Client should work with Rails 2.3.6 and up. For compatibility with
+older Rails try using an older version of the client.
+
 You can download the latest version of RubyCAS-Client from the project's rubyforge page at 
 http://rubyforge.org/projects/rubycas-client.
 
@@ -107,7 +110,7 @@ Here is a more complicated configuration showing most of the configuration optio
 (this does not show proxy options, which are covered in the next section):
 
   # enable detailed CAS logging
-  cas_logger = CASClient::Logger.new(RAILS_ROOT+'/log/cas.log')
+  cas_logger = CASClient::Logger.new(::Rails.root+'/log/cas.log')
   cas_logger.level = Logger::DEBUG
 
   CASClient::Frameworks::Rails::Filter.configure(
@@ -148,7 +151,7 @@ notify the client application that the CAS session is closed. The client will au
 requsts from the CAS server, but in order for this to work you must configure your Rails application as follows:
 
 1. The Rails session store must be set to ActiveRecord: <tt>config.action_controller.session_store = :active_record_store</tt>
-2. The server must be able to read and write to RAILS_ROOT/tmp/sessions. If you are in a clustered environment,
+2. The server must be able to read and write to Rails.root/tmp/sessions. If you are in a clustered environment,
    the contents of this directory must be shared between all server instances. 
 3. Cross-site request forgery protection must be disabled. In your <tt>application.rb</tt>: <tt>self.allow_forgery_protection = false</tt>.
    (Or rather you may want to disable forgery protection only for actions that are behind the CAS filter.)
@@ -229,7 +232,7 @@ all you need to do is this:
 In your <tt>config/environment.rb</tt>:
 
   # enable detailed CAS logging for easier troubleshooting
-  cas_logger = CASClient::Logger.new(RAILS_ROOT+'/log/cas.log')
+  cas_logger = CASClient::Logger.new(::Rails.root+'/log/cas.log')
   cas_logger.level = Logger::DEBUG
 
   CASClient::Frameworks::Rails::Filter.configure(

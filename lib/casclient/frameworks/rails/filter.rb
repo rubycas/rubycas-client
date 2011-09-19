@@ -2,7 +2,7 @@ module CASClient
   module Frameworks
     module Rails
       class Filter
-        cattr_reader :config, :log, :client
+        cattr_reader :config, :log, :client, :fake_user, :fake_extra_attribues
         
         # These are initialized when you call configure.
         @@config = nil
@@ -133,7 +133,7 @@ module CASClient
           
           def configure(config)
             @@config = config
-            @@config[:logger] = RAILS_DEFAULT_LOGGER unless @@config[:logger]
+            @@config[:logger] = ::Rails.logger unless @@config[:logger]
             @@client = CASClient::Client.new(config)
             @@log = client.log
           end
@@ -279,8 +279,10 @@ module CASClient
             
             if controller.request.post? &&
                 controller.params['logoutRequest'] &&
-                controller.params['logoutRequest'] =~
-                  %r{^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)</samlp:SessionIndex>}m
+                #This next line checks the logoutRequest value for both its regular and URI.escape'd form. I couldn't get
+                #it to work without URI.escaping it from rubycas server's side, this way it will work either way.
+                [controller.params['logoutRequest'],URI.unescape(controller.params['logoutRequest'])].find{|xml| xml =~
+                    %r{^<samlp:LogoutRequest.*?<samlp:SessionIndex>(.*)</samlp:SessionIndex>}m}
               # TODO: Maybe check that the request came from the registered CAS server? Although this might be
               #       pointless since it's easily spoofable...
               si = $~[1]
@@ -335,7 +337,7 @@ module CASClient
           end
         end
       end
-    
+
       class GatewayFilter < Filter
         def self.use_gatewaying?
           return true unless @@config[:use_gatewaying] == false
