@@ -4,13 +4,13 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{vibes-rubycas-client}
-  s.version = "2.3.0.alpha8"
+  s.name = %q{rubycas-client}
+  s.version = "2.3.0.rc1"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Matt Campbell}, %q{Rahul Joshi}, %q{Matt Zukowski}, %q{Matt Walker}]
-  s.date = %q{2011-06-30}
-  s.description = %q{We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server}
+  s.authors = ["Matt Zukowski", "Matt Walker", "Matt Campbell"]
+  s.date = %q{2011-09-19}
+  s.description = %q{Client library for the Central Authentication Service (CAS) protocol.}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -55,50 +55,50 @@ Gem::Specification.new do |s|
     "lib/casclient/tickets.rb",
     "lib/casclient/tickets/storage.rb",
     "lib/casclient/tickets/storage/active_record_ticket_store.rb",
-    "lib/vibes-rubycas-client.rb",
+    "lib/rubycas-client.rb",
     "rails_generators/active_record_ticket_store/USAGE",
     "rails_generators/active_record_ticket_store/active_record_ticket_store_generator.rb",
     "rails_generators/active_record_ticket_store/templates/README",
     "rails_generators/active_record_ticket_store/templates/migration.rb",
+    "rubycas-client.gemspec",
     "test/teststrap.rb",
-    "test/units/casclient/frameworks/rails/filter_test.rb",
-    "vibes-rubycas-client.gemspec"
+    "test/units/casclient/frameworks/rails/filter_test.rb"
   ]
-  s.homepage = %q{http://github.com/vibes/rubycas-client}
-  s.licenses = [%q{MIT}]
-  s.rdoc_options = [%q{--main}, %q{README.rdoc}]
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.5}
-  s.summary = %q{Client library for the Central Authentication Service (CAS) protocol.}
+  s.homepage = %q{http://github.com/rubycas/rubycas-client}
+  s.licenses = ["MIT"]
+  s.rdoc_options = ["--main", "README.rdoc"]
+  s.require_paths = ["lib"]
+  s.rubygems_version = %q{1.6.2}
+  s.summary = nil
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, ["~> 2.3.11"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_development_dependency(%q<riot>, [">= 0"])
       s.add_development_dependency(%q<rr>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_development_dependency(%q<actionpack>, ["~> 2.3.11"])
+      s.add_development_dependency(%q<actionpack>, [">= 0"])
     else
-      s.add_dependency(%q<activesupport>, ["~> 2.3.11"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<riot>, [">= 0"])
       s.add_dependency(%q<rr>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<actionpack>, ["~> 2.3.11"])
+      s.add_dependency(%q<actionpack>, [">= 0"])
     end
   else
-    s.add_dependency(%q<activesupport>, ["~> 2.3.11"])
+    s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<riot>, [">= 0"])
     s.add_dependency(%q<rr>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
     s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<actionpack>, ["~> 2.3.11"])
+    s.add_dependency(%q<actionpack>, [">= 0"])
   end
 end
 

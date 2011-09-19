@@ -6,8 +6,8 @@ group :development do
   gem "bundler", "~> 1.0.0"
   gem "jeweler", "~> 1.6.2"
   gem "rcov"
-  gem "actionpack", "~> 2.3"
+  gem "actionpack"
 end
 
-gem "activesupport", "~> 2.3"
+gem "activesupport"
 

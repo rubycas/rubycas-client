@@ -13,16 +13,16 @@ GEM
     rack (1.1.2)
     rake (0.9.2)
     rcov (0.9.9)
-    riot (0.12.4)
+    riot (0.12.5)
       rr
-    rr (1.0.2)
+    rr (1.0.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (~> 2.3)
-  activesupport (~> 2.3)
+  actionpack
+  activesupport
   bundler (~> 1.0.0)
   jeweler (~> 1.6.2)
   rcov

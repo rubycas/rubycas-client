@@ -13,15 +13,13 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "vibes-rubycas-client"
-  gem.homepage = "http://github.com/vibes/rubycas-client"
+  gem.name = "rubycas-client"
+  gem.homepage = "http://github.com/rubycas/rubycas-client"
   gem.license = "MIT"
-  gem.summary = "Client library for the Central Authentication Service (CAS) protocol."
-  gem.description = "We've taken the rubycas-client and added some enterprisey features and improved compatibility with JASIG's CAS server"
-  gem.authors = ["Matt Campbell", "Rahul Joshi", "Matt Zukowski", "Matt Walker"]
+  gem.description = "Client library for the Central Authentication Service (CAS) protocol."
+  gem.authors = ["Matt Zukowski", "Matt Walker", "Matt Campbell"]
   gem.rdoc_options = ['--main', 'README.rdoc']
-  gem.files.exclude '.rvmrc'
+  gem.files.exclude '.rvmrc', '.infinity_test'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
@@ -48,7 +46,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "vibes-rubycas-client #{version}"
+  rdoc.title = "rubycas-client #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

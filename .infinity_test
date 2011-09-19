@@ -1,0 +1,7 @@
+infinity_test do
+  use :rubies => %w(1.9.2 1.8.7 ree), :gemset => 'rubycas-client'
+
+  before(:each_ruby) do |env|
+    env.system('bundle install')
+  end
+end
