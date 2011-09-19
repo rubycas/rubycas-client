@@ -69,16 +69,18 @@ module CASClient
       class LocalDirTicketStore < AbstractTicketStore
         require 'pstore'
 
+        DEFAULT_TMP_DIR = defined?(RAILS_ROOT) ? "#{RAILS_ROOT}/tmp" : "#{Dir.pwd}/tmp"
+
         def initialize(config={})
           config ||= {}
-          @tmp_dir = config[:storage_dir] || "#{RAILS_ROOT}/tmp"
+          @tmp_dir = config[:storage_dir] || DEFAULT_TMP_DIR
           @service_session_lookup_dir = config[:service_session_lookup_dir] || "#{@tmp_dir}/sessions"
           @pgt_store_path = config[:pgt_store_path] || "#{@tmp_dir}/cas_pgt.pstore"
         end
 
         # Creates a file in tmp/sessions linking a SessionTicket
         # with the local Rails session id. The file is named
-        # cas_sess.<session ticket> and its text contents is the corresponding 
+        # cas_sess.<session ticket> and its text contents is the corresponding
         # Rails session id.
         # Returns the filename of the lookup file created.
         def store_service_session_lookup(st, controller)
