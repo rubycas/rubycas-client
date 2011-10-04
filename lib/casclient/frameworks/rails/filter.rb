@@ -32,7 +32,7 @@ module CASClient
 
             st = read_ticket(controller)
             
-            unless config[:authenticate_on_every_request]
+            unless authenticate_on_every_request?
               if st && last_st && 
                   last_st == st.ticket && 
                   last_st_service == st.service
@@ -152,6 +152,10 @@ module CASClient
           
           def use_gatewaying?
             @@config[:use_gatewaying]
+          end
+
+          def authenticate_on_every_request?
+            @@config[:authenticate_on_every_request]
           end
           
           # Returns the login URL for the current controller. 
@@ -344,6 +348,19 @@ module CASClient
           return true unless @@config[:use_gatewaying] == false
         end
       end
+
+      class ForceGatewayFilter < GatewayFilter
+        def self.authenticate_on_every_request?
+          return true
+        end
+      end
+
+      class ForceFilter < Filter
+        def self.authenticate_on_every_request?
+          return true
+        end
+      end
+
     end
   end
 end
