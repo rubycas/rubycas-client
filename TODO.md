@@ -2,7 +2,7 @@
 
 ## Version 3.0
 
-1. Move Service Callback, PGT Callback and Single Signout Callback to
+1. Move Service Callback, PGT Callback and Single Sign Out Callback to
    a Rack Middleware.
 1. Convert test cases from riot to rspec2
 1. Integration with travis for CI
@@ -12,6 +12,7 @@
 
 ## Version 3.1
 
+1. Improve test coverage
 1. Remove dependency on activesupport (expect in Rails specific classes)
 1. Support for Rails 3.0 and 3.1
 1. Support for Ruby 1.9.3
