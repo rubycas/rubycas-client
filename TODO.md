@@ -1,0 +1,38 @@
+# Planned Changes
+
+## Version 3.0
+
+1. Move Service Callback, PGT Callback and Single Signout Callback to
+   a Rack Middleware.
+1. Convert test cases from riot to rspec2
+1. Integration with travis for CI
+  1. Test against Rails 2.3
+  1. Test without Rails
+  1. Test against 1.8.7 and 1.9.2
+
+## Version 3.1
+
+1. Remove dependency on activesupport (expect in Rails specific classes)
+1. Support for Rails 3.0 and 3.1
+1. Support for Ruby 1.9.3
+
+## Future
+
+1. Support for Ruby 1.9.3
+1. Support for other Rubies (JRuby, Rubinius, etc.)
+1. Support for Rails 3.2
+
+# Documentation Needs
+
+## Improve/Rewrite Documentation
+
+The documentation isn't the clearest and is now a bit out of date. That
+needs addressing
+
+## Examples
+
+We could use some new and/or improved examples for
+
+1. Rails 2.3
+1. Rails 3.x
+1. Sinatra
