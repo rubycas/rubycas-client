@@ -56,6 +56,8 @@ module CASClient
         end
 
       end
+      puts "loaded active record ticket store!"
+      ::ACTIVE_RECORD_TICKET_STORE = ActiveRecordTicketStore
 
       class CasPgtiou < ActiveRecord::Base
         #t.string :pgt_iou, :null => false
