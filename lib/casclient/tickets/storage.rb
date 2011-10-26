@@ -63,13 +63,13 @@ module CASClient
       # worker processes have access to a shared file system.
       #
       # This ticket store takes the following config parameters
-      # :storage_dir - The directory to store data in. Defaults to RAILS_ROOT/tmp
+      # :storage_dir - The directory to store data in. Defaults to Rails.root/tmp
       # :service_session_lookup_dir - The directory to store Service Ticket/Session ID files in. Defaults to :storage_dir/sessions
       # :pgt_store_path - The location to store the pgt PStore file. Defaults to :storage_dir/cas_pgt.pstore
       class LocalDirTicketStore < AbstractTicketStore
         require 'pstore'
 
-        DEFAULT_TMP_DIR = defined?(RAILS_ROOT) ? "#{RAILS_ROOT}/tmp" : "#{Dir.pwd}/tmp"
+        DEFAULT_TMP_DIR = defined?(Rails.root) ? "#{Rails.root}/tmp" : "#{Dir.pwd}/tmp"
 
         def initialize(config={})
           config ||= {}
