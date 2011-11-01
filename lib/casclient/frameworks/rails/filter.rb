@@ -78,6 +78,11 @@ module CASClient
                   end
                 #end
               
+                # The user is now authentified we need to set this to false.
+                # otherwise on the next request it will wrongly think the user
+                # was sent to the cas server
+                controller.session[:cas_sent_to_gateway] = false
+
                 # Store the ticket in the session to avoid re-validating the same service
                 # ticket with the CAS server.
                 controller.session[:cas_last_valid_ticket] = st.ticket
