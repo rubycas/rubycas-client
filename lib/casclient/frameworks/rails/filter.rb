@@ -32,27 +32,28 @@ module CASClient
 
             st = read_ticket(controller)
             
-            if st && last_st && 
-                last_st == st.ticket && 
-                last_st_service == st.service
-              # warn() rather than info() because we really shouldn't be re-validating the same ticket. 
-              # The only situation where this is acceptable is if the user manually does a refresh and 
-              # the same ticket happens to be in the URL.
-              log.warn("Re-using previously validated ticket since the ticket id and service are the same.")
-              return true
-            elsif last_st &&
-                !config[:authenticate_on_every_request] && 
-                controller.session[client.username_session_key]
-              # Re-use the previous ticket if the user already has a local CAS session (i.e. if they were already
-              # previously authenticated for this service). This is to prevent redirection to the CAS server on every
-              # request.
-              #
-              # This behaviour can be disabled (so that every request is routed through the CAS server) by setting
-              # the :authenticate_on_every_request config option to true. However, this is not desirable since
-              # it will almost certainly break POST request, AJAX calls, etc.
-              log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
-                "Previous ticket #{last_st.inspect} will be re-used."
-              return true
+            unless authenticate_on_every_request?
+              if st && last_st && 
+                  last_st == st.ticket && 
+                  last_st_service == st.service
+                # warn() rather than info() because we really shouldn't be re-validating the same ticket. 
+                # The only situation where this is acceptable is if the user manually does a refresh and 
+                # the same ticket happens to be in the URL.
+                log.warn("Re-using previously validated ticket since the ticket id and service are the same.")
+                return true
+              elsif last_st &&
+                  controller.session[client.username_session_key]
+                # Re-use the previous ticket if the user already has a local CAS session (i.e. if they were already
+                # previously authenticated for this service). This is to prevent redirection to the CAS server on every
+                # request.
+                #
+                # This behaviour can be disabled (so that every request is routed through the CAS server) by setting
+                # the :authenticate_on_every_request config option to true. However, this is not desirable since
+                # it will almost certainly break POST request, AJAX calls, etc.
+                log.debug "Existing local CAS session detected for #{controller.session[client.username_session_key].inspect}. "+
+                  "Previous ticket #{last_st.inspect} will be re-used."
+                return true
+              end
             end
             
             if st
@@ -151,6 +152,10 @@ module CASClient
           
           def use_gatewaying?
             @@config[:use_gatewaying]
+          end
+
+          def authenticate_on_every_request?
+            @@config[:authenticate_on_every_request]
           end
           
           # Returns the login URL for the current controller. 
@@ -343,6 +348,19 @@ module CASClient
           return true unless @@config[:use_gatewaying] == false
         end
       end
+
+      class ForceGatewayFilter < GatewayFilter
+        def self.authenticate_on_every_request?
+          return true
+        end
+      end
+
+      class ForceFilter < Filter
+        def self.authenticate_on_every_request?
+          return true
+        end
+      end
+
     end
   end
 end
