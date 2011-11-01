@@ -1,4 +1,4 @@
-= RubyCAS-Client
+= RubyCAS-Client http://travis-ci.org/rubycas/rubycas-client.png
 
 Authors::   Matt Zukowski <matt AT roughest DOT net> and Matt Campbell <matt AT soupmatt DOT com>; inspired by code by Ola Bini <ola.bini AT ki DOT se> and Matt Walker <mwalker AT tamu DOT edu>
 Copyright:: Portions contributed by Matt Zukowski are copyright (c) 2009 Urbacon Ltd.
