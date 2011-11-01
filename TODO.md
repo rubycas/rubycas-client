@@ -1,14 +1,20 @@
 # Planned Changes
 
+Also take a look at the [issues page](/rubycas/rubycas-client/issues)
+
+## Version 2.4
+
+1. Support for Ruby 1.9.3
+1. Integration with travis for CI
+  1. Test against Rails 2.3
+  1. Test without Rails
+  1. Test against 1.8.7, 1.9.2, 1.9.3, jruby
+
 ## Version 3.0
 
 1. Convert test cases from riot to rspec2 - Done!
 1. Move Service Callback, PGT Callback and Single Sign Out Callback to
    a Rack Middleware.
-1. Integration with travis for CI
-  1. Test against Rails 2.3
-  1. Test without Rails
-  1. Test against 1.8.7 and 1.9.2
 
 ## Version 3.1
 
@@ -16,11 +22,9 @@
 1. Improve test coverage for CASClient::Client
 1. Remove dependency on activesupport (expect in Rails specific classes)
 1. Support for Rails 3.0 and 3.1
-1. Support for Ruby 1.9.3
 
 ## Future
 
-1. Support for Ruby 1.9.3
 1. Support for other Rubies (JRuby, Rubinius, etc.)
 1. Support for Rails 3.2
 
