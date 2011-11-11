@@ -66,7 +66,8 @@ module CASClient
         
         @extra_attributes = {}
         @xml.elements.to_a('//cas:authenticationSuccess/cas:attributes/* | //cas:authenticationSuccess/*[local-name() != \'proxies\' and local-name() != \'proxyGrantingTicket\' and local-name() != \'user\' and local-name() != \'attributes\']').each do |el|
-          @extra_attributes.merge! el.name => el.text
+          inner_text = el.cdatas.length > 0 ? el.cdatas.join('') : el.text
+          @extra_attributes.merge! el.name => inner_text
         end
         
         # unserialize extra attributes
