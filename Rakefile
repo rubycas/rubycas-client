@@ -19,7 +19,7 @@ Jeweler::Tasks.new do |gem|
   gem.summary = "Client library for the Central Authentication Service (CAS) protocol."
   gem.authors = ["Matt Zukowski", "Matt Walker", "Matt Campbell"]
   gem.rdoc_options = ['--main', 'README.rdoc']
-  gem.files.exclude '.rvmrc', '.infinity_test'
+  gem.files.exclude '.rvmrc', '.infinity_test', '.rbenv-version', '.rbenv-gemsets'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
