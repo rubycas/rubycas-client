@@ -1,6 +1,6 @@
 = RubyCAS-Client Changelog
 
-== Version 2.3.2 :: 2011-11-11
+== Version 2.3.3 :: 2011-11-11
 
 * Bug Fixes
   * Removed a puts that didn't get cleaned up
