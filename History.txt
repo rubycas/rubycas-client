@@ -1,5 +1,12 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.2 :: 2011-11-11
+
+* Bug Fixes
+  * Removed a puts that didn't get cleaned up
+  * Fix a bug with parsing extra attributes caused by a strange edge
+    case in active_support
+
 == Version 2.3.1 :: 2011-10-22
 
 * New Functionality
@@ -33,7 +40,7 @@ See http://www.opensource.org/licenses/mit-license.php
 
 * New functionality:
   * Added config parameter force_ssl_verification (self explanatory) [Roberto Klein]
-  * Added explicit SingleSignutFilter for Rails (convenient?) [Adam Elliot]
+  * Added explicit SingleSigoutFilter for Rails (convenient?) [Adam Elliot]
   * Added support for faking out the filter; useful when testing. See
     http://github.com/gunark/rubycas-client/commit/1eb10cc285d59193eede3d4406f95cad9db9d93a
     [Brian Hogan]
