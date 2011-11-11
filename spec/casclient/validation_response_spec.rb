@@ -11,7 +11,7 @@ describe CASClient::ValidationResponse do
       <cas:first_name>Jack</cas:first_name>
       <cas:mobile_phone></cas:mobile_phone>
       <cas:global_roles><![CDATA[]]></cas:global_roles>
-      <cas:foo_data><![CDATA[{ foo: "bar" }]]></cas:foo_data>
+      <cas:foo_data> <![CDATA[[{"id":10529}]]]></cas:foo_data>
     </cas:attributes>
   </cas:authenticationSuccess>
 </cas:serviceResponse>
@@ -33,7 +33,7 @@ RESPONSE_TEXT
     end
 
     it "sets the value of JSON attributes to their parsed value" do
-      subject.extra_attributes["foo_data"]["foo"].should == "bar"
+      subject.extra_attributes["foo_data"][0]["id"].should == 10529
     end
   end
 end
