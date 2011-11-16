@@ -1,5 +1,11 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.4 :: 2011-11-16
+
+* Bug Fixes
+  * read_service_url will no longer include POST parameters on the
+    service url
+
 == Version 2.3.3 :: 2011-11-11
 
 * Bug Fixes
