@@ -5,12 +5,19 @@ require 'casclient/frameworks/rails/filter'
 describe CASClient::Frameworks::Rails::Filter do
 
   def controller_with_session(request = nil, session={})
+
+    query_parameters = {:ticket => "bogusticket", :renew => false}
+    parameters = query_parameters.dup
+
     request ||= mock_post_request
     controller = double("Controller")
     controller.stub(:session) {session}
     controller.stub(:request) {request}
     controller.stub(:url_for) {"bogusurl"}
-    controller.stub(:params) {{:ticket => "bogusticket", :renew => false}}
+    controller.stub(:query_parameters) {query_parameters}
+    controller.stub(:path_parameters) {{}}
+    controller.stub(:parameters) {parameters}
+    controller.stub(:params) {parameters}
     controller
   end
 
