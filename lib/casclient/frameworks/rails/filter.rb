@@ -322,14 +322,16 @@ module CASClient
           def returning_from_gateway?(controller)
             controller.session[:cas_sent_to_gateway]
           end
-          
+
           def read_service_url(controller)
             if config[:service_url]
               log.debug("Using explicitly set service url: #{config[:service_url]}")
               return config[:service_url]
             end
-            
-            params = controller.params.dup
+
+            params = {}.with_indifferent_access
+            params.merge controller.query_parameters
+            params.merge controller.path_parameters
             params.delete(:ticket)
             service_url = controller.url_for(params)
             log.debug("Guessed service url: #{service_url.inspect}")
