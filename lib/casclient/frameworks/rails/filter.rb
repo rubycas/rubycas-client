@@ -330,8 +330,8 @@ module CASClient
             end
 
             params = {}.with_indifferent_access
-            params.merge controller.query_parameters
-            params.merge controller.path_parameters
+            params.merge controller.request.query_parameters
+            params.merge controller.request.path_parameters
             params.delete(:ticket)
             service_url = controller.url_for(params)
             log.debug("Guessed service url: #{service_url.inspect}")

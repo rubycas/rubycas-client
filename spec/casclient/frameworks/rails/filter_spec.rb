@@ -9,7 +9,10 @@ describe CASClient::Frameworks::Rails::Filter do
     query_parameters = {:ticket => "bogusticket", :renew => false}
     parameters = query_parameters.dup
 
+    #TODO this really need to be replaced with a "real" rails controller
     request ||= mock_post_request
+    request.stub(:query_parameters) {query_parameters}
+    request.stub(:path_parameters) {{}}
     controller = double("Controller")
     controller.stub(:session) {session}
     controller.stub(:request) {request}
