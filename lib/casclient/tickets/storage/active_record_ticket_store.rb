@@ -22,8 +22,8 @@ module CASClient
           #get the session from the rack env using ActiveRecord::SessionStore::SESSION_RECORD_KEY = 'rack.session.record'
 
           st = st.ticket if st.kind_of? ServiceTicket
-          session = controller.request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY]
-          session.service_ticket = st
+          session = controller.session
+          session[:service_ticket] = st
         end
 
         def get_session_for_service_ticket(st)
