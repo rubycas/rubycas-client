@@ -1,5 +1,12 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.6 :: 2011-11-22
+
+* Bug Fixes
+  * Don't attempt to store single sign out information if sessions
+    aren't enabled for this request. Fixes a problem were we were
+    blowing up trying to modify a frozen session
+
 == Version 2.3.5 :: 2011-11-17
 
 * Bug Fixes
