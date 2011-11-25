@@ -69,11 +69,10 @@ module CASClient
       class LocalDirTicketStore < AbstractTicketStore
         require 'pstore'
 
-        DEFAULT_TMP_DIR = defined?(Rails.root) ? "#{Rails.root}/tmp" : "#{Dir.pwd}/tmp"
-
         def initialize(config={})
           config ||= {}
-          @tmp_dir = config[:storage_dir] || DEFAULT_TMP_DIR
+          default_tmp_dir = defined?(Rails.root) ? "#{Rails.root}/tmp" : "#{Dir.pwd}/tmp"
+          @tmp_dir = config[:storage_dir] || default_tmp_dir
           @service_session_lookup_dir = config[:service_session_lookup_dir] || "#{@tmp_dir}/sessions"
           @pgt_store_path = config[:pgt_store_path] || "#{@tmp_dir}/cas_pgt.pstore"
         end
