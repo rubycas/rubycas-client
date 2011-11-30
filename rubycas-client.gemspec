@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "rubycas-client"
-  s.version = "2.3.6"
+  s.version = "2.3.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Zukowski", "Matt Walker", "Matt Campbell"]
-  s.date = "2011-11-22"
+  s.date = "2011-11-30"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -81,7 +81,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_development_dependency(%q<json>, ["~> 1.6.1"])
       s.add_development_dependency(%q<rspec>, ["~> 2.7.0"])
-      s.add_development_dependency(%q<bundler>, [">= 1.1.rc"])
+      s.add_development_dependency(%q<bundler>, [">= 1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_development_dependency(%q<actionpack>, [">= 0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
@@ -90,7 +90,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<json>, ["~> 1.6.1"])
       s.add_dependency(%q<rspec>, ["~> 2.7.0"])
-      s.add_dependency(%q<bundler>, [">= 1.1.rc"])
+      s.add_dependency(%q<bundler>, [">= 1.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_dependency(%q<actionpack>, [">= 0"])
       s.add_dependency(%q<rake>, [">= 0"])
@@ -100,7 +100,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<json>, ["~> 1.6.1"])
     s.add_dependency(%q<rspec>, ["~> 2.7.0"])
-    s.add_dependency(%q<bundler>, [">= 1.1.rc"])
+    s.add_dependency(%q<bundler>, [">= 1.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
     s.add_dependency(%q<actionpack>, [">= 0"])
     s.add_dependency(%q<rake>, [">= 0"])
