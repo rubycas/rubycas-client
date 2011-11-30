@@ -1,5 +1,11 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.7 :: 2011-11-29
+
+* Bug Fixes
+  * Fixed bug in how service_urls with query parameters are handled
+  * Fixed issue with setting correct temp directory under Rails 3.1
+
 == Version 2.3.6 :: 2011-11-22
 
 * Bug Fixes
