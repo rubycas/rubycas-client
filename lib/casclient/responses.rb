@@ -72,25 +72,7 @@ module CASClient
         
         # unserialize extra attributes
         @extra_attributes.each do |k, v|
-          if v.blank?
-            @extra_attributes[k] = nil
-          elsif !options[:encode_extra_attributes_as]
-            begin
-                @extra_attributes[k] = YAML.load(v)
-              rescue ArgumentError
-                raise ArgumentError, "Did not find :encode_extra_attributes_as config parameter, hence default encoding scheme is YAML but CAS response recieved in encoded differently "
-              end
-          else 
-            if options[:encode_extra_attributes_as] == :json
-              begin
-                @extra_attributes[k] = JSON.parse(v)
-              rescue JSON::ParserError
-                @extra_attributes[k] = YAML.load(v)
-              end
-            else
-              @extra_attributes[k] = YAML.load(v)
-            end
-          end
+          @extra_attributes[k] = parse_extra_attribute_value(v, options[:encode_extra_attributes_as])
         end
       elsif is_failure?
         @failure_code = @xml.elements['//cas:authenticationFailure'].attributes['code']
@@ -98,6 +80,34 @@ module CASClient
       else
         # this should never happen, since the response should already have been recognized as invalid
         raise BadResponseException, "BAD CAS RESPONSE:\n#{raw_text.inspect}\n\nXML DOC:\n#{doc.inspect}"
+      end
+    end
+
+    def parse_extra_attribute_value(value, encode_extra_attributes_as)
+      attr_value = if value.blank?
+        nil
+      elsif !encode_extra_attributes_as
+        begin
+            YAML.load(value)
+          rescue ArgumentError
+            raise ArgumentError, "Did not find :encode_extra_attributes_as config parameter, hence default encoding scheme is YAML but CAS response recieved in encoded differently "
+          end
+      else
+        if encode_extra_attributes_as == :json
+          begin
+            JSON.parse(value)
+          rescue JSON::ParserError
+            YAML.load(value)
+          end
+        else
+          YAML.load(value)
+        end
+      end
+
+      unless (attr_value.kind_of? Enumerable) || attr_value.nil?
+        attr_value.to_s
+      else
+        attr_value
       end
     end
 

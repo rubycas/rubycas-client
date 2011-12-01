@@ -9,9 +9,11 @@ describe CASClient::ValidationResponse do
   <cas:authenticationSuccess>
     <cas:attributes>
       <cas:first_name>Jack</cas:first_name>
+      <cas:last_name>92.5</cas:last_name>
       <cas:mobile_phone></cas:mobile_phone>
       <cas:global_roles><![CDATA[]]></cas:global_roles>
       <cas:foo_data> <![CDATA[[{"id":10529}]]]></cas:foo_data>
+      <cas:food_data> <![CDATA[{"id":10529}]]></cas:food_data>
     </cas:attributes>
   </cas:authenticationSuccess>
 </cas:serviceResponse>
@@ -32,8 +34,16 @@ RESPONSE_TEXT
       subject.extra_attributes["first_name"].should == "Jack"
     end
 
-    it "sets the value of JSON attributes to their parsed value" do
+    it "sets the value of JSON attributes containing Arrays to their parsed value" do
       subject.extra_attributes["foo_data"][0]["id"].should == 10529
+    end
+
+    it "sets the value of JSON attributes containing Hashes to their parsed value" do
+      subject.extra_attributes["food_data"]["id"].should == 10529
+    end
+
+    it "sets non-hash attributes as strings" do
+      subject.extra_attributes["last_name"].should be_a_kind_of String
     end
   end
 end
