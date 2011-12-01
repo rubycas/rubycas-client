@@ -14,6 +14,7 @@ describe CASClient::ValidationResponse do
       <cas:global_roles><![CDATA[]]></cas:global_roles>
       <cas:foo_data> <![CDATA[[{"id":10529}]]]></cas:foo_data>
       <cas:food_data> <![CDATA[{"id":10529}]]></cas:food_data>
+      <cas:allegedly_yaml>- 10</cas:allegedly_yaml>
     </cas:attributes>
   </cas:authenticationSuccess>
 </cas:serviceResponse>
@@ -44,6 +45,10 @@ RESPONSE_TEXT
 
     it "sets non-hash attributes as strings" do
       subject.extra_attributes["last_name"].should be_a_kind_of String
+    end
+
+    it "sets the value of attributes which are not valid JSON but are valid YAML to their literal value" do
+      subject.extra_attributes["allegedly_yaml"].should == '- 10'
     end
   end
 end

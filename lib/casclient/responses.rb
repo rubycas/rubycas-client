@@ -97,7 +97,7 @@ module CASClient
           begin
             JSON.parse(value)
           rescue JSON::ParserError
-            YAML.load(value)
+            value
           end
         else
           YAML.load(value)
