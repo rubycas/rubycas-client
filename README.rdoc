@@ -1,4 +1,4 @@
-= RubyCAS-Client
+= RubyCAS-Client 
 
 Authors::   Matt Zukowski <matt AT roughest DOT net> and Matt Campbell <matt AT soupmatt DOT com>; inspired by code by Ola Bini <ola.bini AT ki DOT se> and Matt Walker <mwalker AT tamu DOT edu>
 Copyright:: Portions contributed by Matt Zukowski are copyright (c) 2009 Urbacon Ltd.
@@ -8,7 +8,7 @@ License::   MIT License
 Websites::  http://github.com/rubycas/rubycas-client
             http://github.com/rubycas/rubycas-client/wiki
             http://rubydoc.info/github/rubycas/rubycas-client/master/frames
-
+Build Status:: {<img src="http://travis-ci.org/rubycas/rubycas-client.png" />}[http://travis-ci.org/rubycas/rubycas-client]
 
 === RubyCAS-Client is a Ruby client library for Yale's Central Authentication Service (CAS) protocol.
 
