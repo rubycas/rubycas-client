@@ -1,5 +1,12 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.8 :: 2011-12-19
+
+* Bug Fixes
+  * Fix some undesired behavior when parsing extra attributes as JSON
+    * Simple attributes (that aren't JSON Objects) stay strings
+    * We don't fallback to the YAML parser if JSON parsing fails
+
 == Version 2.3.7 :: 2011-11-29
 
 * Bug Fixes
