@@ -77,28 +77,29 @@ module CASClient
     #                   parameter differently (or not at all).
     # follow_url:: This satisfies section 2.3.1 of the CAS protocol spec.
     #              See http://www.ja-sig.org/products/cas/overview/protocol
-    def logout_url(destination_url = nil, follow_url = nil)
+    def logout_url(destination_url = nil, follow_url = nil, service_url = nil)
       url = @logout_url || (cas_base_url + "/logout")
-      
+      uri = URI.parse(url)
+      service_url = (service_url if service_url) || @service_url
+      h = uri.query ? query_to_hash(uri.query) : {}
+
       if destination_url
         # if present, remove the 'ticket' parameter from the destination_url
         duri = URI.parse(destination_url)
-        h = duri.query ? query_to_hash(duri.query) : {}
-        h.delete('ticket')
-        duri.query = hash_to_query(h)
+        dh = duri.query ? query_to_hash(duri.query) : {}
+        dh.delete('ticket')
+        duri.query = hash_to_query(dh)
         destination_url = duri.to_s.gsub(/\?$/, '')
-      end
-      
-      if destination_url || follow_url
-        uri = URI.parse(url)
-        h = uri.query ? query_to_hash(uri.query) : {}
         h[cas_destination_logout_param_name] = destination_url if destination_url
+        h[gateway] = 'true'
+      elsif follow_url
         h['url'] = follow_url if follow_url
-        uri.query = hash_to_query(h)
-        uri.to_s
+        h['service'] = service_url
       else
-        url
+        h['service'] = service_url
       end
+      uri.query = hash_to_query(h)
+      uri.to_s
     end
     
     def proxy_url
