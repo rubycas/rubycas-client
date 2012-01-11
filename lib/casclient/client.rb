@@ -91,7 +91,7 @@ module CASClient
         duri.query = hash_to_query(dh)
         destination_url = duri.to_s.gsub(/\?$/, '')
         h[cas_destination_logout_param_name] = destination_url if destination_url
-        h[gateway] = 'true'
+        h['gateway'] = 'true'
       elsif follow_url
         h['url'] = follow_url if follow_url
         h['service'] = service_url
