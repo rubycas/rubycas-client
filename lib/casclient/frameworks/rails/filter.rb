@@ -218,7 +218,10 @@ module CASClient
           end
           
           def unauthorized!(controller, vr = nil)
-            format = controller.request.format.to_sym
+            format = nil
+            unless controller.request.format.nil?
+              format = controller.request.format.to_sym
+            end
             format = (format == :js ? :json : format)
             case format
             when :xml, :json
