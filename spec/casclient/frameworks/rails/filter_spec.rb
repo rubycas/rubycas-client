@@ -182,4 +182,21 @@ describe CASClient::Frameworks::Rails::Filter do
       end
     end
   end
+
+  context "controller request is missing format" do
+    context "#unauthorized!" do
+      it 'should not crash' do
+        request = double('mock request')
+        request.stub(:format).and_return(nil)
+
+        controller = controller_with_session(request)
+
+        CASClient::Frameworks::Rails::Filter.
+          should_receive(:redirect_to_cas_for_authentication).
+          with(controller)
+          
+        CASClient::Frameworks::Rails::Filter.unauthorized!(controller)
+      end
+    end
+  end
 end
