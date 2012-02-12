@@ -8,6 +8,8 @@ group :development do
   gem "actionpack"
   gem "rake"
   gem "simplecov", :require => false
+  gem "guard"
+  gem "guard-rspec"
 end
 
 gem "activesupport", :require => "active_support"
