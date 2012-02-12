@@ -1,7 +1,8 @@
 require 'bundler'
-
-Bundler.setup(:default, :test)
+Bundler.setup(:default, :development)
 Bundler.require
+
+require 'simplecov'
 
 RSpec.configure do |config|
   #config.include Rack::Test::Methods

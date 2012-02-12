@@ -7,7 +7,7 @@ group :development do
   gem "jeweler", "~> 1.6.2"
   gem "actionpack"
   gem "rake"
-  gem "rcov"
+  gem "simplecov", :require => false
 end
 
 gem "activesupport", :require => "active_support"
