@@ -24,11 +24,11 @@ module CASClient
         end
 
         def get_session_for_service_ticket(st)
-          session_id = read_service_session_lookup(si)
+          session_id = read_service_session_lookup(st)
           if session_id
             session = ActiveRecord::SessionStore::Session.find_by_session_id(session_id)
           else
-            log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session id could be looked up.")
+            log.warn("Couldn't destroy session with SessionIndex #{st} because no corresponding session id could be looked up.")
           end
           [session_id, session]
         end
