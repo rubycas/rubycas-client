@@ -4,14 +4,16 @@ module CASClient
       class AbstractTicketStore
 
         attr_accessor :log
-        @log = CASClient::LoggerWrapper.new
+        def log
+          @log ||= CASClient::LoggerWrapper.new
+        end
 
-        def process_single_sign_out(si)
+        def process_single_sign_out(st)
 
-          session_id, session = get_session_for_service_ticket(si)
+          session_id, session = get_session_for_service_ticket(st)
           if session
             session.destroy
-            log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{si.inspect}.")
+            log.debug("Destroyed #{session.inspect} for session #{session_id.inspect} corresponding to service ticket #{st.inspect}.")
           else
             log.debug("Data for session #{session_id.inspect} was not found. It may have already been cleared by a local CAS logout request.")
           end
@@ -19,16 +21,17 @@ module CASClient
           if session_id
             log.info("Single-sign-out for service ticket #{session_id.inspect} completed successfuly.")
           else
-            log.debug("No session id found for CAS ticket #{si}")
+            log.debug("No session id found for CAS ticket #{st}")
           end
         end
 
         def get_session_for_service_ticket(st)
-          session_id = read_service_session_lookup(si)
-          if session_id
-            session = ActiveRecord::SessionStore::Session.find_by_session_id(session_id)
+          session_id = read_service_session_lookup(st)
+          unless session_id.nil?
+            # This feels a bit hackish, but there isn't really a better way to go about it that I am aware of yet
+            session = ActiveRecord::SessionStore.session_class.find_by_session_id(session_id)
           else
-            log.warn("Couldn't destroy session with SessionIndex #{si} because no corresponding session id could be looked up.")
+            log.warn("Couldn't destroy session service ticket #{st} because no corresponding session id could be found.")
           end
           [session_id, session]
         end
@@ -52,6 +55,12 @@ module CASClient
         protected
         def read_service_session_lookup(st)
           raise 'Implement this in a subclass!'
+        end
+
+        def session_id_from_controller(controller)
+          session_id = controller.request.session_options[:id] || controller.session.session_id
+          raise CASClient::CASException, "Failed to extract session_id from controller" if session_id.nil?
+          session_id
         end
       end
 
@@ -83,10 +92,10 @@ module CASClient
         # Rails session id.
         # Returns the filename of the lookup file created.
         def store_service_session_lookup(st, controller)
-          raise CASException, "No service_ticket specified." unless st
-          raise CASException, "No controller specified." unless controller
+          raise CASException, "No service_ticket specified." if st.nil?
+          raise CASException, "No controller specified." if controller.nil?
 
-          sid = controller.request.session_options[:id] || controller.session.session_id
+          sid = session_id_from_controller(controller)
 
           st = st.ticket if st.kind_of? ServiceTicket
           f = File.new(filename_of_service_session_lookup(st), 'w')
@@ -100,11 +109,11 @@ module CASClient
         # cas_sess.<session ticket> file created in a prior call to 
         # #store_service_session_lookup.
         def read_service_session_lookup(st)
-          raise CASException, "No service_ticket specified." unless st
+          raise CASException, "No service_ticket specified." if st.nil?
 
           st = st.ticket if st.kind_of? ServiceTicket
           ssl_filename = filename_of_service_session_lookup(st)
-          return File.exists?(ssl_filename) && IO.read(ssl_filename)
+          return IO.read(ssl_filename) if File.exists?(ssl_filename)
         end
 
         # Removes a stored relationship between a ServiceTicket and a local
@@ -113,7 +122,7 @@ module CASClient
         #
         # See #store_service_session_lookup.
         def cleanup_service_session_lookup(st)
-          raise CASException, "No service_ticket specified." unless st
+          raise CASException, "No service_ticket specified." if st.nil?
 
           st = st.ticket if st.kind_of? ServiceTicket
           ssl_filename = filename_of_service_session_lookup(st)
@@ -121,6 +130,9 @@ module CASClient
         end
 
         def save_pgt_iou(pgt_iou, pgt)
+          raise CASException, "Invalid pgt_iou" if pgt_iou.nil?
+          raise CASException, "Invalid pgt" if pgt.nil?
+
           # TODO: pstore contents should probably be encrypted...
           pstore = open_pstore
 
@@ -135,16 +147,13 @@ module CASClient
           pstore = open_pstore
 
           pgt = nil
+          # TODO: need to periodically clean the storage, otherwise it will just keep growing
           pstore.transaction do
             pgt = pstore[pgt_iou]
+            pstore.delete pgt_iou
           end
 
           raise CASException, "Invalid pgt_iou specified. Perhaps this pgt has already been retrieved?" unless pgt
-
-          # TODO: need to periodically clean the storage, otherwise it will just keep growing
-          pstore.transaction do
-            pstore.delete pgt_iou
-          end
 
           pgt
         end

@@ -4,32 +4,6 @@ require 'casclient/frameworks/rails/filter'
 
 describe CASClient::Frameworks::Rails::Filter do
 
-  def controller_with_session(request = nil, session={})
-
-    query_parameters = {:ticket => "bogusticket", :renew => false}
-    parameters = query_parameters.dup
-
-    #TODO this really need to be replaced with a "real" rails controller
-    request ||= mock_post_request
-    request.stub(:query_parameters) {query_parameters}
-    request.stub(:path_parameters) {{}}
-    controller = double("Controller")
-    controller.stub(:session) {session}
-    controller.stub(:request) {request}
-    controller.stub(:url_for) {"bogusurl"}
-    controller.stub(:query_parameters) {query_parameters}
-    controller.stub(:path_parameters) {{}}
-    controller.stub(:parameters) {parameters}
-    controller.stub(:params) {parameters}
-    controller
-  end
-
-  def mock_post_request
-      mock_request = ActionController::Request.new({})
-      mock_request.stub(:post?) {true}
-      mock_request
-  end
-
   before(:each) do
     CASClient::Frameworks::Rails::Filter.configure(
       :cas_base_url => 'http://test.local/',
@@ -42,7 +16,7 @@ describe CASClient::Frameworks::Rails::Filter do
     context "faking user without attributes" do
       before { CASClient::Frameworks::Rails::Filter.fake('tester@test.com') }
       it 'should set the session user' do
-        CASClient::Frameworks::Rails::Filter.filter(controller_with_session(nil, subject))
+        CASClient::Frameworks::Rails::Filter.filter(mock_controller_with_session(nil, subject))
         subject.should eq({:cas_user => 'tester@test.com', :casfilteruser => 'tester@test.com'})
       end
       after { CASClient::Frameworks::Rails::Filter.fake(nil,nil) }
@@ -51,7 +25,7 @@ describe CASClient::Frameworks::Rails::Filter do
     context "faking user with attributes" do
       before { CASClient::Frameworks::Rails::Filter.fake('tester@test.com', {:test => 'stuff', :this => 'that'}) }
       it 'should set the session user and attributes' do
-        CASClient::Frameworks::Rails::Filter.filter(controller_with_session(nil, subject))
+        CASClient::Frameworks::Rails::Filter.filter(mock_controller_with_session(nil, subject))
         subject.should eq({ :cas_user => 'tester@test.com', :casfilteruser => 'tester@test.com', :cas_extra_attributes => {:test => 'stuff', :this => 'that' }})
       end
       after { CASClient::Frameworks::Rails::Filter.fake(nil,nil) }
@@ -76,7 +50,7 @@ describe CASClient::Frameworks::Rails::Filter do
       CASClient::Client.any_instance.stub(:request_cas_response).and_return(response)
       CASClient::Client.any_instance.stub(:retrieve_proxy_granting_ticket).and_return(pgt)
 
-      controller = controller_with_session()
+      controller = mock_controller_with_session()
       CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
      end
   end
@@ -92,7 +66,7 @@ describe CASClient::Frameworks::Rails::Filter do
       CASClient::Client.any_instance.stub(:request_cas_response).and_return(response)
       CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
-      controller = controller_with_session()
+      controller = mock_controller_with_session()
       CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
      end
   end
@@ -103,7 +77,7 @@ describe CASClient::Frameworks::Rails::Filter do
 
         CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
-        controller = controller_with_session()
+        controller = mock_controller_with_session()
         controller.stub(:params) {{}}
         CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
        end
@@ -116,7 +90,7 @@ describe CASClient::Frameworks::Rails::Filter do
           CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
           CASClient::Frameworks::Rails::Filter.config[:use_gatewaying] = false 
-          controller = controller_with_session()
+          controller = mock_controller_with_session()
           controller.session[:cas_sent_to_gateway] = true
           controller.stub(:params) {{}}
           CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
@@ -127,7 +101,7 @@ describe CASClient::Frameworks::Rails::Filter do
          it "should return failure from filter" do
 
           CASClient::Frameworks::Rails::Filter.config[:use_gatewaying] = true 
-          controller = controller_with_session()
+          controller = mock_controller_with_session()
           controller.session[:cas_sent_to_gateway] = true
           controller.stub(:params) {{}}
           CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
@@ -151,7 +125,7 @@ describe CASClient::Frameworks::Rails::Filter do
         CASClient::Client.any_instance.stub(:request_cas_response).and_return(response)
         CASClient::Client.any_instance.stub(:retrieve_proxy_granting_ticket).and_raise CASClient::CASException
 
-        controller = controller_with_session()
+        controller = mock_controller_with_session()
         expect { CASClient::Frameworks::Rails::Filter.filter(controller) }.to raise_error(CASClient::CASException)
        end
     end
@@ -161,7 +135,7 @@ describe CASClient::Frameworks::Rails::Filter do
 
         CASClient::Client.any_instance.stub(:request_cas_response).and_raise "Some exception"
 
-        controller = controller_with_session()
+        controller = mock_controller_with_session()
         expect { CASClient::Frameworks::Rails::Filter.filter(controller) }.to raise_error(RuntimeError)
        end
     end
@@ -177,7 +151,7 @@ describe CASClient::Frameworks::Rails::Filter do
 
         subject[:cas_last_valid_ticket] = 'bogusticket'
         subject[:cas_last_valid_ticket_service] = 'bogusurl'
-        controller = controller_with_session(mock_post_request(), subject)
+        controller = mock_controller_with_session(mock_post_request(), subject)
         CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
       end
     end
@@ -189,7 +163,7 @@ describe CASClient::Frameworks::Rails::Filter do
         request = double('mock request')
         request.stub(:format).and_return(nil)
 
-        controller = controller_with_session(request)
+        controller = mock_controller_with_session(request)
 
         CASClient::Frameworks::Rails::Filter.
           should_receive(:redirect_to_cas_for_authentication).

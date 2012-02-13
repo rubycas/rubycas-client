@@ -19,25 +19,30 @@ module CASClient
         end
 
         def store_service_session_lookup(st, controller)
-          #get the session from the rack env using ActiveRecord::SessionStore::SESSION_RECORD_KEY = 'rack.session.record'
+          raise CASException, "No service_ticket specified." unless st
+          raise CASException, "No controller specified." unless controller
 
           st = st.ticket if st.kind_of? ServiceTicket
           session = controller.session
           session[:service_ticket] = st
         end
 
-        def get_session_for_service_ticket(st)
+        def read_service_session_lookup(st)
+          raise CASException, "No service_ticket specified." unless st
           st = st.ticket if st.kind_of? ServiceTicket
           session = ActiveRecord::SessionStore::Session.find_by_service_ticket(st)
-          session_id = session ? session.session_id : nil
-          [session_id, session]
+          session ? session.session_id : nil
         end
 
         def cleanup_service_session_lookup(st)
           #no cleanup needed for this ticket store
+          #we still raise the exception for API compliance
+          raise CASException, "No service_ticket specified." unless st
         end
 
         def save_pgt_iou(pgt_iou, pgt)
+          raise CASClient::CASException.new("Invalid pgt_iou") if pgt_iou.nil?
+          raise CASClient::CASException.new("Invalid pgt") if pgt.nil?
           pgtiou = CasPgtiou.create(:pgt_iou => pgt_iou, :pgt_id => pgt)
         end
 
@@ -45,9 +50,9 @@ module CASClient
           raise CASException, "No pgt_iou specified. Cannot retrieve the pgt." unless pgt_iou
 
           pgtiou = CasPgtiou.find_by_pgt_iou(pgt_iou)
-          pgt = pgtiou.pgt_id
 
-          raise CASException, "Invalid pgt_iou specified. Perhaps this pgt has already been retrieved?" unless pgt
+          raise CASException, "Invalid pgt_iou specified. Perhaps this pgt has already been retrieved?" unless pgtiou
+          pgt = pgtiou.pgt_id
 
           pgtiou.destroy
 

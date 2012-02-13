@@ -1,15 +1,18 @@
 source "http://rubygems.org"
 
 group :development do
-  gem "json", "~> 1.6.1"
-  gem "rspec", "~> 2.7.0"
+  gem "json"
+  gem "rspec"
   gem "bundler", ">= 1.0"
-  gem "jeweler", "~> 1.6.2"
+  gem "jeweler"
   gem "actionpack"
+  gem "activerecord"
   gem "rake"
   gem "simplecov", :require => false
   gem "guard"
   gem "guard-rspec"
+  gem "sqlite3", :require => false
+  gem "database_cleaner"
 end
 
 gem "activesupport", :require => "active_support"
