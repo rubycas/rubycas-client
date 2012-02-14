@@ -1,5 +1,22 @@
 = RubyCAS-Client Changelog
 
+== Master
+
+* Bug Fixes
+  * Fixed issue that caused Single Sign Out to fail (@bryanlarsen and @soorajb)
+  * Fixed issue in Filter#unauthorized! (@mscottford)
+
+* New functionality
+  * Tweak the CasProxyCallbackController so it can be used with
+    rubycas-client-rails in Rails 3 (@bryanlarsen)
+  * Add support for calling the CAS Server through an HTTP proxy (@shevaun)
+  * Add support for specifying the service url to be added to the
+    logout url (@dyson)
+
+* Other
+  * Made writing and running rspec tests much easier
+  * Added tests for Ticket Stores
+
 == Version 2.3.8 :: 2011-12-19
 
 * Bug Fixes
