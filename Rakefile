@@ -25,18 +25,6 @@ end
 Jeweler::RubygemsDotOrgTasks.new
 
 begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/test_*.rb'
-    test.verbose = true
-    test.rcov_opts << '--exclude "gems/*"'
-  end
-rescue LoadError
-  puts "Hiding rcov tasks because rcov is not available"
-end
-
-begin
   require 'rspec/core/rake_task'
   desc 'Run RSpecs to confirm that all functionality is working as expected'
   RSpec::Core::RakeTask.new('spec') do |t|
