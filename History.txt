@@ -16,6 +16,7 @@
 * Other
   * Made writing and running rspec tests much easier
   * Added tests for Ticket Stores
+  * Official support for jruby 1.6
 
 == Version 2.3.8 :: 2011-12-19
 
