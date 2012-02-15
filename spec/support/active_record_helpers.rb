@@ -6,7 +6,7 @@ module ActiveRecordHelpers
     def setup_active_record
       config_file = File.open("spec/database.yml")
       db_config = HashWithIndifferentAccess.new(YAML.load(config_file))
-      ActiveRecord::Base.establish_connection(db_config[:test])
+      ActiveRecord::Base.establish_connection(db_config[(RUBY_PLATFORM == "java") ? :testjruby : :test])
       ActiveRecord::Migration.verbose = false
       RubyCasTables.migrate(:up)
     end
