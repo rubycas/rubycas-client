@@ -5,8 +5,8 @@ group :development do
   gem "rspec"
   gem "bundler", ">= 1.0"
   gem "jeweler"
-  gem "actionpack"
-  gem "activerecord"
+  gem "actionpack", :require => 'action_pack'
+  gem "activerecord", :require => 'active_record'
   gem "rake"
   gem "simplecov", :require => false
   gem "guard"
