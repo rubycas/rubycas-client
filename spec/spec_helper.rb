@@ -6,7 +6,7 @@ Bundler.require
 require 'rubycas-client'
 
 Dir["./spec/support/**/*.rb"].each do |f|
-  require f unless f.end_with? '_spec.rb'
+  require f.gsub('.rb','') unless f.end_with? '_spec.rb'
 end
 
 require 'database_cleaner'
