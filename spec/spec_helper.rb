@@ -5,6 +5,8 @@ Bundler.require
 
 require 'rubycas-client'
 
+SPEC_TMP_DIR="spec/tmp"
+
 Dir["./spec/support/**/*.rb"].each do |f|
   require f.gsub('.rb','') unless f.end_with? '_spec.rb'
 end

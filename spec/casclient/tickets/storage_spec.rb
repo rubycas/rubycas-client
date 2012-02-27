@@ -1,9 +1,6 @@
 require 'spec_helper'
 require 'support/local_hash_ticket_store'
-
-if RUBY_VERSION >= "1.9.3"
-  require 'tmpdir'
-end
+require 'fileutils'
 
 describe CASClient::Tickets::Storage::AbstractTicketStore do
   describe "#store_service_session_lookup" do
@@ -34,14 +31,14 @@ describe CASClient::Tickets::Storage::AbstractTicketStore do
 end
 
 describe CASClient::Tickets::Storage::LocalDirTicketStore do
-  around do |example|
-    Dir.mktmpdir(described_class.name) do |dir|
-      @dir = dir
-      Dir.mkdir(File.join(dir, "sessions"))
-      example.run
-    end
+  let(:dir) {File.join(SPEC_TMP_DIR, "local_dir_ticket_store")}
+  before do
+    FileUtils.mkdir_p(File.join(dir, "sessions"))
+  end
+  after do
+    FileUtils.remove_dir(dir)
   end
   it_should_behave_like "a ticket store" do
-    let(:ticket_store) {described_class.new(:storage_dir => @dir)}
+    let(:ticket_store) {described_class.new(:storage_dir => dir)}
   end
 end
