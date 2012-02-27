@@ -3,5 +3,5 @@ test:
   database: spec/test.sqlite3.db
 
 testjruby:
-  adapter: jdbch2
-  database: spec/test
+  adapter: jdbcsqlite3
+  database: spec/test.sqlite3.db

@@ -19,7 +19,7 @@ group :development do
 
   platforms :jruby do
     gem "jruby-openssl"
-    gem "activerecord-jdbch2-adapter"
+    gem "activerecord-jdbcsqlite3-adapter"
   end
 end
 
