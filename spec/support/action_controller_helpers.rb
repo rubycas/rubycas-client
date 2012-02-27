@@ -1,4 +1,4 @@
-require 'actionpack'
+require 'action_pack'
 
 module ActionControllerHelpers
 
