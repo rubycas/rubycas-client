@@ -15,6 +15,10 @@ describe CASClient::ValidationResponse do
       <cas:foo_data> <![CDATA[[{"id":10529}]]]></cas:foo_data>
       <cas:food_data> <![CDATA[{"id":10529}]]></cas:food_data>
       <cas:allegedly_yaml>- 10</cas:allegedly_yaml>
+      <cas:truthy> <![CDATA[--- true
+]]></cas:truthy>
+      <cas:falsy> <![CDATA[--- false
+]]></cas:falsy>
     </cas:attributes>
   </cas:authenticationSuccess>
 </cas:serviceResponse>
@@ -51,6 +55,10 @@ RESPONSE_TEXT
       subject.extra_attributes["allegedly_yaml"].should == '- 10'
     end
 
+    it "sets the value of boolean attributes to their boolean value" do
+      subject.extra_attributes["truthy"].should == true
+      subject.extra_attributes["falsy"].should == false
+    end
   end
 
   context "When parsing response with cas:attribute style extra attributes" do
