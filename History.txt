@@ -1,6 +1,6 @@
 = RubyCAS-Client Changelog
 
-== Master
+== Version 2.3.9rc1 :: 2012-03-24
 
 * Bug Fixes
   * Fixed issue that caused Single Sign Out to fail (@bryanlarsen and @soorajb)
