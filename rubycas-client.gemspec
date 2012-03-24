@@ -5,9 +5,9 @@
 
 Gem::Specification.new do |s|
   s.name = "rubycas-client"
-  s.version = ""
+  s.version = "2.3.9.rc1"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Zukowski", "Matt Walker", "Matt Campbell"]
   s.date = "2012-03-24"
   s.extra_rdoc_files = [
