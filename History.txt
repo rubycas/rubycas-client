@@ -5,6 +5,8 @@
 * Bug Fixes
   * Fixed issue that caused Single Sign Out to fail (@bryanlarsen and @soorajb)
   * Fixed issue in Filter#unauthorized! (@mscottford)
+  * Fixed #38, boolean values are now preserved in extra attribute yaml
+    parsing
 
 * New functionality
   * Tweak the CasProxyCallbackController so it can be used with
@@ -12,6 +14,8 @@
   * Add support for calling the CAS Server through an HTTP proxy (@shevaun)
   * Add support for specifying the service url to be added to the
     logout url (@dyson)
+  * add support for extra attributes as xml attributes (@bhenderson)
+  * Add :raw mode to extra attribute parsing
 
 * Other
   * Made writing and running rspec tests much easier
