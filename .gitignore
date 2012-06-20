@@ -17,4 +17,9 @@ doc
 # jeweler generated
 pkg
 
+# rbenv and rvm configs
+.rbenv-version
+.rbenv-vars
+.rvmrc
+
 .project
