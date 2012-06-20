@@ -1,5 +1,11 @@
 = RubyCAS-Client Changelog
 
+== Version 2.3.9 :: 2012-06-20
+
+* Other
+  * ci against lots more ruby versions - see .travis.yml and the travis
+    status page
+
 == Version 2.3.9rc1 :: 2012-03-24
 
 * Bug Fixes
