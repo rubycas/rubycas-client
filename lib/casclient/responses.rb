@@ -179,10 +179,10 @@ module CASClient
     def parse_http_response(http_response)
       header = http_response.to_hash
 
-      # FIXME: this regexp might be incorrect...
+   
       if header['set-cookie'] && 
         header['set-cookie'].first && 
-        header['set-cookie'].first =~ /tgt=([^&]+);/
+        header['set-cookie'].first =~ /tgt=([^&]+)/
         @tgt = $~[1]
       end
 
@@ -191,7 +191,7 @@ module CASClient
         @ticket = $~[1]
       end
 
-      if not ((http_response.kind_of?(Net::HTTPSuccess) || http_response.kind_of?(Net::HTTPFound)) && @ticket.present?)
+      if not ((http_response.kind_of?(Net::HTTPSuccess) || http_response.kind_of?(Net::HTTPFound) || http_response.kind_of?(Net::HTTPSeeOther)) && @ticket.present?)
         @failure = true
         # Try to extract the error message -- this only works with RubyCAS-Server.
         # For other servers we just return the entire response body (i.e. the whole error page).
