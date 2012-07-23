@@ -32,13 +32,28 @@ end
 
 describe CASClient::Tickets::Storage::LocalDirTicketStore do
   let(:dir) {File.join(SPEC_TMP_DIR, "local_dir_ticket_store")}
-  before do
-    FileUtils.mkdir_p(File.join(dir, "sessions"))
-  end
+
   after do
     FileUtils.remove_dir(dir)
   end
-  it_should_behave_like "a ticket store" do
-    let(:ticket_store) {described_class.new(:storage_dir => dir)}
+
+  describe "when the sessions directory does not exist" do
+    before do
+      File.exist?(File.join(dir, "sessions")).should be_false
+    end
+
+    it_should_behave_like "a ticket store" do
+      let(:ticket_store) {described_class.new(:storage_dir => dir)}
+    end
+  end
+
+  describe "when the session directory exists" do
+    before do
+      FileUtils.mkdir_p(File.join(dir, "sessions"))
+    end
+
+    it_should_behave_like "a ticket store" do
+      let(:ticket_store) {described_class.new(:storage_dir => dir)}
+    end
   end
 end
