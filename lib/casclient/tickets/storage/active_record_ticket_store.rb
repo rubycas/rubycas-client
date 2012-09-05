@@ -4,7 +4,8 @@ module CASClient
 
       # A Ticket Store that keeps it's ticket in database tables using ActiveRecord.
       #
-      # Services Tickets are stored in an extra column add to the ActiveRecord sessions table.
+      # Services Tickets are stored in an extra column added to the ActiveRecord sessions table.
+      # You will need to add the service_ticket column your ActiveRecord sessions table.
       # Proxy Granting Tickets and their IOUs are stored in the cas_pgtious table.
       #
       # This ticket store takes the following config parameters
