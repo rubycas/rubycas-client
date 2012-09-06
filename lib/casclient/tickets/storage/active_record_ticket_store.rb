@@ -17,6 +17,7 @@ module CASClient
           if config[:pgtious_table_name]
             CasPgtiou.set_table_name = config[:pgtious_table_name]
           end
+          ActiveRecord::SessionStore.session_class = ServiceTicketAwareSession
         end
 
         def store_service_session_lookup(st, controller)
@@ -63,7 +64,17 @@ module CASClient
 
       end
 
-      ::ACTIVE_RECORD_TICKET_STORE = ActiveRecordTicketStore
+      ACTIVE_RECORD_TICKET_STORE = ActiveRecordTicketStore
+
+      class ServiceTicketAwareSession < ActiveRecord::SessionStore::Session
+        before_save :save_service_ticket
+
+        def save_service_ticket
+          if data[:service_ticket]
+            self.service_ticket = data[:service_ticket]
+          end
+        end
+      end
 
       class CasPgtiou < ActiveRecord::Base
         #t.string :pgt_iou, :null => false
