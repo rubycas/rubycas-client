@@ -23,3 +23,5 @@ pkg
 .rvmrc
 
 .project
+
+Gemfile.lock
