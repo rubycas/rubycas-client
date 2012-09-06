@@ -1,5 +1,11 @@
 = RubyCAS-Client Changelog
 
+== Unreleased
+
+* Bug Fixes
+  * Fixed bug where ActiveRecordTicketStore failed to add the service
+    ticket to the sessions table
+
 == Version 2.3.9 :: 2012-06-20
 
 * Other
