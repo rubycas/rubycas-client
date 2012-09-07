@@ -18,6 +18,9 @@ RSpec.configure do |config|
   config.mock_framework = :rspec
   config.include ActionControllerHelpers
 
+  config.filter_run_including :focus => true
+  config.run_all_when_everything_filtered = true
+
   config.before(:suite) do
     ActiveRecordHelpers.setup_active_record
     DatabaseCleaner.strategy = :transaction

@@ -297,7 +297,7 @@ module CASClient
               
               log.debug "Intercepted single-sign-out request for CAS session #{si.inspect}."
 
-              @@client.ticket_store.process_single_sign_out(si)             
+              @@client.ticket_store.process_single_sign_out(si)
               
               # Return true to indicate that a single-sign-out request was detected
               # and that further processing of the request is unnecessary.
