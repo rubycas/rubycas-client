@@ -18,8 +18,10 @@ RSpec.configure do |config|
   config.mock_framework = :rspec
   config.include ActionControllerHelpers
 
-  config.filter_run_including :focus => true
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.filter_run_including :focus
   config.run_all_when_everything_filtered = true
+  config.fail_fast = false
 
   config.before(:suite) do
     ActiveRecordHelpers.setup_active_record
