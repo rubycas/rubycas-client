@@ -2,7 +2,7 @@ module CASClient
   module Frameworks
     module Rails
       class Filter
-        cattr_reader :config, :log, :client, :fake_user, :fake_extra_attribues
+        cattr_reader :config, :log, :client, :fake_user, :fake_extra_attributes
         
         # These are initialized when you call configure.
         @@config = nil
