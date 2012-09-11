@@ -6,6 +6,7 @@
   * Fixed bug where ActiveRecordTicketStore failed to add the service
     ticket to the sessions table
   * Fixed compatibility of login_to_service with rubycas-server 1.1.x (@bradseefeld)
+  * Fix an issue that prevented inspection of faked extra attributes on the filter (@yurikoval)
 
 == Version 2.3.9 :: 2012-06-20
 
