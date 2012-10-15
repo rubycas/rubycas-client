@@ -35,7 +35,7 @@ rescue LoadError
   puts "Hiding spec tasks because RSpec is not available"
 end
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
