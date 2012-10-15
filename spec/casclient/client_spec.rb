@@ -90,4 +90,12 @@ describe CASClient::Client do
       end
     end
   end
+
+  describe 'logout_url' do
+    it 'should tolerate oddly formed URIs' do
+      destination_url = 'https://foo.com/path/to/page?&sort=date_received.DESC'
+      
+      client.logout_url(destination_url)
+    end
+  end
 end

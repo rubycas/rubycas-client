@@ -282,7 +282,16 @@ module CASClient
       pairs = []
       hash.each do |k, vals|
         vals = [vals] unless vals.kind_of? Array
-        vals.each {|v| pairs << (v.nil? ? CGI.escape(k) : "#{CGI.escape(k)}=#{CGI.escape(v)}")}
+
+        vals.each {|v|
+          if  v.nil?
+            pairs << CGI.escape(k) unless k.nil?
+          else
+            pairs << "#{CGI.escape(k)}=#{CGI.escape(v)}"
+          end
+
+          pairs
+        }
       end
       pairs.join("&")
     end
