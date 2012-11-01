@@ -7,8 +7,6 @@ require 'appraisal'
 
 require 'rspec/core/rake_task'
 desc 'Default: run the specs and features.'
-task :default do
-  system("bundle exec rake -s appraisal spec ;")
-end
+task :default => [:spec]
 
 RSpec::Core::RakeTask.new
