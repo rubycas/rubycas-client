@@ -1,0 +1,375 @@
+  [1m[36mSQL (0.3ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mSQL (0.1ms)[0m  select sqlite_version(*)
+  [1m[36mSQL (1.2ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [1m[35mSQL (0.0ms)[0m  PRAGMA index_list("schema_migrations")
+  [1m[36mSQL (1.0ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mSQL (0.1ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mSQL (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations"
+Migrating to GenerateSessions (1)
+  [1m[36mSQL (0.3ms)[0m  [1mCREATE TABLE "sessions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "session_id" varchar(255) NOT NULL, "data" text, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35mSQL (0.0ms)[0m  PRAGMA index_list("sessions")
+  [1m[36mSQL (0.1ms)[0m  [1mCREATE INDEX "index_sessions_on_session_id" ON "sessions" ("session_id")[0m
+  [1m[35mSQL (0.1ms)[0m  PRAGMA index_list("sessions")
+  [1m[36mSQL (0.0ms)[0m  [1mPRAGMA index_info('index_sessions_on_session_id')[0m
+  [1m[35mSQL (0.1ms)[0m  CREATE INDEX "index_sessions_on_updated_at" ON "sessions" ("updated_at")
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('1')[0m
+Migrating to ModifySessions (2)
+  [1m[35mSQL (0.3ms)[0m  ALTER TABLE "sessions" ADD "service_ticket" varchar(255)
+  [1m[36mSQL (0.1ms)[0m  [1mPRAGMA index_list("sessions")[0m
+  [1m[35mSQL (0.0ms)[0m  PRAGMA index_info('index_sessions_on_updated_at')
+  [1m[36mSQL (0.0ms)[0m  [1mPRAGMA index_info('index_sessions_on_session_id')[0m
+  [1m[35mSQL (0.1ms)[0m  CREATE INDEX "index_sessions_on_service_ticket" ON "sessions" ("service_ticket")
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('2')[0m
+Migrating to AddPgtious (3)
+  [1m[35mSQL (0.2ms)[0m  CREATE TABLE "cas_pgtious" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "pgt_iou" varchar(255) NOT NULL, "pgt_id" varchar(255) NOT NULL, "created_at" datetime, "updated_at" datetime) 
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('3')[0m
+  [1m[35mSQL (0.2ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mSQL (1.6ms)[0m  [1mDELETE FROM "sessions";[0m
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM sqlite_sequence where name = 'sessions';
+  [1m[36mSQL (0.9ms)[0m  [1mDELETE FROM "cas_pgtious";[0m
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM sqlite_sequence where name = 'cas_pgtious';
+  [1m[36mSQL (0.2ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mAREL (0.4ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session252', 'BAh7AA==
+', '2012-11-02 15:39:06.598569', '2012-11-02 15:39:06.598569', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session73', 'BAh7AA==
+', '2012-11-02 15:39:06.653787', '2012-11-02 15:39:06.653787', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC920' LIMIT 1
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session706', 'BAh7AA==
+', '2012-11-02 15:39:06.665997', '2012-11-02 15:39:06.665997', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session131', 'BAh7AA==
+', '2012-11-02 15:39:06.680194', '2012-11-02 15:39:06.680194', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC404' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session275', 'BAh7AA==
+', '2012-11-02 15:39:06.685556', '2012-11-02 15:39:06.685556', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session270', 'BAh7AA==
+', '2012-11-02 15:39:06.689591', '2012-11-02 15:39:06.689591', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC220' LIMIT 1
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session739', 'BAh7AA==
+', '2012-11-02 15:39:06.693451', '2012-11-02 15:39:06.693451', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session625', 'BAh7AA==
+', '2012-11-02 15:39:06.695823', '2012-11-02 15:39:06.695823', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC519' LIMIT 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session259', 'BAh7AA==
+', '2012-11-02 15:39:06.701196', '2012-11-02 15:39:06.701196', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session599', 'BAh7AA==
+', '2012-11-02 15:39:06.705153', '2012-11-02 15:39:06.705153', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC972' LIMIT 1
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session422', 'BAh7AA==
+', '2012-11-02 15:39:06.709109', '2012-11-02 15:39:06.709109', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session643', 'BAh7AA==
+', '2012-11-02 15:39:06.711231', '2012-11-02 15:39:06.711231', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC566' LIMIT 1[0m
+  [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_977', 'my_pgt_700', '2012-11-02 15:39:06.722054', '2012-11-02 15:39:06.722054')[0m
+  [1m[35mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  SELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_977' LIMIT 1
+  [1m[36mAREL (0.0ms)[0m  [1mDELETE FROM "cas_pgtious" WHERE "cas_pgtious"."id" = 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_998', 'my_pgt_950', '2012-11-02 15:39:06.747501', '2012-11-02 15:39:06.747501')
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'not_mymy_pgt_iou_998' LIMIT 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_756', 'my_pgt_351', '2012-11-02 15:39:06.749834', '2012-11-02 15:39:06.749834')
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_756' LIMIT 1[0m
+  [1m[35mAREL (0.0ms)[0m  DELETE FROM "cas_pgtious" WHERE "cas_pgtious"."id" = 1
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_756' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session361', 'BAh7AA==
+', '2012-11-02 15:39:06.759682', '2012-11-02 15:39:06.759682', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session606', 'BAh7AA==
+', '2012-11-02 15:39:06.765241', '2012-11-02 15:39:06.765241', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session719', 'BAh7AA==
+', '2012-11-02 15:39:06.770698', '2012-11-02 15:39:06.770698', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session220', 'BAh7AA==
+', '2012-11-02 15:39:06.780726', '2012-11-02 15:39:06.780726', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session35', 'BAh7AA==
+', '2012-11-02 15:39:06.789168', '2012-11-02 15:39:06.789168', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session858', 'BAh7AA==
+', '2012-11-02 15:39:06.798486', '2012-11-02 15:39:06.798486', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session28', 'BAh7AA==
+', '2012-11-02 15:39:06.803660', '2012-11-02 15:39:06.803660', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session956', 'BAh7AA==
+', '2012-11-02 15:39:06.814023', '2012-11-02 15:39:06.814023', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session716', 'BAh7AA==
+', '2012-11-02 15:39:06.822106', '2012-11-02 15:39:06.822106', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session396', 'BAh7AA==
+', '2012-11-02 15:39:06.831893', '2012-11-02 15:39:06.831893', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session946', 'BAh7AA==
+', '2012-11-02 15:39:06.837220', '2012-11-02 15:39:06.837220', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session859', 'BAh7AA==
+', '2012-11-02 15:39:06.840080', '2012-11-02 15:39:06.840080', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session153', 'BAh7AA==
+', '2012-11-02 15:39:07.002444', '2012-11-02 15:39:07.002444', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session769', 'BAh7AA==
+', '2012-11-02 15:39:07.006876', '2012-11-02 15:39:07.006876', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session171', 'BAh7AA==
+', '2012-11-02 15:39:07.010181', '2012-11-02 15:39:07.010181', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session902', 'BAh7AA==
+', '2012-11-02 15:39:07.012216', '2012-11-02 15:39:07.012216', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session943', 'BAh7AA==
+', '2012-11-02 15:39:07.017393', '2012-11-02 15:39:07.017393', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session395', 'BAh7AA==
+', '2012-11-02 15:39:07.030760', '2012-11-02 15:39:07.030760', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session441', 'BAh7AA==
+', '2012-11-02 15:39:07.034016', '2012-11-02 15:39:07.034016', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session386', 'BAh7AA==
+', '2012-11-02 15:39:07.036156', '2012-11-02 15:39:07.036156', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session120', 'BAh7AA==
+', '2012-11-02 15:39:07.040858', '2012-11-02 15:39:07.040858', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session384', 'BAh7AA==
+', '2012-11-02 15:39:07.044699', '2012-11-02 15:39:07.044699', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session526', 'BAh7AA==
+', '2012-11-02 15:39:07.047957', '2012-11-02 15:39:07.047957', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session394', 'BAh7AA==
+', '2012-11-02 15:39:07.050556', '2012-11-02 15:39:07.050556', NULL)[0m
+  [1m[36mSQL (0.5ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+Migrating to GenerateSessions (1)
+Migrating to ModifySessions (2)
+Migrating to AddPgtious (3)
+  [1m[35mSQL (0.2ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mSQL (1.4ms)[0m  [1mDELETE FROM "sessions";[0m
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM sqlite_sequence where name = 'sessions';
+  [1m[36mSQL (0.9ms)[0m  [1mDELETE FROM "cas_pgtious";[0m
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM sqlite_sequence where name = 'cas_pgtious';
+  [1m[36mAREL (0.4ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session301', 'BAh7AA==
+', '2012-11-02 15:41:06.059491', '2012-11-02 15:41:06.059491', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session928', 'BAh7AA==
+', '2012-11-02 15:41:06.101058', '2012-11-02 15:41:06.101058', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC760' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session255', 'BAh7AA==
+', '2012-11-02 15:41:06.111868', '2012-11-02 15:41:06.111868', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session826', 'BAh7AA==
+', '2012-11-02 15:41:06.116961', '2012-11-02 15:41:06.116961', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC358' LIMIT 1
+  [1m[36mAREL (0.4ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session569', 'BAh7AA==
+', '2012-11-02 15:41:06.122214', '2012-11-02 15:41:06.122214', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session107', 'BAh7AA==
+', '2012-11-02 15:41:06.126828', '2012-11-02 15:41:06.126828', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC3' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session635', 'BAh7AA==
+', '2012-11-02 15:41:06.130569', '2012-11-02 15:41:06.130569', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session697', 'BAh7AA==
+', '2012-11-02 15:41:06.132724', '2012-11-02 15:41:06.132724', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC309' LIMIT 1
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session860', 'BAh7AA==
+', '2012-11-02 15:41:06.138676', '2012-11-02 15:41:06.138676', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session349', 'BAh7AA==
+', '2012-11-02 15:41:06.150927', '2012-11-02 15:41:06.150927', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC427' LIMIT 1[0m
+  [1m[35mAREL (0.4ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session132', 'BAh7AA==
+', '2012-11-02 15:41:06.158849', '2012-11-02 15:41:06.158849', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session449', 'BAh7AA==
+', '2012-11-02 15:41:06.166831', '2012-11-02 15:41:06.166831', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC734' LIMIT 1
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_34', 'my_pgt_634', '2012-11-02 15:41:06.176995', '2012-11-02 15:41:06.176995')[0m
+  [1m[35mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  SELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_34' LIMIT 1
+  [1m[36mAREL (0.0ms)[0m  [1mDELETE FROM "cas_pgtious" WHERE "cas_pgtious"."id" = 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_145', 'my_pgt_434', '2012-11-02 15:41:06.202929', '2012-11-02 15:41:06.202929')
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'not_mymy_pgt_iou_145' LIMIT 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_6', 'my_pgt_634', '2012-11-02 15:41:06.205462', '2012-11-02 15:41:06.205462')
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_6' LIMIT 1[0m
+  [1m[35mAREL (0.1ms)[0m  DELETE FROM "cas_pgtious" WHERE "cas_pgtious"."id" = 1
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_6' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session585', 'BAh7AA==
+', '2012-11-02 15:41:06.214889', '2012-11-02 15:41:06.214889', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session218', 'BAh7AA==
+', '2012-11-02 15:41:06.220133', '2012-11-02 15:41:06.220133', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session348', 'BAh7AA==
+', '2012-11-02 15:41:06.225323', '2012-11-02 15:41:06.225323', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session194', 'BAh7AA==
+', '2012-11-02 15:41:06.228145', '2012-11-02 15:41:06.228145', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session609', 'BAh7AA==
+', '2012-11-02 15:41:06.235916', '2012-11-02 15:41:06.235916', NULL)
+  [1m[36mAREL (0.4ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session163', 'BAh7AA==
+', '2012-11-02 15:41:06.243674', '2012-11-02 15:41:06.243674', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session800', 'BAh7AA==
+', '2012-11-02 15:41:06.252729', '2012-11-02 15:41:06.252729', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session929', 'BAh7AA==
+', '2012-11-02 15:41:06.259301', '2012-11-02 15:41:06.259301', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session429', 'BAh7AA==
+', '2012-11-02 15:41:06.267512', '2012-11-02 15:41:06.267512', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session352', 'BAh7AA==
+', '2012-11-02 15:41:06.276898', '2012-11-02 15:41:06.276898', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session736', 'BAh7AA==
+', '2012-11-02 15:41:06.281825', '2012-11-02 15:41:06.281825', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session460', 'BAh7AA==
+', '2012-11-02 15:41:06.284519', '2012-11-02 15:41:06.284519', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session298', 'BAh7AA==
+', '2012-11-02 15:41:06.434195', '2012-11-02 15:41:06.434195', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session858', 'BAh7AA==
+', '2012-11-02 15:41:06.438555', '2012-11-02 15:41:06.438555', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session53', 'BAh7AA==
+', '2012-11-02 15:41:06.441961', '2012-11-02 15:41:06.441961', NULL)
+  [1m[36mAREL (0.4ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session658', 'BAh7AA==
+', '2012-11-02 15:41:06.444491', '2012-11-02 15:41:06.444491', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session75', 'BAh7AA==
+', '2012-11-02 15:41:06.449328', '2012-11-02 15:41:06.449328', NULL)
+  [1m[36mAREL (0.6ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session653', 'BAh7AA==
+', '2012-11-02 15:41:06.454059', '2012-11-02 15:41:06.454059', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session15', 'BAh7AA==
+', '2012-11-02 15:41:06.460791', '2012-11-02 15:41:06.460791', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session663', 'BAh7AA==
+', '2012-11-02 15:41:06.463026', '2012-11-02 15:41:06.463026', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session304', 'BAh7AA==
+', '2012-11-02 15:41:06.467619', '2012-11-02 15:41:06.467619', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session743', 'BAh7AA==
+', '2012-11-02 15:41:06.471476', '2012-11-02 15:41:06.471476', NULL)[0m
+  [1m[35mAREL (0.4ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session216', 'BAh7AA==
+', '2012-11-02 15:41:06.475516', '2012-11-02 15:41:06.475516', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session394', 'BAh7AA==
+', '2012-11-02 15:41:06.478125', '2012-11-02 15:41:06.478125', NULL)[0m
+  [1m[36mSQL (0.3ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mSQL (0.1ms)[0m  select sqlite_version(*)
+  [1m[36mSQL (1.0ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [1m[35mSQL (0.1ms)[0m  PRAGMA index_list("schema_migrations")
+  [1m[36mSQL (1.1ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mSQL (0.1ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mSQL (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations"
+Migrating to GenerateSessions (1)
+  [1m[36mSQL (0.3ms)[0m  [1mCREATE TABLE "sessions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "session_id" varchar(255) NOT NULL, "data" text, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35mSQL (0.0ms)[0m  PRAGMA index_list("sessions")
+  [1m[36mSQL (0.1ms)[0m  [1mCREATE INDEX "index_sessions_on_session_id" ON "sessions" ("session_id")[0m
+  [1m[35mSQL (0.1ms)[0m  PRAGMA index_list("sessions")
+  [1m[36mSQL (0.1ms)[0m  [1mPRAGMA index_info('index_sessions_on_session_id')[0m
+  [1m[35mSQL (0.1ms)[0m  CREATE INDEX "index_sessions_on_updated_at" ON "sessions" ("updated_at")
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('1')[0m
+Migrating to ModifySessions (2)
+  [1m[35mSQL (0.3ms)[0m  ALTER TABLE "sessions" ADD "service_ticket" varchar(255)
+  [1m[36mSQL (0.1ms)[0m  [1mPRAGMA index_list("sessions")[0m
+  [1m[35mSQL (0.0ms)[0m  PRAGMA index_info('index_sessions_on_updated_at')
+  [1m[36mSQL (0.0ms)[0m  [1mPRAGMA index_info('index_sessions_on_session_id')[0m
+  [1m[35mSQL (0.1ms)[0m  CREATE INDEX "index_sessions_on_service_ticket" ON "sessions" ("service_ticket")
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('2')[0m
+Migrating to AddPgtious (3)
+  [1m[35mSQL (0.3ms)[0m  CREATE TABLE "cas_pgtious" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "pgt_iou" varchar(255) NOT NULL, "pgt_id" varchar(255) NOT NULL, "created_at" datetime, "updated_at" datetime) 
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('3')[0m
+  [1m[35mSQL (0.2ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mSQL (1.5ms)[0m  [1mDELETE FROM "sessions";[0m
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM sqlite_sequence where name = 'sessions';
+  [1m[36mSQL (1.1ms)[0m  [1mDELETE FROM "cas_pgtious";[0m
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM sqlite_sequence where name = 'cas_pgtious';
+  [1m[36mSQL (0.2ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session828', 'BAh7AA==
+', '2012-11-02 15:41:29.318524', '2012-11-02 15:41:29.318524', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session123', 'BAh7AA==
+', '2012-11-02 15:41:29.360784', '2012-11-02 15:41:29.360784', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.2ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC536' LIMIT 1
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session639', 'BAh7AA==
+', '2012-11-02 15:41:29.373031', '2012-11-02 15:41:29.373031', NULL)[0m
+  [1m[35mAREL (0.4ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session610', 'BAh7AA==
+', '2012-11-02 15:41:29.375542', '2012-11-02 15:41:29.375542', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC609' LIMIT 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session695', 'BAh7AA==
+', '2012-11-02 15:41:29.381044', '2012-11-02 15:41:29.381044', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session935', 'BAh7AA==
+', '2012-11-02 15:41:29.385147', '2012-11-02 15:41:29.385147', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC865' LIMIT 1
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session573', 'BAh7AA==
+', '2012-11-02 15:41:29.388901', '2012-11-02 15:41:29.388901', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session145', 'BAh7AA==
+', '2012-11-02 15:41:29.391067', '2012-11-02 15:41:29.391067', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC691' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session64', 'BAh7AA==
+', '2012-11-02 15:41:29.396375', '2012-11-02 15:41:29.396375', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session199', 'BAh7AA==
+', '2012-11-02 15:41:29.409835', '2012-11-02 15:41:29.409835', NULL)[0m
+  [1m[35mActiveRecord::SessionStore::Session Load (0.1ms)[0m  SELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC364' LIMIT 1
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session841', 'BAh7AA==
+', '2012-11-02 15:41:29.414447', '2012-11-02 15:41:29.414447', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session382', 'BAh7AA==
+', '2012-11-02 15:41:29.416680', '2012-11-02 15:41:29.416680', NULL)
+  [1m[36mActiveRecord::SessionStore::Session Load (0.1ms)[0m  [1mSELECT "sessions".* FROM "sessions" WHERE "sessions"."service_ticket" = 'ST-ABC451' LIMIT 1[0m
+  [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_268', 'my_pgt_838', '2012-11-02 15:41:29.426507', '2012-11-02 15:41:29.426507')[0m
+  [1m[35mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  SELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_268' LIMIT 1
+  [1m[36mAREL (0.0ms)[0m  [1mDELETE FROM "cas_pgtious" WHERE "cas_pgtious"."id" = 1[0m
+  [1m[35mAREL (0.6ms)[0m  INSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_188', 'my_pgt_785', '2012-11-02 15:41:29.451272', '2012-11-02 15:41:29.451272')
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'not_mymy_pgt_iou_188' LIMIT 1[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "cas_pgtious" ("pgt_iou", "pgt_id", "created_at", "updated_at") VALUES ('my_pgt_iou_228', 'my_pgt_281', '2012-11-02 15:41:29.454292', '2012-11-02 15:41:29.454292')
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_228' LIMIT 1[0m
+  [1m[35mAREL (0.0ms)[0m  DELETE FROM "cas_pgtious" WHERE "cas_pgtious"."id" = 1
+  [1m[36mCASClient::Tickets::Storage::CasPgtiou Load (0.1ms)[0m  [1mSELECT "cas_pgtious".* FROM "cas_pgtious" WHERE "cas_pgtious"."pgt_iou" = 'my_pgt_iou_228' LIMIT 1[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session958', 'BAh7AA==
+', '2012-11-02 15:41:29.463470', '2012-11-02 15:41:29.463470', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session953', 'BAh7AA==
+', '2012-11-02 15:41:29.468860', '2012-11-02 15:41:29.468860', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session306', 'BAh7AA==
+', '2012-11-02 15:41:29.474156', '2012-11-02 15:41:29.474156', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session762', 'BAh7AA==
+', '2012-11-02 15:41:29.476950', '2012-11-02 15:41:29.476950', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session927', 'BAh7AA==
+', '2012-11-02 15:41:29.484903', '2012-11-02 15:41:29.484903', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session584', 'BAh7AA==
+', '2012-11-02 15:41:29.494097', '2012-11-02 15:41:29.494097', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session975', 'BAh7AA==
+', '2012-11-02 15:41:29.499299', '2012-11-02 15:41:29.499299', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session806', 'BAh7AA==
+', '2012-11-02 15:41:29.502271', '2012-11-02 15:41:29.502271', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session989', 'BAh7AA==
+', '2012-11-02 15:41:29.513563', '2012-11-02 15:41:29.513563', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session48', 'BAh7AA==
+', '2012-11-02 15:41:29.519005', '2012-11-02 15:41:29.519005', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session425', 'BAh7AA==
+', '2012-11-02 15:41:29.523894', '2012-11-02 15:41:29.523894', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session609', 'BAh7AA==
+', '2012-11-02 15:41:29.526568', '2012-11-02 15:41:29.526568', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session411', 'BAh7AA==
+', '2012-11-02 15:41:29.676078', '2012-11-02 15:41:29.676078', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session475', 'BAh7AA==
+', '2012-11-02 15:41:29.680299', '2012-11-02 15:41:29.680299', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session629', 'BAh7AA==
+', '2012-11-02 15:41:29.683488', '2012-11-02 15:41:29.683488', NULL)
+  [1m[36mAREL (0.3ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session633', 'BAh7AA==
+', '2012-11-02 15:41:29.685718', '2012-11-02 15:41:29.685718', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session665', 'BAh7AA==
+', '2012-11-02 15:41:29.690477', '2012-11-02 15:41:29.690477', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session977', 'BAh7AA==
+', '2012-11-02 15:41:29.694371', '2012-11-02 15:41:29.694371', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session276', 'BAh7AA==
+', '2012-11-02 15:41:29.697618', '2012-11-02 15:41:29.697618', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session678', 'BAh7AA==
+', '2012-11-02 15:41:29.699776', '2012-11-02 15:41:29.699776', NULL)[0m
+  [1m[35mAREL (0.3ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session782', 'BAh7AA==
+', '2012-11-02 15:41:29.713390', '2012-11-02 15:41:29.713390', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session177', 'BAh7AA==
+', '2012-11-02 15:41:29.717672', '2012-11-02 15:41:29.717672', NULL)[0m
+  [1m[35mAREL (0.2ms)[0m  INSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session672', 'BAh7AA==
+', '2012-11-02 15:41:29.720824', '2012-11-02 15:41:29.720824', NULL)
+  [1m[36mAREL (0.2ms)[0m  [1mINSERT INTO "sessions" ("session_id", "data", "created_at", "updated_at", "service_ticket") VALUES ('session975', 'BAh7AA==
+', '2012-11-02 15:41:29.722918', '2012-11-02 15:41:29.722918', NULL)[0m
