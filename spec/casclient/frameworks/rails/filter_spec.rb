@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'action_controller'
 require 'casclient/frameworks/rails/filter'
 
 describe CASClient::Frameworks::Rails::Filter do
