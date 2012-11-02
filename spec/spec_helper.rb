@@ -37,13 +37,11 @@ RSpec.configure do |config|
   config.fail_fast = false
 
   config.before(:suite) do
-    ActiveRecordHelpers.setup_active_record
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
   config.after(:suite) do
-    ActiveRecordHelpers.teardown_active_record
   end
 
   config.before(:each) do
