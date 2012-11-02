@@ -8,6 +8,9 @@ Bundler.setup(:default, :development)
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 
+# Ensure we have our testing DB setup
+ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
+
 Rails.backtrace_cleaner.remove_silencers!
 
 require 'simplecov' unless ENV['TRAVIS']
