@@ -2,6 +2,18 @@ require 'action_pack'
 
 module ActionControllerHelpers
 
+  def build_controller_instance
+    if Rails.version =~ /^2\.3/
+      controller = ApplicationController.new
+      controller.session = {}
+    else
+      request = Rack::Request.new({})
+      controller = ApplicationController.new
+      controller.request = request
+    end
+    return controller
+  end
+
   def mock_controller_with_session(request = nil, session={})
 
     query_parameters = {:ticket => "bogusticket", :renew => false}
