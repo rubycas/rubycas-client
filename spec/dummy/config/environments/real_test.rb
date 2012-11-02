@@ -14,7 +14,7 @@ config.static_cache_control = "public, max-age=3600" if respond_to?(:static_cach
 config.whiny_nils = true
 
 # Show full error reports and disable caching
-if respond_to?(:consider_all_requests_local=)
+if config.respond_to?(:consider_all_requests_local=)
   config.consider_all_requests_local = true
 else
   config.action_controller.consider_all_requests_local = true
