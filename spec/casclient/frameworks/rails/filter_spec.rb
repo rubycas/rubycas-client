@@ -5,6 +5,7 @@ require 'casclient/frameworks/rails/filter'
 describe CASClient::Frameworks::Rails::Filter do
 
   before(:each) do
+    @controller = ApplicationController.new
     CASClient::Frameworks::Rails::Filter.configure(
       :cas_base_url => 'http://test.local/',
       :logger => double("Logger")
@@ -13,21 +14,30 @@ describe CASClient::Frameworks::Rails::Filter do
 
   describe "#fake" do
     subject { Hash.new }
+    let(:controller) {
+      @controller.session = subject
+      @controller
+    }
+
     context "faking user without attributes" do
       before { CASClient::Frameworks::Rails::Filter.fake('tester@test.com') }
+
       it 'should set the session user' do
-        CASClient::Frameworks::Rails::Filter.filter(mock_controller_with_session(nil, subject))
+        CASClient::Frameworks::Rails::Filter.filter(controller)
         subject.should eq({:cas_user => 'tester@test.com', :casfilteruser => 'tester@test.com'})
       end
+
       after { CASClient::Frameworks::Rails::Filter.fake(nil,nil) }
     end
 
     context "faking user with attributes" do
       before { CASClient::Frameworks::Rails::Filter.fake('tester@test.com', {:test => 'stuff', :this => 'that'}) }
+
       it 'should set the session user and attributes' do
-        CASClient::Frameworks::Rails::Filter.filter(mock_controller_with_session(nil, subject))
+        CASClient::Frameworks::Rails::Filter.filter(controller)
         subject.should eq({ :cas_user => 'tester@test.com', :casfilteruser => 'tester@test.com', :cas_extra_attributes => {:test => 'stuff', :this => 'that' }})
       end
+
       after { CASClient::Frameworks::Rails::Filter.fake(nil,nil) }
     end
   end
