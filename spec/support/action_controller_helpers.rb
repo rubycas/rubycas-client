@@ -14,6 +14,7 @@ module ActionControllerHelpers
     return controller
   end
 
+=begin
   def mock_controller_with_session(request = nil, session={})
 
     query_parameters = {:ticket => "bogusticket", :renew => false}
@@ -33,6 +34,7 @@ module ActionControllerHelpers
     controller.stub(:params) {parameters}
     controller
   end
+=end
 
   def mock_post_request
       mock_request = double("request")
