@@ -5,14 +5,31 @@ module ActionControllerHelpers
   def build_controller_instance
     controller = UnfilteredController.new
 
+    request_env = Rack::MockRequest.env_for('/unfiltered')
+    request = build_request_for(request_env)
+
     if Rails.version =~ /^2\.3/
       controller.session = {}
-    else
-      request = Rack::Request.new({})
-      controller = ApplicationController.new
-      controller.request = request
     end
+
+    controller.request = request
+
     return controller
+  end
+
+  def build_request_for(request_env)
+    if Rails.version =~ /^2\.3/
+      request = ActionController::TestRequest.new(request_env)
+    else
+      request = ActionDispatch::TestRequest.new(request_env)
+    end
+
+    request.path_parameters = {
+      :controller => 'unfiltered',
+      :action => 'index'
+    }.with_indifferent_access
+
+    request
   end
 
 =begin
