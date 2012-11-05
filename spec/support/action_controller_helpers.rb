@@ -2,14 +2,14 @@ require 'action_pack'
 
 module ActionControllerHelpers
 
-  def build_controller_instance
+  DEFAULT_ENV_OPTS = {
+    :method => 'GET',
+    :params => 'ticket=some_ticket'
+  }
+  def build_controller_instance(env_opts={})
     controller = UnfilteredController.new
 
-    request_env = Rack::MockRequest.env_for('/unfiltered', {
-      :method => 'GET',
-      :params => 'ticket=some_ticket'
-    })
-
+    request_env = Rack::MockRequest.env_for('/unfiltered', DEFAULT_ENV_OPTS.merge(env_opts))
     request = build_request_for(request_env)
 
     if is_rails2?
