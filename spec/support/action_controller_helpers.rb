@@ -40,6 +40,11 @@ module ActionControllerHelpers
     request
   end
 
+  def final_setup_on(controller)
+    if is_rails2?
+      controller.send(:initialize_current_url)
+    end
+  end
 =begin
   def mock_controller_with_session(request = nil, session={})
 
