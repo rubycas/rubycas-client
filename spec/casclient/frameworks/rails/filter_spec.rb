@@ -60,7 +60,7 @@ describe CASClient::Frameworks::Rails::Filter do
   end
 
   context "new invalid service ticket" do
-     it "should return failure from filter" do
+    it "should return failure from filter" do
 
       raw_text = "<cas:serviceResponse xmlns:cas=\"http://www.yale.edu/tp/cas\">
                     <cas:authenticationFailure>Some Error Text</cas:authenticationFailure>
@@ -70,9 +70,8 @@ describe CASClient::Frameworks::Rails::Filter do
       CASClient::Client.any_instance.stub(:request_cas_response).and_return(response)
       CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
-      controller = mock_controller_with_session()
-      CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
-     end
+      CASClient::Frameworks::Rails::Filter.filter(@controller).should eq(false)
+    end
   end
 
   context "does not have new input service ticket" do
