@@ -11,7 +11,7 @@ describe CASClient::Frameworks::Rails::Filter do
     )
   end
 
-  describe "#fake", :focus => true do
+  describe "#fake" do
     subject { @controller.session }
 
     context "faking user without attributes" do
