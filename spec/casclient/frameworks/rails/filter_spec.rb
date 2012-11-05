@@ -38,7 +38,7 @@ describe CASClient::Frameworks::Rails::Filter do
   end
 
   context "new valid service ticket" do
-     it "should return successfully from filter" do
+    it "should return successfully from filter" do
 
       pgt = CASClient::ProxyGrantingTicket.new(
       "PGT-1308586001r9573FAD5A8C62E134A4AA93273F226BD3F0C3A983DCCCD176",
@@ -55,8 +55,7 @@ describe CASClient::Frameworks::Rails::Filter do
       CASClient::Client.any_instance.stub(:request_cas_response).and_return(response)
       CASClient::Client.any_instance.stub(:retrieve_proxy_granting_ticket).and_return(pgt)
 
-      controller = mock_controller_with_session()
-      CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
+      CASClient::Frameworks::Rails::Filter.filter(@controller).should eq(true)
      end
   end
 
