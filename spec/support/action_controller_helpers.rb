@@ -27,6 +27,12 @@ module ActionControllerHelpers
   def build_request_for(request_env)
     if is_rails2?
       request = ActionController::TestRequest.new(request_env)
+      # because an empty string returns false for #present?
+      # we have to ensure there is a valid value for 'REQUEST_URI'
+      uri = "http://testhost.local"
+      query_string = request.env['QUERY_STRING']
+      uri << (query_string ? "?#{query_string}" : '')
+      request.env['REQUEST_URI'] = uri
       request.query_parameters = request.GET
     else
       request = ActionDispatch::TestRequest.new(request_env)
