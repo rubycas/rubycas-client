@@ -5,7 +5,11 @@ module ActionControllerHelpers
   def build_controller_instance
     controller = UnfilteredController.new
 
-    request_env = Rack::MockRequest.env_for('/unfiltered')
+    request_env = Rack::MockRequest.env_for('/unfiltered', {
+      :method => 'GET',
+      :params => 'ticket=some_ticket'
+    })
+
     request = build_request_for(request_env)
 
     if is_rails2?
@@ -23,6 +27,7 @@ module ActionControllerHelpers
   def build_request_for(request_env)
     if is_rails2?
       request = ActionController::TestRequest.new(request_env)
+      request.query_parameters = request.GET
     else
       request = ActionDispatch::TestRequest.new(request_env)
     end
