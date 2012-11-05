@@ -75,15 +75,17 @@ describe CASClient::Frameworks::Rails::Filter do
   end
 
   context "does not have new input service ticket" do
+    before do
+      @controller = build_controller_instance({:params=>''})
+    end
+
     context "with last service ticket" do
-       it "should return failure from filter" do
+      it "should return failure from filter" do
 
         CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
-        controller = mock_controller_with_session()
-        controller.stub(:params) {{}}
-        CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
-       end
+        CASClient::Frameworks::Rails::Filter.filter(@controller).should eq(false)
+      end
     end
 
     context "sent through gateway" do
@@ -93,10 +95,8 @@ describe CASClient::Frameworks::Rails::Filter do
           CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
           CASClient::Frameworks::Rails::Filter.config[:use_gatewaying] = false 
-          controller = mock_controller_with_session()
-          controller.session[:cas_sent_to_gateway] = true
-          controller.stub(:params) {{}}
-          CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
+          @controller.session[:cas_sent_to_gateway] = true
+          CASClient::Frameworks::Rails::Filter.filter(@controller).should eq(false)
          end
       end
 
@@ -104,10 +104,8 @@ describe CASClient::Frameworks::Rails::Filter do
          it "should return failure from filter" do
 
           CASClient::Frameworks::Rails::Filter.config[:use_gatewaying] = true 
-          controller = mock_controller_with_session()
-          controller.session[:cas_sent_to_gateway] = true
-          controller.stub(:params) {{}}
-          CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
+          @controller.session[:cas_sent_to_gateway] = true
+          CASClient::Frameworks::Rails::Filter.filter(@controller).should eq(true)
          end
       end
     end
