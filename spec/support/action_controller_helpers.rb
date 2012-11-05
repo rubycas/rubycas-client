@@ -10,9 +10,12 @@ module ActionControllerHelpers
 
     if is_rails2?
       controller.session = {}
+      controller.params = request.params
     end
 
     controller.request = request
+
+    final_setup_on(controller)
 
     return controller
   end
