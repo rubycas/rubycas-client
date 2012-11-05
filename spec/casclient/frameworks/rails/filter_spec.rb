@@ -6,7 +6,7 @@ describe CASClient::Frameworks::Rails::Filter do
   before(:each) do
     @controller = build_controller_instance
     CASClient::Frameworks::Rails::Filter.configure(
-      :cas_base_url => 'http://test.local/',
+      :cas_base_url => 'http://test.local',
       :logger => double("Logger")
     )
   end
@@ -126,8 +126,7 @@ describe CASClient::Frameworks::Rails::Filter do
         CASClient::Client.any_instance.stub(:request_cas_response).and_return(response)
         CASClient::Client.any_instance.stub(:retrieve_proxy_granting_ticket).and_raise CASClient::CASException
 
-        controller = mock_controller_with_session()
-        expect { CASClient::Frameworks::Rails::Filter.filter(controller) }.to raise_error(CASClient::CASException)
+        expect { CASClient::Frameworks::Rails::Filter.filter(@controller) }.to raise_error(CASClient::CASException)
        end
     end
 
@@ -136,13 +135,12 @@ describe CASClient::Frameworks::Rails::Filter do
 
         CASClient::Client.any_instance.stub(:request_cas_response).and_raise "Some exception"
 
-        controller = mock_controller_with_session()
-        expect { CASClient::Frameworks::Rails::Filter.filter(controller) }.to raise_error(RuntimeError)
+        expect { CASClient::Frameworks::Rails::Filter.filter(@controller) }.to raise_error(RuntimeError)
        end
     end
 
     context "matches existing service ticket" do
-      subject { Hash.new }
+      subject { @controller.session }
       it "should return successfully from filter" do
 
         mock_client = CASClient::Client.new()
@@ -150,10 +148,10 @@ describe CASClient::Frameworks::Rails::Filter do
         mock_client.should_receive(:retrieve_proxy_granting_ticket).at_most(0).times
         CASClient::Frameworks::Rails::Filter.send(:class_variable_set, :@@client, mock_client)
 
-        subject[:cas_last_valid_ticket] = 'bogusticket'
-        subject[:cas_last_valid_ticket_service] = 'bogusurl'
-        controller = mock_controller_with_session(mock_post_request(), subject)
-        CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
+        subject[:cas_last_valid_ticket] = @controller.params[:ticket]
+        subject[:cas_last_valid_ticket_service] = ticketless_url(@controller)
+
+        CASClient::Frameworks::Rails::Filter.filter(@controller).should eq(true)
       end
     end
   end
