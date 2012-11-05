@@ -3,8 +3,9 @@ require 'action_pack'
 module ActionControllerHelpers
 
   def build_controller_instance
+    controller = UnfilteredController.new
+
     if Rails.version =~ /^2\.3/
-      controller = ApplicationController.new
       controller.session = {}
     else
       request = Rack::Request.new({})
