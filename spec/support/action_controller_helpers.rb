@@ -85,4 +85,10 @@ protected
   def is_rails2?
     @_is_rails2 ||= Rails.version =~ /^2.3/
   end
+
+  def ticketless_url(controller)
+    params = controller.params.dup
+    params.delete(:ticket)
+    controller.url_for(params)
+  end
 end
