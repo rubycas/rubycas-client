@@ -8,7 +8,7 @@ module ActionControllerHelpers
     request_env = Rack::MockRequest.env_for('/unfiltered')
     request = build_request_for(request_env)
 
-    if Rails.version =~ /^2\.3/
+    if is_rails2?
       controller.session = {}
     end
 
@@ -18,7 +18,7 @@ module ActionControllerHelpers
   end
 
   def build_request_for(request_env)
-    if Rails.version =~ /^2\.3/
+    if is_rails2?
       request = ActionController::TestRequest.new(request_env)
     else
       request = ActionDispatch::TestRequest.new(request_env)
@@ -60,5 +60,10 @@ module ActionControllerHelpers
       mock_request.stub(:session_options) { Hash.new }
       mock_request.stub(:headers) { Hash.new }
       mock_request
+  end
+
+protected
+  def is_rails2?
+    @_is_rails2 ||= Rails.version =~ /^2.3/
   end
 end
