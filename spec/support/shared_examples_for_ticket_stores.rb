@@ -77,9 +77,17 @@ end
 shared_examples "a ticket store" do
   let(:ticket_store) { described_class.new }
   let(:service_url) { "https://www.example.com/cas" }
+
   let(:session) do
     ActiveRecord::SessionStore::Session.create!(:session_id => "session#{rand(1000)}", :data => {})
   end
+
+  let(:controller) do
+    controller = build_controller_instance
+    controller.stub(:session).and_return(session)
+    controller
+  end
+
   subject { ticket_store }
 
   context "when dealing with sessions, Service Tickets, and Single Sign Out" do
