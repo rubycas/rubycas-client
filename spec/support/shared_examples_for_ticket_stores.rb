@@ -53,10 +53,8 @@ shared_examples "a ticket store interacting with sessions" do
           ActiveRecord::SessionStore.session_class.find_by_session_id(session.session_id).should be_nil
         end
       end
-      it "should destroy session for the given service ticket" do
-        subject.process_single_sign_out(service_ticket)
-      end
     end
+
     context "the service ticket is not associated with a session" do
       it "should run without error if there is no session for the given service ticket" do
         expect { subject.process_single_sign_out(service_ticket) }.to_not raise_error
