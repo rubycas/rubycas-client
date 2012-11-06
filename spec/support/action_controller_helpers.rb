@@ -52,6 +52,7 @@ module ActionControllerHelpers
     end
   end
 
+=begin
   def mock_post_request
       mock_request = double("request")
       mock_request.stub(:post?) {true}
@@ -59,7 +60,7 @@ module ActionControllerHelpers
       mock_request.stub(:headers) { Hash.new }
       mock_request
   end
-
+=end
 protected
   def is_rails2?
     @_is_rails2 ||= Rails.version =~ /^2.3/
