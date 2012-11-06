@@ -30,6 +30,7 @@ shared_examples "a ticket store interacting with sessions" do
         subject.store_service_session_lookup(service_ticket, controller)
         session.save!
       end
+
       it "should return the session_id and session for the given service ticket" do
         result_session_id, result_session = subject.get_session_for_service_ticket(service_ticket)
         result_session_id.should == session.session_id
@@ -95,6 +96,9 @@ shared_examples "a ticket store" do
   let(:controller) do
     controller = build_controller_instance
     controller.stub(:session).and_return(session)
+    controller.request.stub(:session_options).and_return({
+      :id => session.session_id
+    })
     controller
   end
 
