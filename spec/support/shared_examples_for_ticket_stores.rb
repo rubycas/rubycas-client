@@ -1,13 +1,21 @@
 shared_examples "a ticket store interacting with sessions" do
   describe "#store_service_session_lookup" do
     it "should raise CASException if the Service Ticket is nil" do
-      expect { subject.store_service_session_lookup(nil, "controller") }.to raise_exception(CASClient::CASException, /No service_ticket specified/)
+      expect {
+        subject.store_service_session_lookup(nil, "controller")
+      }.to raise_exception(CASClient::CASException, /No service_ticket specified/)
     end
+
     it "should raise CASException if the controller is nil" do
-      expect { subject.store_service_session_lookup("service_ticket", nil) }.to raise_exception(CASClient::CASException, /No controller specified/)
+      expect {
+        subject.store_service_session_lookup("service_ticket", nil)
+      }.to raise_exception(CASClient::CASException, /No controller specified/)
     end
+
     it "should store the ticket without any errors" do
-      expect { subject.store_service_session_lookup(service_ticket, mock_controller_with_session(nil, session)) }.to_not raise_exception
+      expect {
+        subject.store_service_session_lookup(service_ticket, controller)
+      }.to_not raise_exception
     end
   end
 
@@ -19,9 +27,10 @@ shared_examples "a ticket store interacting with sessions" do
     end
     context "the service ticket is associated with a session" do
       before do
-        subject.store_service_session_lookup(service_ticket, mock_controller_with_session(nil, session))
+        subject.store_service_session_lookup(service_ticket, controller)
         session.save!
       end
+
       it "should return the session_id and session for the given service ticket" do
         result_session_id, result_session = subject.get_session_for_service_ticket(service_ticket)
         result_session_id.should == session.session_id
@@ -42,21 +51,21 @@ shared_examples "a ticket store interacting with sessions" do
         expect { subject.process_single_sign_out(nil) }.to raise_exception(CASClient::CASException, /No service_ticket specified/)
       end
     end
+
     context "the service ticket is associated with a session" do
       before do
-        subject.store_service_session_lookup(service_ticket, mock_controller_with_session(nil, session))
+        subject.store_service_session_lookup(service_ticket, controller)
         session.save!
         subject.process_single_sign_out(service_ticket)
       end
+
       context "the session" do
         it "should be destroyed" do
           ActiveRecord::SessionStore.session_class.find_by_session_id(session.session_id).should be_nil
         end
       end
-      it "should destroy session for the given service ticket" do
-        subject.process_single_sign_out(service_ticket)
-      end
     end
+
     context "the service ticket is not associated with a session" do
       it "should run without error if there is no session for the given service ticket" do
         expect { subject.process_single_sign_out(service_ticket) }.to_not raise_error
@@ -79,9 +88,20 @@ end
 shared_examples "a ticket store" do
   let(:ticket_store) { described_class.new }
   let(:service_url) { "https://www.example.com/cas" }
+
   let(:session) do
     ActiveRecord::SessionStore::Session.create!(:session_id => "session#{rand(1000)}", :data => {})
   end
+
+  let(:controller) do
+    controller = build_controller_instance
+    controller.stub(:session).and_return(session)
+    controller.request.stub(:session_options).and_return({
+      :id => session.session_id
+    })
+    controller
+  end
+
   subject { ticket_store }
 
   context "when dealing with sessions, Service Tickets, and Single Sign Out" do

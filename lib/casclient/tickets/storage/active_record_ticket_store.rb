@@ -69,6 +69,10 @@ module CASClient
       class ServiceTicketAwareSession < ActiveRecord::SessionStore::Session
         before_save :save_service_ticket
 
+        def self.find_by_session_id(session_id)
+          super
+        end
+
         def save_service_ticket
           if data[:service_ticket]
             self.service_ticket = data[:service_ticket]

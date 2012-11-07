@@ -23,5 +23,5 @@ pkg
 .rvmrc
 
 .project
-
+*.DS_Store
 Gemfile.lock

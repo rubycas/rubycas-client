@@ -1,1 +1,3 @@
 test.*.db
+dummy/log/*
+dummy/db/*.sqlite3

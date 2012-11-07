@@ -1,5 +1,25 @@
+# Configure Rails Environment
+ENV["RAILS_ENV"] = "test"
+
 require 'bundler'
 Bundler.setup(:default, :development)
+
+# Boot up the dummy app
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+if defined? RAILS_GEM_VERSION
+  # Bomb out early if we're trying to run rails 2.3 on ruby 1.9.3
+  raise "Rails 2.3 does not support running under Ruby 1.9.3+!" if RUBY_VERSION >= "1.9.3"
+  # even more rails 2.3 hackity hacks
+  require 'test_help'
+else
+  require "rails/test_help"
+end
+
+# Ensure we have our testing DB setup
+ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
+
+Rails.backtrace_cleaner.remove_silencers!
+
 require 'simplecov' unless ENV['TRAVIS']
 Bundler.require
 
@@ -24,13 +44,11 @@ RSpec.configure do |config|
   config.fail_fast = false
 
   config.before(:suite) do
-    ActiveRecordHelpers.setup_active_record
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
   config.after(:suite) do
-    ActiveRecordHelpers.teardown_active_record
   end
 
   config.before(:each) do
