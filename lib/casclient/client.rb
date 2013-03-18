@@ -44,7 +44,8 @@ module CASClient
         when :local_dir_ticket_store, nil
           CASClient::Tickets::Storage::LocalDirTicketStore
         when :active_record_ticket_store
-          CASClient::Tickets::Storage::ACTIVE_RECORD_TICKET_STORE
+          require 'casclient/tickets/storage/active_record_ticket_store'
+          CASClient::Tickets::Storage::ActiveRecordTicketStore
         else
           conf[:ticket_store]
       end
