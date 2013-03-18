@@ -22,12 +22,7 @@ class CasProxyCallbackController < ActionController::Base
     render :text => "Okay, the server is up, but please specify a pgtIou and pgtId." and return unless pgtIou and pgtId
     
     # TODO: pstore contents should probably be encrypted...
-
-    if Rails::VERSION::MAJOR > 2
-      casclient = RubyCAS::Filter.client
-    else
-      casclient = CASClient::Frameworks::Rails::Filter.client
-    end
+    casclient = CASClient::Frameworks::Rails::Filter.client
 
     casclient.ticket_store.save_pgt_iou(pgtIou, pgtId)
 
