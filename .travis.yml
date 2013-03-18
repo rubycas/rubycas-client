@@ -30,11 +30,5 @@ matrix:
     - rvm: rbx-19mode
       gemfile: gemfiles/rails23.gemfile
   allow_failures:
-    - rvm: 2.0.0
-    - rvm: jruby-19mode
     - rvm: jruby-head
-    - rvm: rbx-19mode
     - rvm: ruby-head
-    - gemfile: gemfiles/rails30.gemfile
-    - gemfile: gemfiles/rails31.gemfile
-    - gemfile: gemfiles/rails32.gemfile
