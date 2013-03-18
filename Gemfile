@@ -10,13 +10,4 @@ group :tools do
   gem "fuubar"
   gem "rb-fsevent"
   gem "growl", :group => :darwin
-
-  platforms :ruby do
-    gem "sqlite3"
-  end
-
-  platforms :jruby do
-    gem "jruby-openssl"
-    gem "activerecord-jdbcsqlite3-adapter"
-  end
 end
