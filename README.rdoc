@@ -1,4 +1,4 @@
-{<img src="http://travis-ci.org/rubycas/rubycas-client.png" />}[http://travis-ci.org/rubycas/rubycas-client]
+{<img src="https://secure.travis-ci.org/rubycas/rubycas-client.png" alt="Build Status" />}[http://travis-ci.org/rubycas/rubycas-client]
 {<img src="https://codeclimate.com/badge.png" />}[https://codeclimate.com/github/rubycas/rubycas-client]
 
 = RubyCAS-Client 
