@@ -21,6 +21,9 @@ pkg
 .rbenv-version
 .rbenv-vars
 .rvmrc
+.ruby-version
+
+tmp
 
 .project
 

@@ -9,5 +9,5 @@ group :tools do
   gem "guard-bundler"
   gem "fuubar"
   gem "rb-fsevent"
-  gem "growl", :group => :darwin
+  gem "ruby_gntp", :group => :darwin
 end
