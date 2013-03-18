@@ -10,6 +10,7 @@
   * Fix travis builds running incorrectly (@tpicket66)
   * Remove dependency on rubycas-client-rails when Rails 3.x is being used (@KrisSiegel)
   * Fix an issue where the Ticket Store might break under Rails 3.x
+  * Fix loading the ActiveRecordTicketStore by symbol
 
 * Other
   * Vastly expand combinations of ruby and rails versions that are considered supported. - see .travis.yml
