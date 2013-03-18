@@ -7,6 +7,12 @@
     ticket to the sessions table
   * Fixed compatibility of login_to_service with rubycas-server 1.1.x (@bradseefeld)
   * Fix an issue that prevented inspection of faked extra attributes on the filter (@yurikoval)
+  * Fix travis builds running incorrectly (@tpicket66)
+  * Remove dependency on rubycas-client-rails when Rails 3.x is being used (@KrisSiegel)
+  * Fix an issue where the Ticket Store might break under Rails 3.x
+
+* Other
+  * Vastly expand combinations of ruby and rails versions that are considered supported. - see .travis.yml
 
 == Version 2.3.9 :: 2012-06-20
 
