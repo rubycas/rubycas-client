@@ -1,6 +1,6 @@
 = RubyCAS-Client Changelog
 
-== Unreleased
+== Version 2.3.10.rc1 :: 2013-03-18
 
 * Bug Fixes
   * Fixed bug where ActiveRecordTicketStore failed to add the service
