@@ -1,3 +1,4 @@
+require 'action_controller'
 # Rails controller that responds to proxy generating ticket callbacks from the CAS server and allows
 # for retrieval of those PGTs.
 class CasProxyCallbackController < ActionController::Base
@@ -23,7 +24,7 @@ class CasProxyCallbackController < ActionController::Base
     
     # TODO: pstore contents should probably be encrypted...
 
-    if Rails::VERSION::MAJOR > 2
+    if defined?(RubyCAS::Filter)
       casclient = RubyCAS::Filter.client
     else
       casclient = CASClient::Frameworks::Rails::Filter.client
