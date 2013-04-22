@@ -23,9 +23,9 @@ describe CASClient::Tickets::Storage::AbstractTicketStore do
       expect { subject.retrieve_pgt("pgt_iou") }.to raise_exception 'Implement this in a subclass!'
     end
   end
-  describe "#get_session_for_service_ticket" do
+  describe "#get_session_id_for_service_ticket" do
     it "should raise an exception" do
-      expect { subject.get_session_for_service_ticket("service_ticket") }.to raise_exception 'Implement this in a subclass!'
+      expect { subject.get_session_id_for_service_ticket("service_ticket") }.to raise_exception 'Implement this in a subclass!'
     end
   end
 end
