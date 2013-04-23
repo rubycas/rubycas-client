@@ -116,8 +116,9 @@ module CASClient
         def destroy_session_with_session_id session_id, st
           raise CASException, "No service_ticket specified." if st.nil?
 
-          session = ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session_id})
-          session.destroy if session.present?
+          st = st.ticket if st.kind_of? ServiceTicket
+          ssl_filename = filename_of_service_session_lookup(st)
+          File.delete(ssl_filename) if File.exists?(ssl_filename)
         end
 
         # Removes a stored relationship between a ServiceTicket and a local
