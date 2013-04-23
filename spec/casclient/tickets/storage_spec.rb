@@ -8,6 +8,11 @@ describe CASClient::Tickets::Storage::AbstractTicketStore do
       expect { subject.store_service_session_lookup("service_ticket", mock_controller_with_session) }.to raise_exception 'Implement this in a subclass!'
     end
   end
+  describe "#destroy_session_with_session_id" do
+    it "should raise an exception" do
+      expect { subject.destroy_session_with_session_id("service_ticket", nil) }.to raise_exception 'Implement this in a subclass!'
+    end
+  end
   describe "#cleanup_service_session_lookup" do
     it "should raise an exception" do
       expect { subject.cleanup_service_session_lookup("service_ticket") }.to raise_exception 'Implement this in a subclass!'

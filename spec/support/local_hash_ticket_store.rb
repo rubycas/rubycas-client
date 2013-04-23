@@ -19,6 +19,15 @@ class LocalHashTicketStore < CASClient::Tickets::Storage::AbstractTicketStore
     st_hash[st]
   end
 
+  def destroy_session_with_session_id session_id, st
+    raise CASClient::CASException, "No service_ticket specified." if st.nil?
+    st = st.ticket if st.kind_of? CASClient::ServiceTicket
+    st_hash.delete st
+
+    session = ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session_id})
+    session.destroy if session.present?
+  end
+
   def cleanup_service_session_lookup(st)
     raise CASClient::CASException, "No service_ticket specified." if st.nil?
     st = st.ticket if st.kind_of? CASClient::ServiceTicket

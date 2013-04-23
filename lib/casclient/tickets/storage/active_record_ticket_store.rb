@@ -32,7 +32,7 @@ module CASClient
         def destroy_session_with_session_id session_id, st
           # This feels a bit hackish, but there isn't really a better way to go about it that I am aware of yet
           session = ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session_id})
-          session.destroy
+          session.destroy if session.present?
         end
 
         def read_service_session_lookup(st)
