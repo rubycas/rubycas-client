@@ -38,8 +38,6 @@ API documentation (i.e. the RDocs) are available at http://rubycas-client.rubyfo
 
 == Installation
 
-<b>NOTE:</b> For compatibility with Rails 3 have a look at https://github.com/zuk/rubycas-client-rails
-
 The current version of RubyCAS-Client should work with Rails 2.3.6 and up. For compatibility with
 older Rails try using an older version of the client.
 
