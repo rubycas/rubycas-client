@@ -267,7 +267,7 @@ to authenticate another application:
 
   service_uri = "http://some-other-application.example.foo"
   proxy_granting_ticket = session[:cas_pgt]
-  proxy_ticket = CASClient::Frameworks::Rails::Filter.client.request_proxy_ticket(service_uri, proxy_granting_ticket)
+  proxy_ticket = CASClient::Frameworks::Rails::Filter.client.request_proxy_ticket(proxy_granting_ticket, service_uri)
   
 <tt>proxy_ticket</tt> should now contain a valid proxy ticket. You can use it to authenticate other services by sending it together with 
 the service URI as parameters to your target application:
