@@ -1,3 +1,4 @@
+require 'casclient/tickets/storage'
 require 'redis'
 
 module CASClient
