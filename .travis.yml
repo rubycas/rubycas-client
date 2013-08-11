@@ -9,7 +9,6 @@ rvm:
   - 1.9.2
   - 1.9.3
   - 2.0.0
-  - ruby-head
   - jruby-18mode
   - jruby-19mode
   - jruby-head
@@ -31,4 +30,3 @@ matrix:
       gemfile: gemfiles/rails23.gemfile
   allow_failures:
     - rvm: jruby-head
-    - rvm: ruby-head
