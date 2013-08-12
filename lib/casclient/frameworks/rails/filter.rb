@@ -130,6 +130,7 @@ module CASClient
             unauthorized!(controller)
             return false
           end
+          alias :before :filter
           
           def configure(config)
             @@config = config
