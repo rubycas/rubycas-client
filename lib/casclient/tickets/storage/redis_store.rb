@@ -11,7 +11,8 @@ module CASClient
         
         def initialize(config={})
           config ||= {} 
-          @namespace = "cas_#{config[:env]}"
+          env = config.fetch(:env, '')
+          @namespace = config.fetch(:namespace, "cas_#{config[:env]}")
           @redis = Redis.new({ host: config[:host], port: config[:port] })
         end
         
