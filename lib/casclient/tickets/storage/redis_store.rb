@@ -6,20 +6,20 @@ module CASClient
     module Storage
 
       # A Ticket Store that keeps its ticket data in redis
-      
+
       class RedisStore < AbstractTicketStore
-        
+
         def initialize(config={})
-          config ||= {} 
+          config ||= {}
           env = config.fetch(:env, '')
           @namespace = config.fetch(:namespace, "cas_#{config[:env]}")
           @redis = Redis.new({ host: config[:host], port: config[:port] })
         end
-        
+
         def redis
           @redis
         end
-        
+
         def path_for(key)
           @namespace + key
         end
@@ -58,12 +58,12 @@ module CASClient
           pgt_id
         end
 
-        def dump(obj)
-          Marshal.dump(obj)
+        def dump(str)
+          str.to_s
         end
 
-        def load(obj)
-          Marshal.load(obj)
+        def load(str)
+          str
         end
 
       end
