@@ -10,9 +10,7 @@ module CASClient
       class RedisStore < AbstractTicketStore
 
         def initialize(config={})
-          config ||= {}
-          env = config.fetch(:env, '')
-          @namespace = config.fetch(:namespace, "cas_#{config[:env]}")
+          @namespace = config.fetch(:namespace, "cas_ticket_")
           @redis = Redis.new({ host: config[:host], port: config[:port] })
         end
 
