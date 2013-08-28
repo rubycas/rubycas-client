@@ -12,7 +12,7 @@ module CASClient
         end
 
         def to_s
-          "User: #{@user}, Attributes: #{@extra_attributes}, Valid?: #{valid?}, Errors: #{@errors}"
+          "User: #{@user}, Attributes: [#{@extra_attributes}], Valid?: #{valid?}, Errors: #{@errors}"
         end
 
         def error_messages
@@ -64,6 +64,7 @@ module CASClient
           private
 
           def read_ticket(req)
+            log.error("#{self.class.name} Read Ticket: #{req.params[:ticket]}")
             ticket = req.params[:ticket]
             return nil unless ticket
             log.debug("Request contains ticket #{ticket.inspect}.")
