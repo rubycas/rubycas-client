@@ -1,5 +1,3 @@
-require 'casclient/client'
-
 # Rack controller that responds to proxy generating ticket callbacks from the CAS server and allows
 # for retrieval of those PGTs.
 module CasProxy
@@ -23,7 +21,6 @@ module CasProxy
         # call the action without any parameters (maybe to check if the server responds correctly)
         return [200, {'Content-Type' => 'text/plain'}, ["Okay, the server is up, but please specify a pgtIou and pgtId."]] unless pgtIou and pgtId
 
-        # TODO: pstore contents should probably be encrypted...
         CASClient::Frameworks::Rack::ProxyFilter.client.ticket_store.save_pgt_iou(pgtIou, pgtId)
 
         [200, {'Content-Type' => 'text/plain'}, ["PGT received. Thank you!"]]
@@ -31,9 +28,5 @@ module CasProxy
 
     end
 
-    private
-    def open_pstore
-      PStore.new("#{::Rails.root}/tmp/cas_pgt.pstore")
-    end
   end
 end
