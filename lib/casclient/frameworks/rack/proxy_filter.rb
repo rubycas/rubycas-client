@@ -24,8 +24,6 @@ module CASClient
       # A simplified filter that only manages Proxy requests
       class ProxyFilter
 
-        cattr_reader :config, :log, :client
-
         @@config = nil
         @@client = nil
         @@log = nil
@@ -59,6 +57,18 @@ module CASClient
             @@config[:logger] = ::App.logger unless @@config[:logger]
             @@client = CASClient::Client.new(config)
             @@log = client.log
+          end
+
+          def config
+            @@config
+          end
+
+          def log
+            @@log
+          end
+
+          def client
+            @@client
           end
 
           private
