@@ -9,6 +9,10 @@ module CASClient
           @user, @extra_attributes, @errors = user, extra_attributes, errors
         end
 
+        def attributes
+          extra_attributes
+        end
+
         def valid?
           @errors.empty?
         end
