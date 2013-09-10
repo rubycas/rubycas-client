@@ -54,7 +54,7 @@ module CASClient
 
           def configure(config)
             @@config = config
-            @@config[:logger] = ::App.logger unless @@config[:logger]
+            @@config[:logger] ||= ::App.logger
             @@client = CASClient::Client.new(config)
             @@log = client.log
           end
