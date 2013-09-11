@@ -1,31 +1,8 @@
+require_relative 'response'
+
 module CASClient
   module Frameworks
     module Rack
-
-      class Response
-        attr_reader :user, :extra_attributes, :errors
-
-        def initialize(user = nil, extra_attributes = nil, *errors)
-          @user, @extra_attributes, @errors = user, extra_attributes, errors
-        end
-
-        def attributes
-          extra_attributes
-        end
-
-        def valid?
-          @errors.empty?
-        end
-
-        def to_s
-          "User: #{@user}, Attributes: [#{@extra_attributes}], Valid?: #{valid?}, Errors: #{@errors}"
-        end
-
-        def error_messages
-          @errors.join(", ")
-        end
-      end
-
 
       # A simplified filter that only manages Proxy requests
       class ProxyFilter
@@ -44,7 +21,7 @@ module CASClient
                 if st.is_valid? # st.extra_attributes
                   if st.pgt_iou
                     if client.retrieve_proxy_granting_ticket(st.pgt_iou)
-                      return Response.new(st.user.dup, HashWithIndifferentAccess.new(st.extra_attributes))
+                      return CASClient::Frameworks::Rack::Response.new(st.user.dup, HashWithIndifferentAccess.new(st.extra_attributes))
                     end
 
                     log.error("Failed to retrieve a PGT for PGT IOU #{st.pgt_iou}!")
@@ -52,10 +29,10 @@ module CASClient
                 end
               end
             rescue OpenSSL::SSL::SSLError => err
-              Response.new(nil, nil, "OpenSSL::SSL::SSLError #{err}")
+              CASClient::Frameworks::Rack::Response.new(nil, nil, "OpenSSL::SSL::SSLError #{err}")
             end
 
-            Response.new(nil, nil, "unauthorized!")
+            CASClient::Frameworks::Rack::Response.new(nil, nil, "unauthorized!")
           end
 
           def configure(config)
