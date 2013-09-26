@@ -1,5 +1,5 @@
-# Rack controller that responds to proxy generating ticket callbacks from the CAS server and allows
-# for retrieval of those PGTs.
+# Rack middleware that responds to proxy generating ticket callbacks from the
+# CAS server and allows for retrieval of those PGTs elsewhere.
 module CasProxy
   class Callback
 
@@ -10,7 +10,7 @@ module CasProxy
       # Receives a proxy granting ticket from the CAS server and stores it in the database.
       # Note that this action should ALWAYS be called via https, otherwise you have a gaping security hole.
       # In fact, the JA-SIG implementation of the CAS server will refuse to send PGTs to non-https URLs.
-      when "/cas_proxy_callback/receive_pgt" # Rack map removes the prefix
+      when "/cas_proxy_callback/receive_pgt" # Rack map removes the prefix. matches the Rails routing
         pgtIou = req.params['pgtIou']
 
         # CAS Protocol spec says that the argument should be called 'pgt', but the JA-SIG CAS server seems to use pgtId.

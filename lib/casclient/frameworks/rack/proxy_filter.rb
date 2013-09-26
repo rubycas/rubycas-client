@@ -21,7 +21,7 @@ module CASClient
                 if st.is_valid? # st.extra_attributes
                   if st.pgt_iou
                     if client.retrieve_proxy_granting_ticket(st.pgt_iou)
-                      return CASClient::Frameworks::Rack::Response.new(st.user.dup, HashWithIndifferentAccess.new(st.extra_attributes))
+                      return CASClient::Frameworks::Rack::Response.new(st.user.dup, HashWithIndifferentAccess.new(st.extra_attributes), ticket: st)
                     end
 
                     log.error("Failed to retrieve a PGT for PGT IOU #{st.pgt_iou}!")
