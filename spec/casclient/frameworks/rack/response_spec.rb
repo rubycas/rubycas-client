@@ -5,7 +5,7 @@ describe CASClient::Frameworks::Rack::Response do
 
   describe 'with errors' do
     subject {
-      CASClient::Frameworks::Rack::Response.new(nil, nil, "OpenSSL::SSL::SSLError")
+      CASClient::Frameworks::Rack::Response.new(nil, nil, errors: "OpenSSL::SSL::SSLError")
     }
 
     it 'user is nil' do
@@ -25,17 +25,17 @@ describe CASClient::Frameworks::Rack::Response do
     end
 
     it 'to_s' do
-      subject.to_s.should == "Errors: [\"OpenSSL::SSL::SSLError\"]"
+      subject.to_s.should match /Errors: \["OpenSSL::SSL::SSLError"\]/
     end
 
     it 'to_hash' do
-      subject.to_hash.should == {errors: ["OpenSSL::SSL::SSLError"] }
+      subject.to_hash.should == {cas_user: nil, cas_extra_attributes: nil, errors: ["OpenSSL::SSL::SSLError"], :ticket=>nil }
     end
   end
 
   describe 'valid responds to' do
     let(:email) { 'name@example.com' }
-    let(:attributes) { Hash[:role_names, 'headoffice,centre'] }
+    let(:attributes) { Hash[:roles, 'role1,role2'] }
 
     subject {
       CASClient::Frameworks::Rack::Response.new(email, attributes)
@@ -45,7 +45,7 @@ describe CASClient::Frameworks::Rack::Response do
       subject.user.should == email
     end
 
-    it 'attributes is populate' do
+    it 'attributes is populated' do
       subject.attributes.should == attributes
     end
 
@@ -62,11 +62,11 @@ describe CASClient::Frameworks::Rack::Response do
     end
 
     it 'to_hash' do
-      subject.to_hash.should == {cas_user: email, cas_extra_attributes: attributes, ticket: nil }
+      subject.to_hash.should == {cas_user: email, cas_extra_attributes: attributes, errors: [], ticket: nil }
     end
 
     it 'to_hash attributes are intact' do
-      subject.to_hash[:cas_extra_attributes][:role_names].should == 'headoffice,centre'
+      subject.to_hash[:cas_extra_attributes][:role_names].should == attributes[:role_names]
     end
 
   end
