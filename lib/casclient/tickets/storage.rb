@@ -106,7 +106,7 @@ module CASClient
 
         # Returns the local Rails session ID corresponding to the given
         # ServiceTicket. This is done by reading the contents of the
-        # cas_sess.<session ticket> file created in a prior call to 
+        # cas_sess.<session ticket> file created in a prior call to
         # #store_service_session_lookup.
         def read_service_session_lookup(st)
           raise CASException, "No service_ticket specified." if st.nil?
@@ -166,6 +166,7 @@ module CASClient
           return "#{@service_session_lookup_dir}/cas_sess.#{st}"
         end
 
+        # TODO: pstore contents should probably be encrypted...
         def open_pstore
           PStore.new(@pgt_store_path)
         end

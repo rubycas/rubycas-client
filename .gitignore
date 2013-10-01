@@ -28,3 +28,4 @@ tmp
 .project
 
 Gemfile.lock
+.DS_Store
