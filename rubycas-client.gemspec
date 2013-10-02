@@ -24,12 +24,11 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency("activesupport")
   gem.add_development_dependency("rake")
-  gem.add_development_dependency("database_cleaner", "~> 1.0.1")
+  gem.add_development_dependency("database_cleaner", "~> 0.9.1")
   gem.add_development_dependency("json")
   gem.add_development_dependency("rspec")
   gem.add_development_dependency("appraisal")
   gem.add_development_dependency("rails")
-  gem.add_development_dependency("activerecord-session_store")
   gem.add_development_dependency("simplecov")
   if defined?(JRUBY_VERSION)
     gem.add_development_dependency("activerecord-jdbcsqlite3-adapter")

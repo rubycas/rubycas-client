@@ -17,7 +17,7 @@ module CASClient
           if config[:pgtious_table_name]
             CasPgtiou.set_table_name = config[:pgtious_table_name]
           end
-          ActionDispatch::Session::ActiveRecordStore.session_class = ServiceTicketAwareSession
+          ActiveRecord::SessionStore.session_class = ServiceTicketAwareSession
         end
 
         def store_service_session_lookup(st, controller)

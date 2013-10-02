@@ -67,8 +67,6 @@ require 'casclient/tickets'
 require 'casclient/responses'
 require 'casclient/client'
 require 'casclient/tickets/storage'
-require 'active_record'
-require 'active_record/session_store'
 autoload :ACTIVE_RECORD_TICKET_STORE, 'casclient/tickets/storage/active_record_ticket_store'
 if defined?(Rails)
   require 'casclient/frameworks/rails/filter'
