@@ -47,7 +47,7 @@ http://rubyforge.org/projects/rubycas-client.
 However, if you're using Rails, it's easier to install the CAS client as a plugin:
 
   cd <your rails app>
-  ./script/plugin install git://github.com/gunark/rubycas-client.git
+  ./script/plugin install git://github.com/rubycas/rubycas-client.git
 
 Alternatively, the library is also installable as a RubyGem[http://rubygems.org]:
 
@@ -56,7 +56,7 @@ Alternatively, the library is also installable as a RubyGem[http://rubygems.org]
 If your Rails application is under Subversion control, you can also install the plugin as an svn:external, ensuring that
 you always have the latest bleeding-edge version of RubyCAS-Client:
 
-  ./script/plugin install -x http://svn.github.com/gunark/rubycas-client.git
+  ./script/plugin install -x http://svn.github.com/rubycas/rubycas-client.git
 
 
 == Usage Examples
@@ -64,7 +64,7 @@ you always have the latest bleeding-edge version of RubyCAS-Client:
 If you'd rather jump right in, have a look at the example Rails and Merb applications pre-configured for CAS
 authentication:
 
-http://github.com/gunark/rubycas-client/tree/master/examples
+http://github.com/rubycas/rubycas-client/tree/master/examples
 
 
 Otherwise, continue reading for a step-by-step guide for integrating RubyCAS-Client with Rails:
