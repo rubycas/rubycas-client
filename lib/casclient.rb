@@ -68,7 +68,7 @@ require 'casclient/responses'
 require 'casclient/client'
 require 'casclient/tickets/storage'
 autoload :ACTIVE_RECORD_TICKET_STORE, 'casclient/tickets/storage/active_record_ticket_store'
-if defined?(Rails)
+if defined?(Rails) && defined?(ActionController::Base)
   require 'casclient/frameworks/rails/filter'
   require 'casclient/frameworks/rails/cas_proxy_callback_controller'
 end
