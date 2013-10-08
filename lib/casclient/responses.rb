@@ -37,7 +37,7 @@ module CASClient
 
     def parse(raw_text, options)
       raise BadResponseException, 
-        "CAS response is empty/blank." if raw_text.blank?
+        "CAS response is empty/blank." if raw_text.to_s.empty?
       @parse_datetime = Time.now
       if raw_text =~ /^(yes|no)\n(.*?)\n$/m
         @protocol = 1.0
@@ -89,7 +89,7 @@ module CASClient
     end
 
     def parse_extra_attribute_value(value, encode_extra_attributes_as)
-      attr_value = if value.blank?
+      attr_value = if value.to_s.empty?
          nil
        elsif !encode_extra_attributes_as
          begin
@@ -140,7 +140,7 @@ module CASClient
 
     def parse(raw_text)
       raise BadResponseException, 
-        "CAS response is empty/blank." if raw_text.blank?
+        "CAS response is empty/blank." if raw_text.to_s.empty?
       @parse_datetime = Time.now
 
       @xml = check_and_parse_xml(raw_text)
@@ -214,7 +214,7 @@ module CASClient
     end
 
     def is_success?
-      !@failure && !ticket.blank?
+      !@failure && !ticket.to_s.empty?
     end
 
     def is_failure?
