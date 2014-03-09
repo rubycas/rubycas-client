@@ -11,7 +11,7 @@ module CASClient
         @@fake_user = nil
         @@fake_extra_attributes = nil
 
-        def before(controller)
+        def self.before(controller)
           self.filter controller
         end
         
