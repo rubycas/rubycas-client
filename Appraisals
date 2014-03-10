@@ -14,4 +14,9 @@ appraise "rails32" do
   gem "rails", "~> 3.2.8"
 end
 
+appraise "rails4" do
+  gem "rails", "~> 4.0.0"
+  gem "activerecord-session_store", "~> 0.0.1", :require => false
+end
+
 # vim: filetype=ruby

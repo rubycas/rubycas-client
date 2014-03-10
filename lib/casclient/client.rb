@@ -112,12 +112,13 @@ module CASClient
       @proxy_url || (cas_base_url + "/proxy")
     end
 
-    def validate_service_ticket(st)
+    def validate_service_ticket(st,consume=true)
       uri = URI.parse(validate_url)
       h = uri.query ? query_to_hash(uri.query) : {}
       h['service'] = st.service
       h['ticket'] = st.ticket
-      h['renew'] = "1" if st.renew
+      h['renew'] = '1' if st.renew
+      h['consume'] = consume.to_s
       h['pgtUrl'] = proxy_callback_url if proxy_callback_url
       uri.query = hash_to_query(h)
 

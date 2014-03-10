@@ -4,6 +4,7 @@ gemfile:
   - gemfiles/rails30.gemfile
   - gemfiles/rails31.gemfile
   - gemfiles/rails32.gemfile
+  - gemfiles/rails4.gemfile
 rvm:
   - 1.8.7
   - 1.9.2
@@ -28,5 +29,13 @@ matrix:
       gemfile: gemfiles/rails23.gemfile
     - rvm: rbx-19mode
       gemfile: gemfiles/rails23.gemfile
+    - rvm: 1.8.7
+      gemfile: gemfiles/rails4.gemfile
+    - rvm: 1.9.2
+      gemfile: gemfiles/rails4.gemfile
+    - rvm: jruby-18mode
+      gemfile: gemfiles/rails4.gemfile
+    - rvm: rbx-18mode
+      gemfile: gemfiles/rails4.gemfile
   allow_failures:
     - rvm: jruby-head
