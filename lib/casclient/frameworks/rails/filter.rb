@@ -10,6 +10,10 @@ module CASClient
         @@log = nil
         @@fake_user = nil
         @@fake_extra_attributes = nil
+
+        def self.before(controller)
+          self.filter controller
+        end
         
         class << self
           def filter(controller)
