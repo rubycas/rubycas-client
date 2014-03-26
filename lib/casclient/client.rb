@@ -5,7 +5,7 @@ module CASClient
     attr_reader :log, :username_session_key, :extra_attributes_session_key
     attr_reader :ticket_store
     attr_reader :proxy_host, :proxy_port
-    attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url
+    attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url, :ticket_url
     attr_accessor :proxy_callback_url, :proxy_retrieval_url
 
     def initialize(conf = nil)
@@ -28,6 +28,7 @@ module CASClient
 
       @login_url    = conf[:login_url]
       @logout_url   = conf[:logout_url]
+      @ticket_url   = conf[:ticket_url]
       @validate_url = conf[:validate_url]
       @proxy_url    = conf[:proxy_url]
       @service_url  = conf[:service_url]
@@ -68,6 +69,10 @@ module CASClient
 
     def validate_url
       @validate_url || (cas_base_url + "/proxyValidate")
+    end
+
+    def ticket_url
+      @ticket_url || (cas_base_url + '/loginTicket')
     end
 
     # Returns the CAS server's logout url.
@@ -182,7 +187,7 @@ module CASClient
     # This only works with RubyCAS-Server, since obtaining login
     # tickets in this manner is not part of the official CAS spec.
     def request_login_ticket
-      uri = URI.parse(login_url+'Ticket')
+      uri = URI.parse(ticket_url)
       https = https_connection(uri)
       res = https.post(uri.path, ';')
 
