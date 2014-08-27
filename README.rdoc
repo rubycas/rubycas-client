@@ -138,7 +138,7 @@ An arbitrary Logger instance can be given as the :logger parameter. In the examp
 <tt>log/cas.log</tt> file in your Rails app's directory.
 
 The service url sets the service parameter that will be sent to CAS for every authentication.  This can be useful if you are 
-implementing the single logout feature or would like to funnel all authentications through a specific action.
+implementing the single logout feature (supported by some CAS Servers) or would like to funnel all authentications through a specific action.
 
 ==== Re-authenticating on every request (i.e. the "single sign-out problem")
 
