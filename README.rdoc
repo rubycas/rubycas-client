@@ -122,6 +122,7 @@ Here is a more complicated configuration showing most of the configuration optio
     :extra_attributes_session_key => :cas_extra_attributes,
     :logger => cas_logger,
     :enable_single_sign_out => true
+    :service_url => "https://mysite.service.com"
   )
 
 Note that normally it is not necessary to specify <tt>:login_url</tt>, <tt>:logout_url</tt>, and <tt>:validate_url</tt>.
@@ -135,6 +136,9 @@ info under <tt>session[:cas_extra_attributes]</tt>).
 
 An arbitrary Logger instance can be given as the :logger parameter. In the example above we log all CAS activity to a 
 <tt>log/cas.log</tt> file in your Rails app's directory.
+
+The service url sets the service parameter that will be sent to CAS for every authentication.  This can be useful if you are 
+implementing the single logout feature (supported by some CAS Servers) or would like to funnel all authentications through a specific action.
 
 ==== Re-authenticating on every request (i.e. the "single sign-out problem")
 
