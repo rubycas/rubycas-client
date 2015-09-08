@@ -50,7 +50,11 @@ shared_examples "a ticket store interacting with sessions" do
       end
       context "the session" do
         it "should be destroyed" do
-          ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session.session_id}).should be_nil
+          if ActiveRecord::SessionStore.respond_to?(:session_class=)
+            ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session.session_id}).should be_nil
+          else
+            ActionDispatch::Session::ActiveRecordStore.session_class.find_by(:session_id => session.session_id).should be_nil
+          end
         end
       end
       it "should destroy session for the given service ticket" do

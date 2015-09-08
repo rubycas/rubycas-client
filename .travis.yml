@@ -4,6 +4,9 @@ gemfile:
   - gemfiles/rails30.gemfile
   - gemfiles/rails31.gemfile
   - gemfiles/rails32.gemfile
+  - gemfiles/rails40.gemfile
+  - gemfiles/rails41.gemfile
+  - gemfiles/rails42.gemfile
 rvm:
   - 1.8.7
   - 1.9.2
@@ -25,3 +28,21 @@ matrix:
       gemfile: gemfiles/rails23.gemfile
     - rvm: rbx
       gemfile: gemfiles/rails23.gemfile
+    - rvm: 1.8.7
+      gemfile: gemfiles/rails40.gemfile
+    - rvm: 1.8.7
+      gemfile: gemfiles/rails41.gemfile
+    - rvm: 1.8.7
+      gemfile: gemfiles/rails42.gemfile
+    - rvm: jruby-18mode
+      gemfile: gemfiles/rails40.gemfile
+    - rvm: jruby-18mode
+      gemfile: gemfiles/rails41.gemfile
+    - rvm: jruby-18mode
+      gemfile: gemfiles/rails42.gemfile
+    - rvm: 1.9.2
+      gemfile: gemfiles/rails40.gemfile
+    - rvm: 1.9.2
+      gemfile: gemfiles/rails41.gemfile
+    - rvm: 1.9.2
+      gemfile: gemfiles/rails42.gemfile
