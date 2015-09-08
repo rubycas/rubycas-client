@@ -26,7 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency("rake")
   gem.add_development_dependency("database_cleaner", "~> 1.0.0")
   gem.add_development_dependency("json")
-  gem.add_development_dependency("rspec", "~> 2.0")
+  gem.add_development_dependency("rspec", "~> 2.14.0")
   gem.add_development_dependency("appraisal")
   gem.add_development_dependency("rails")
   gem.add_development_dependency("simplecov")
