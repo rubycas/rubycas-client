@@ -255,7 +255,7 @@ module CASClient
             end
             
             if controller.session[:previous_redirect_to_cas] &&
-                controller.session[:previous_redirect_to_cas] > (Time.now - 1.second)
+                controller.session[:previous_redirect_to_cas].to_time > (Time.now - 1.second)
               log.warn("Previous redirect to the CAS server was less than a second ago. The client at #{controller.request.remote_ip.inspect} may be stuck in a redirection loop!")
               controller.session[:cas_validation_retry_count] ||= 0
               
