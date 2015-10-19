@@ -37,17 +37,17 @@ describe CASClient::Client do
     context "cas server is up" do
       it "returns false if the server cannot be connected to" do
         connection.stub(:get).and_raise(Errno::ECONNREFUSED)
-        client.cas_server_is_up?.should be_false
+        client.cas_server_is_up?.should be false
       end
     
       it "returns false if the request was not a success" do
         response.stub :kind_of? => false
-        client.cas_server_is_up?.should be_false
+        client.cas_server_is_up?.should be false
       end
       
       it "returns true when the server is running" do
         response.stub :kind_of? => true
-        client.cas_server_is_up?.should be_true
+        client.cas_server_is_up?.should be true
       end
     end
     

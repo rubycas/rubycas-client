@@ -14,4 +14,9 @@ appraise "rails32" do
   gem "rails", "~> 3.2.8"
 end
 
+#appraise "rails42" do
+#  gem "rails", "~> 4.2.0"
+#  gem 'activerecord-session_store'#, github: 'rails/activerecord-session_store'
+#end
+
 # vim: filetype=ruby
