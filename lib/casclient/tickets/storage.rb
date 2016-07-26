@@ -29,7 +29,11 @@ module CASClient
           session_id = read_service_session_lookup(st)
           unless session_id.nil?
             # This feels a bit hackish, but there isn't really a better way to go about it that I am aware of yet
-            session = ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session_id})
+            if Rails.version.split(".").first.to_i >= 4
+ +            session = ActionDispatch::Session::ActiveRecordStore.session_class.find_by_session_id(session_id)
+ +          else
+ +            session = ActiveRecord::SessionStore.session_class.find(:first, :conditions => {:session_id => session_id})
+ +          end
           else
             log.warn("Couldn't destroy session service ticket #{st} because no corresponding session id could be found.")
           end
