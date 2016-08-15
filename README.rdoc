@@ -1,3 +1,13 @@
+= In Need of New Maintainer
+
+Unfortunately, those of us who have been maintaining this project no longer have time to give it the attention it needs. If you are interested in taking over maintainence of it, please let us know!
+
+Otherwise, we recommend you consider one of the following alternatives:
+
+{rack-cas}[/biola/rack-cas]
+
+{omniauth-cas}[/dlindahl/omniauth-cas]
+
 {<img src="https://secure.travis-ci.org/rubycas/rubycas-client.png" alt="Build Status" />}[http://travis-ci.org/rubycas/rubycas-client]
 {<img src="https://codeclimate.com/badge.png" />}[https://codeclimate.com/github/rubycas/rubycas-client]
 
