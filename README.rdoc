@@ -131,7 +131,7 @@ Here is a more complicated configuration showing most of the configuration optio
     :username_session_key => :cas_user,
     :extra_attributes_session_key => :cas_extra_attributes,
     :logger => cas_logger,
-    :enable_single_sign_out => true
+    :enable_single_sign_out => true,
     :service_url => "https://mysite.service.com"
   )
 
