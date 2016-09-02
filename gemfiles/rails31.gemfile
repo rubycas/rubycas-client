@@ -2,6 +2,16 @@
 
 source "http://rubygems.org"
 
+gem "rubysl", :platform => :rbx
 gem "rails", "~> 3.1.8"
 
-gemspec :path=>"../"
+group :tools do
+  gem "guard"
+  gem "guard-rspec"
+  gem "guard-bundler"
+  gem "fuubar"
+  gem "rb-fsevent"
+  gem "ruby_gntp", :group => :darwin
+end
+
+gemspec :path => "../"
