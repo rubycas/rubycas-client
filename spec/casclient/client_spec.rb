@@ -53,7 +53,7 @@ describe CASClient::Client do
     
     context "request login ticket" do
       it "raises an exception when the request was not a success" do
-        session.stub(:post).with("/Ticket", ";").and_return(response)
+        session.stub(:post).with("/loginTicket", ";").and_return(response)
         response.stub :kind_of? => false
         lambda {
           client.request_login_ticket
@@ -61,7 +61,7 @@ describe CASClient::Client do
       end
       
       it "returns the response body when the request is a success" do
-        session.stub(:post).with("/Ticket", ";").and_return(response)
+        session.stub(:post).with("/loginTicket", ";").and_return(response)
         response.stub :kind_of? => true
         client.request_login_ticket.should == "HTTP BODY"
       end
