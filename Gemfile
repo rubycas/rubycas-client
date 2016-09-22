@@ -6,7 +6,7 @@ group :tools do
   gem "guard"
   gem "guard-rspec"
   gem "guard-bundler"
-  gem "fuubar"
+  gem "fuubar", "~> 1.0"
   gem "rb-fsevent"
   gem "ruby_gntp", :group => :darwin
 end
