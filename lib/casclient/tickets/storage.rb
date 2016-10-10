@@ -1,3 +1,5 @@
+require "fileutils"
+
 module CASClient
   module Tickets
     module Storage
@@ -84,6 +86,7 @@ module CASClient
           @tmp_dir = config[:storage_dir] || default_tmp_dir
           @service_session_lookup_dir = config[:service_session_lookup_dir] || "#{@tmp_dir}/sessions"
           @pgt_store_path = config[:pgt_store_path] || "#{@tmp_dir}/cas_pgt.pstore"
+          create_service_session_lookup_dir
         end
 
         # Creates a file in tmp/sessions linking a SessionTicket
@@ -168,6 +171,12 @@ module CASClient
 
         def open_pstore
           PStore.new(@pgt_store_path)
+        end
+
+        def create_service_session_lookup_dir
+          unless File.exist? @service_session_lookup_dir
+            FileUtils.mkdir_p @service_session_lookup_dir
+          end
         end
       end
     end
