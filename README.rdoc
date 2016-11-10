@@ -162,7 +162,7 @@ client application knowing about it.
 
 To address this, RubyCAS-Client now supports the new "Single Sign-Out" functionality in CAS 3.1, allowing the server to 
 notify the client application that the CAS session is closed. The client will automatically intercept Single Sign-Out
-requsts from the CAS server, but in order for this to work you must configure your Rails application as follows:
+requests from the CAS server, but in order for this to work you must configure your Rails application as follows:
 
 1. The Rails session store must be set to ActiveRecord: <tt>config.action_controller.session_store = :active_record_store</tt>
 2. The server must be able to read and write to Rails.root/tmp/sessions. If you are in a clustered environment,
