@@ -301,7 +301,11 @@ module CASClient
               
               log.debug "Intercepted single-sign-out request for CAS session #{si.inspect}."
 
-              @@client.ticket_store.process_single_sign_out(si)
+              if config[:authenticate_on_every_request]
+                @@client.ticket_store.process_single_sign_out(si)
+              else
+                logout(controller)
+              end
               
               # Return true to indicate that a single-sign-out request was detected
               # and that further processing of the request is unnecessary.
