@@ -26,7 +26,12 @@ module CASClient
 
           st = st.ticket if st.kind_of? ServiceTicket
           session = controller.session
-          session[:service_ticket] = st
+
+          session_id = session_id_from_controller(controller)
+          ActiveRecord::SessionStore::Session.update_all(
+            %(service_ticket="%s") % st,
+            ["session_id=?", session_id]
+          )
         end
 
         def read_service_session_lookup(st)
