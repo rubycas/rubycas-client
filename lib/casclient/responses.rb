@@ -29,7 +29,7 @@ module CASClient
   class ValidationResponse
     include XmlResponse
 
-    attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes
+    attr_reader :protocol, :user, :pgt_iou, :proxies, :extra_attributes, :authenticator
 
     def initialize(raw_text, options={})
       parse(raw_text, options)
@@ -79,6 +79,9 @@ module CASClient
         @extra_attributes.each do |k, v|
           @extra_attributes[k] = parse_extra_attribute_value(v, options[:encode_extra_attributes_as])
         end
+
+        @authenticator = @xml.elements["cas:authenticator"].text.strip if @xml.elements["cas:authenticator"]
+
       elsif is_failure?
         @failure_code = @xml.elements['//cas:authenticationFailure'].attributes['code']
         @failure_message = @xml.elements['//cas:authenticationFailure'].text.strip
