@@ -5,7 +5,7 @@ module CASClient
     attr_reader :log, :username_session_key, :extra_attributes_session_key
     attr_reader :ticket_store
     attr_reader :proxy_host, :proxy_port
-    attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url
+    attr_writer :login_url, :validate_url, :proxy_url, :logout_url, :service_url, :redirect_all
     attr_accessor :proxy_callback_url, :proxy_retrieval_url
 
     def initialize(conf = nil)
@@ -26,6 +26,7 @@ module CASClient
       @cas_base_url      = conf[:cas_base_url].gsub(/\/$/, '')
       @cas_destination_logout_param_name = conf[:cas_destination_logout_param_name]
 
+      @redirect_all = conf[:redirect_all]
       @login_url    = conf[:login_url]
       @logout_url   = conf[:logout_url]
       @validate_url = conf[:validate_url]
@@ -64,6 +65,14 @@ module CASClient
 
     def login_url
       @login_url || (cas_base_url + "/login")
+    end
+
+    def redirect_all
+      if @redirect_all.present?
+        return @redirect_all
+      else
+        return false
+      end
     end
 
     def validate_url
