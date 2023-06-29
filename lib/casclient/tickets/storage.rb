@@ -113,7 +113,7 @@ module CASClient
 
           st = st.ticket if st.kind_of? ServiceTicket
           ssl_filename = filename_of_service_session_lookup(st)
-          return IO.read(ssl_filename) if File.exists?(ssl_filename)
+          return IO.read(ssl_filename) if File.exist?(ssl_filename)
         end
 
         # Removes a stored relationship between a ServiceTicket and a local
@@ -126,7 +126,7 @@ module CASClient
 
           st = st.ticket if st.kind_of? ServiceTicket
           ssl_filename = filename_of_service_session_lookup(st)
-          File.delete(ssl_filename) if File.exists?(ssl_filename)
+          File.delete(ssl_filename) if File.exist?(ssl_filename)
         end
 
         def save_pgt_iou(pgt_iou, pgt)
